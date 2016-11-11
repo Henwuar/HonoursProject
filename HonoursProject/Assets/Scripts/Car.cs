@@ -5,6 +5,8 @@ using System.Collections;
 public class Car : MonoBehaviour
 {
     [SerializeField]
+    private bool controlled_;
+    [SerializeField]
     private float acceleration_;
     [SerializeField]
     private float brakePower_;
@@ -14,6 +16,7 @@ public class Car : MonoBehaviour
     private float turnSpeed_;
 
     private Rigidbody body_;
+    private Vector3 target_;
 
 	// Use this for initialization
 	void Start ()
@@ -29,51 +32,68 @@ public class Car : MonoBehaviour
 
         Steer();
 
+        if(controlled_)
+        {
+            UpdateInput();
+        }
+        
+	}
+
+    void UpdateInput()
+    {
+        
         //process the input
         if (Input.GetAxis("Accelerate") > 0)
         {
-            Accelerate();
+            Accelerate(Input.GetAxis("Accelerate"));
         }
-        else if(Input.GetAxis("Brake") > 0)
+        else
         {
-            Brake();
+            Accelerate(0);
         }
-	}
+        if (Input.GetAxis("Brake") > 0)
+        {
+            //brake or reverse
+            if (body_.velocity.magnitude > 0.1f)
+            {
+                Brake();
+            }
+            else
+            {
+                Accelerate(-Input.GetAxis("Brake") * 0.25f);
+            }
+        }
+    }
 
     //rotates the vehicle based on input
     public void Steer()
     {
-        if(body_.velocity.magnitude > 0.1f || body_.velocity.magnitude < -0.1f)
-        {
-            float dir = 1;
-            if(Vector3.Angle(transform.forward, body_.velocity) > 0)
-            {
-                dir = -1;
-            }
-            float steering = Input.GetAxis("Horizontal") * turnSpeed_ * dir;
-            transform.Rotate(new Vector3(0, steering, 0));
-        }
-        
+        transform.FindChild("wheel_FL").gameObject.GetComponent<WheelCollider>().steerAngle = Input.GetAxis("Horizontal") * turnSpeed_;
+        transform.FindChild("wheel_FR").gameObject.GetComponent<WheelCollider>().steerAngle = Input.GetAxis("Horizontal") * turnSpeed_;
     }
 
     //accelerates the vehicle along its forward vector
-    public void Accelerate()
+    public void Accelerate(float direction)
     {
-        //apply the acceleration
-        body_.AddForce(transform.forward * acceleration_);
-        //make sure the velocity doesn't exceed the maximum
-        body_.velocity = Vector3.ClampMagnitude(body_.velocity, maxSpeed_);
+        float power = direction * acceleration_ * Time.deltaTime;
+        //add torque to the wheels
+        WheelCollider[] wheels = GetComponentsInChildren<WheelCollider>();
+        foreach (WheelCollider wheel in wheels)
+        {
+            wheel.motorTorque = power;
+            wheel.brakeTorque = 0.0f;
+        }
     }
 
     //decelerates the vehicle
     public void Brake()
     {
-        //apply the force
-        body_.AddForce(transform.forward * -brakePower_);
-        //clamp the vehicles reversing speed
-        if(Vector3.Angle(body_.velocity, transform.forward) > 0)
+        //add torque to the wheels
+        WheelCollider[] wheels = GetComponentsInChildren<WheelCollider>();
+        foreach (WheelCollider wheel in wheels)
         {
-            body_.velocity = Vector3.ClampMagnitude(body_.velocity, maxSpeed_ * 0.25f);
+            wheel.brakeTorque = body_.mass * brakePower_ * 0.1f;
+            wheel.motorTorque = 0.0f;
         }
     }
 }
