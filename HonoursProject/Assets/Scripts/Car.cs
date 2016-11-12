@@ -17,11 +17,13 @@ public class Car : MonoBehaviour
 
     private Rigidbody body_;
     private Vector3 target_;
+    private int gear_;
 
 	// Use this for initialization
 	void Start ()
     {
         body_ = GetComponent<Rigidbody>();
+        gear_ = 0;
 	}
 	
 	// Update is called once per frame
@@ -41,26 +43,36 @@ public class Car : MonoBehaviour
 
     void UpdateInput()
     {
-        
+        print(gear_);
         //process the input
         if (Input.GetAxis("Accelerate") > 0)
         {
+            if(gear_ == -1)
+            {
+                Brake();
+            }
+            gear_ = 1;
             Accelerate(Input.GetAxis("Accelerate"));
         }
-        else
+        else if (Input.GetAxis("Brake") <= 0) 
         {
+            gear_ = 0;
             Accelerate(0);
         }
         if (Input.GetAxis("Brake") > 0)
         {
             //brake or reverse
-            if (body_.velocity.magnitude > 0.1f)
+            if (body_.velocity.magnitude > 0.1f && gear_ >= 0)
             {
                 Brake();
             }
-            else
+            else if(gear_ >= 0)
             {
-                Accelerate(-Input.GetAxis("Brake") * 0.25f);
+                gear_ = -1;
+            }
+            if(gear_ == -1)
+            {
+                Accelerate(-Input.GetAxis("Brake") * 0.5f);
             }
         }
     }
