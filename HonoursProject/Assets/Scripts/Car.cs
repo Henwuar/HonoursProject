@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Car : MonoBehaviour
@@ -17,6 +18,7 @@ public class Car : MonoBehaviour
 
     private Rigidbody body_;
     private Transform target_;
+    private Queue<Transform> targets_;
     private int gear_;
     private Vector3 respawnPoint_;
 
@@ -26,6 +28,7 @@ public class Car : MonoBehaviour
         body_ = GetComponent<Rigidbody>();
         gear_ = 0;
         respawnPoint_ = transform.position;
+        targets_ = new Queue<Transform>();
         target_ = GameObject.FindGameObjectWithTag("Junction").transform;
 	}
 	
@@ -55,6 +58,10 @@ public class Car : MonoBehaviour
         {
             tag = "Car";
         }
+
+        Debug.DrawLine(target_.position + Vector3.up, target_.position - Vector3.up, Color.blue);
+        Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
+        Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
     }
 
     //handles response to input
@@ -123,7 +130,6 @@ public class Car : MonoBehaviour
                 Brake();
                 angle = turnSpeed_;
             }
-            print(angle);
             //get the right direction
             angle *= Mathf.Sign(Vector3.Cross(transform.forward, target_.position - transform.position).y);
 
@@ -176,11 +182,13 @@ public class Car : MonoBehaviour
     //moves towards a junction
     public void MoveToTarget()
     {
-        if(Vector3.Distance(transform.position, target_.position) > 5.0f)
+        float distance = Vector3.Distance(transform.position, target_.position);
+        if (Vector3.Distance(transform.position, target_.position) > 5.0f)
         {
-            if(body_.velocity.magnitude < maxSpeed_)
+            //make sure the car doesn't exceed the maximum speed
+            if (body_.velocity.magnitude < maxSpeed_)
             {
-                Accelerate(1);
+                Accelerate(Mathf.Min(distance/maxSpeed_, 1));
             }
             else
             {
@@ -193,7 +201,18 @@ public class Car : MonoBehaviour
             //if stopped, find a new target
             if(body_.velocity.magnitude < 0.1f)
             {
-                target_ = target_.gameObject.GetComponent<Junction>().GetJunction().transform;
+                //make sure there are target
+                if(targets_.Count == 0)
+                {
+                    IEnumerable<Transform> newTargets = target_.gameObject.GetComponent<Junction>().GetNewTargets();
+                    foreach(Transform target in newTargets)
+                    {
+                        targets_.Enqueue(target);
+                    }
+                    
+                }
+                //get a new target from the queue
+                target_ = targets_.Dequeue();
             }
         }
     }
