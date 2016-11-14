@@ -14,4 +14,9 @@ public class Road : MonoBehaviour
     {
         Debug.DrawLine(start_.position, end_.position);
     }
+
+    public Junction GetJunction()
+    {
+        return endJunction_.GetComponent<Junction>();
+    }
 }

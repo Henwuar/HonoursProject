@@ -21,6 +21,7 @@ GameObject:
   - 4: {fileID: 4000014239846808}
   - 114: {fileID: 114000013972593288}
   - 65: {fileID: 65000013149958822}
+  - 114: {fileID: 114000010446097776}
   m_Layer: 0
   m_Name: Junction
   m_TagString: Junction
@@ -53,6 +54,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114000010446097776
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011701746386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df186e57a924f34d9ada2c9d55a03ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114000013972593288
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -67,3 +79,5 @@ MonoBehaviour:
   road_: {fileID: 1000011232744576, guid: 6270487509389aa4c8dea30a15a33ff6, type: 2}
   roads_: []
   oneWay_: 0
+  size_: 4
+  laneSpacing_: 2

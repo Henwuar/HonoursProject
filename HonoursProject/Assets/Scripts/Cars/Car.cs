@@ -15,12 +15,18 @@ public class Car : MonoBehaviour
     private float maxSpeed_;
     [SerializeField]
     private float turnSpeed_;
+    [SerializeField]
+    private float stopDistance_;
 
     private Rigidbody body_;
     private Transform target_;
     private Queue<Transform> targets_;
     private int gear_;
     private Vector3 respawnPoint_;
+    private bool initialised_ = false;
+    private float waitTime_;
+
+    public bool followingTarget_ = true;
 
 	// Use this for initialization
 	void Start ()
@@ -28,24 +34,59 @@ public class Car : MonoBehaviour
         body_ = GetComponent<Rigidbody>();
         gear_ = 0;
         respawnPoint_ = transform.position;
+        //initialised_ = false;
+    }
+
+    public void Init()
+    {
+        initialised_ = true;
         targets_ = new Queue<Transform>();
-        target_ = GameObject.FindGameObjectWithTag("Junction").transform;
-	}
-	
+        //find all the available roads
+        GameObject[] roads = GameObject.FindGameObjectsWithTag("Road");
+        //chose a target road from them
+        int chosenRoad = Random.Range(0, roads.GetLength(0));
+        target_ = roads[chosenRoad].GetComponent<Road>().end_.transform;
+        transform.LookAt(target_);
+        transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
+        GetTargets();
+    }
+
 	// Update is called once per frame
 	void Update ()
     {
+        //make sure the car is initialised
+        if (!initialised_)
+        {
+            return;
+        }
 
-        Steer();
+        if(waitTime_ > 0)
+        {
+            waitTime_ -= Time.deltaTime;
+            if(waitTime_ < 0)
+            {
+                waitTime_ = 0;
+                followingTarget_ = true;
+            }
+            return;
+        }
 
-        if(controlled_)
+        if(followingTarget_)
+        {
+            Steer();
+        }
+        
+
+        if (controlled_)
         {
             HandleInput();
         }
-        else
+        else if(followingTarget_)
         {
             MoveToTarget();
         }
+
+
         //make the respawn point follow the player
         respawnPoint_ = new Vector3(transform.position.x, respawnPoint_.y, transform.position.z);
 
@@ -59,9 +100,18 @@ public class Car : MonoBehaviour
             tag = "Car";
         }
 
-        Debug.DrawLine(target_.position + Vector3.up, target_.position - Vector3.up, Color.blue);
-        Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
-        Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
+        //resetting
+        RaycastHit hit;
+        Physics.Raycast(transform.position, transform.up, out hit);
+        if (hit.collider && hit.collider.gameObject.tag == "Ground")
+        {
+            print("Reset");
+            Reset();
+        }
+
+        Debug.DrawLine(transform.position, target_.position, Color.blue);
+        //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
+        //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
     }
 
     //handles response to input
@@ -100,11 +150,6 @@ public class Car : MonoBehaviour
                 Accelerate(-Input.GetAxis("Brake") * 0.5f);
             }
         }
-        //resetting
-        if(Input.GetButtonDown("Fire1"))
-        {
-            Reset();
-        }
     }
 
     //rotates the vehicle based on input
@@ -127,7 +172,7 @@ public class Car : MonoBehaviour
             //clamp it at the turning speed;
             if(angle > turnSpeed_)
             {
-                Brake();
+                //Brake();
                 angle = turnSpeed_;
             }
             //get the right direction
@@ -179,16 +224,16 @@ public class Car : MonoBehaviour
         Brake();
     }
 
-    //moves towards a junction
     public void MoveToTarget()
     {
         float distance = Vector3.Distance(transform.position, target_.position);
-        if (Vector3.Distance(transform.position, target_.position) > 5.0f)
+        if (Vector3.Distance(transform.position, target_.position) > stopDistance_)
         {
             //make sure the car doesn't exceed the maximum speed
             if (body_.velocity.magnitude < maxSpeed_)
             {
-                Accelerate(Mathf.Min(distance/maxSpeed_, 1));
+                float angle = Mathf.Abs(transform.FindChild("wheel_FL").GetComponent<WheelCollider>().steerAngle);
+                Accelerate(Mathf.Min(1/(angle/turnSpeed_), 2.5f));
             }
             else
             {
@@ -199,21 +244,47 @@ public class Car : MonoBehaviour
         {
             Brake();
             //if stopped, find a new target
-            if(body_.velocity.magnitude < 0.1f)
-            {
+            //if(body_.velocity.magnitude < maxSpeed_*0.5f)
+            //{
                 //make sure there are target
                 if(targets_.Count == 0)
                 {
-                    IEnumerable<Transform> newTargets = target_.gameObject.GetComponent<Junction>().GetNewTargets();
-                    foreach(Transform target in newTargets)
-                    {
-                        targets_.Enqueue(target);
-                    }
-                    
+                    GetTargets();
                 }
                 //get a new target from the queue
                 target_ = targets_.Dequeue();
+            //}
+        }
+    }
+
+    public void Wait(float time, bool additive = false)
+    {
+        if(followingTarget_)
+        {
+            if (additive)
+            {
+                waitTime_ += time;
             }
+            else
+            {
+                waitTime_ = time;
+            }
+            followingTarget_ = false;
+        }
+        
+    }
+
+    public float DistanceToTarget()
+    {
+        return Vector3.Distance(transform.position, target_.position);
+    }
+
+    void GetTargets()
+    {
+        IEnumerable<Transform> newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
+        foreach (Transform target in newTargets)
+        {
+            targets_.Enqueue(target);
         }
     }
 }
