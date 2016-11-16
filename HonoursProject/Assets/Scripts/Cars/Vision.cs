@@ -26,13 +26,12 @@ public class Vision : MonoBehaviour
         RaycastHit hit;
         Ray ray = new Ray(transform.position + transform.forward, transform.forward);
 
-        Debug.DrawRay(transform.position + transform.forward, transform.forward * visionDistance_, Color.green);
+        //Debug.DrawRay(transform.position + transform.forward, transform.forward * visionDistance_, Color.green);
 
         Physics.Raycast(ray, out hit, visionDistance_);
         //check that the ray hit something
         if(hit.collider && (hit.collider.tag == "Car" || hit.collider.tag == "Player"))
         {
-
             if(hit.distance < stoppingDistance_)
             {
                 //check if the car has just collided with another
@@ -45,9 +44,22 @@ public class Vision : MonoBehaviour
                     car_.Accelerate(-1.0f);
                 }
             }
+            else if(hit.distance < stoppingDistance_ * 0.5f)
+            {
+                car_.Wait(Time.deltaTime);
+                car_.Brake();
+            }
             else
             {
                 car_.Accelerate(0);
+            }
+        }
+        if(hit.collider && hit.collider.tag == "TrafficLight")
+        {
+            if(hit.collider.gameObject.GetComponent<TrafficLight>().GetSignal() == Signals.S_STOP && hit.distance < stoppingDistance_)
+            {
+                car_.Wait(Time.deltaTime);
+                car_.Brake();
             }
         }
 	}

@@ -43,12 +43,24 @@ public class Car : MonoBehaviour
         targets_ = new Queue<Transform>();
         //find all the available roads
         GameObject[] roads = GameObject.FindGameObjectsWithTag("Road");
+        GameObject closestRoad = roads[0];
+        //find the closest road
+        for(int i = 0; i < roads.GetLength(0); i++)
+        {
+            //GameObject road = roads[i];
+            float dist = Vector3.Distance(roads[i].transform.position, transform.position);
+            if(dist < Vector3.Distance(closestRoad.transform.position, transform.position))
+            {
+                closestRoad = roads[i];
+            }
+        }
         //chose a target road from them
-        int chosenRoad = Random.Range(0, roads.GetLength(0));
-        target_ = roads[chosenRoad].GetComponent<Road>().end_.transform;
+        //int chosenRoad = Random.Range(0, roads.GetLength(0));
+        target_ = closestRoad.transform;
+        targets_.Enqueue(target_.GetComponentInParent<Road>().end_.transform);
         transform.LookAt(target_);
-        transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
-        GetTargets();
+        //transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
+        //GetTargets();
     }
 
 	// Update is called once per frame
@@ -109,7 +121,7 @@ public class Car : MonoBehaviour
             Reset();
         }
 
-        Debug.DrawLine(transform.position, target_.position, Color.blue);
+        //Debug.DrawLine(transform.position, target_.position, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
     }
@@ -226,8 +238,7 @@ public class Car : MonoBehaviour
 
     public void MoveToTarget()
     {
-        float distance = Vector3.Distance(transform.position, target_.position);
-        if (Vector3.Distance(transform.position, target_.position) > stopDistance_)
+        if (DistanceToTarget() > stopDistance_)
         {
             //make sure the car doesn't exceed the maximum speed
             if (body_.velocity.magnitude < maxSpeed_)
@@ -244,8 +255,8 @@ public class Car : MonoBehaviour
         {
             Brake();
             //if stopped, find a new target
-            //if(body_.velocity.magnitude < maxSpeed_*0.5f)
-            //{
+            if(body_.velocity.magnitude < maxSpeed_*0.75f)
+            {
                 //make sure there are target
                 if(targets_.Count == 0)
                 {
@@ -253,7 +264,7 @@ public class Car : MonoBehaviour
                 }
                 //get a new target from the queue
                 target_ = targets_.Dequeue();
-            //}
+            }
         }
     }
 

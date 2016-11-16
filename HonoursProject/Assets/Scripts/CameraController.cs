@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour
 {
-
+    private Vector3 targetPos;
 	// Use this for initialization
 	void Start ()
     {
@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
             //look at the player
             transform.LookAt(player.transform.position + (player.transform.forward*3) + (player.GetComponent<Rigidbody>().velocity));
         }
-        else
+        else if(GameObject.FindGameObjectsWithTag("Car").GetLength(0) > 0)
         {
             //find the average position of the cars
             Vector3 averagePos = Vector3.zero;
@@ -36,7 +36,10 @@ public class CameraController : MonoBehaviour
             }
             averagePos /= numCars;
 
-            transform.LookAt(averagePos);
+            targetPos = averagePos;
+            targetPos.y = 80.0f;
+
+            transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f * Time.deltaTime);
         }
 	}
 }
