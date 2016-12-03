@@ -25,6 +25,7 @@ GameObject:
   - 33: {fileID: 33000013353206880}
   - 114: {fileID: 114000010858333526}
   - 64: {fileID: 64000013141773630}
+  - 114: {fileID: 114000013021729570}
   m_Layer: 0
   m_Name: Car
   m_TagString: Car
@@ -393,6 +394,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visionDistance_: 5
   stoppingDistance_: 3
+--- !u!114 &114000013021729570
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010303715308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0854b1aa00d7f0b44a4bc0209158cf21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curEvent_: 0
+  prevEvent_: 0
 --- !u!114 &114000013837720676
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -410,7 +424,6 @@ MonoBehaviour:
   maxSpeed_: 5
   turnSpeed_: 35
   stopDistance_: 2
-  followingTarget_: 1
 --- !u!146 &146000010227279530
 WheelCollider:
   m_ObjectHideFlags: 1

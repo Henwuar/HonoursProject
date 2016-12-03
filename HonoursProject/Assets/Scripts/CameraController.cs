@@ -3,15 +3,21 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour
 {
-    private Vector3 targetPos;
-	// Use this for initialization
-	void Start ()
+    [SerializeField]
+    private float moveSpeed;
+    [SerializeField]
+    private float rotateSpeed;
+
+    private Vector3 eulerRotation;
+
+    // Use this for initialization
+    void Start ()
     {
 	    
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
         //see if a car is being controlled
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -21,25 +27,37 @@ public class CameraController : MonoBehaviour
             transform.position = player.transform.position - (player.transform.forward * 4) + (Vector3.up * 2);
             //look at the player
             transform.LookAt(player.transform.position + (player.transform.forward*3) + (player.GetComponent<Rigidbody>().velocity));
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                player.GetComponent<Car>().ToggleControlled();
+            } 
         }
         else if(GameObject.FindGameObjectsWithTag("Car").GetLength(0) > 0)
         {
-            //find the average position of the cars
-            Vector3 averagePos = Vector3.zero;
-            GameObject[] cars = GameObject.FindGameObjectsWithTag("Car");
-            int numCars = 0;
-
-            foreach (GameObject car in cars)
+            //right mouse button
+            if (Input.GetMouseButton(1))
             {
-                averagePos += car.transform.position;
-                numCars++;
+                eulerRotation.y += Input.GetAxis("Mouse X") * rotateSpeed;
+                eulerRotation.x -= Input.GetAxis("Mouse Y") * rotateSpeed;
             }
-            averagePos /= numCars;
 
-            targetPos = averagePos;
-            targetPos.y = 80.0f;
+            transform.rotation = Quaternion.Euler(new Vector3(eulerRotation.x, eulerRotation.y, 0));
+            Debug.DrawRay(transform.position, transform.forward, Color.blue);
 
-            transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f * Time.deltaTime);
+            Vector3 moveDirection;
+            moveDirection.x = Input.GetAxis("Vertical") * moveSpeed;
+            moveDirection.y = Input.GetAxis("Horizontal") * moveSpeed;
+            moveDirection.z = Input.GetAxis("Up") * moveSpeed;
+            moveDirection = Vector3.ClampMagnitude(moveDirection, moveSpeed);
+
+            Vector3 moveAmount = (moveDirection.x * transform.forward) + (moveDirection.y * transform.right) + (moveDirection.z * transform.up);
+            transform.position += moveAmount * Time.deltaTime;
+
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                GameObject.FindGameObjectWithTag("Car").GetComponent<Car>().ToggleControlled();
+            }
         }
 	}
 }

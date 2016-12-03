@@ -20,13 +20,13 @@ public class Car : MonoBehaviour
 
     private Rigidbody body_;
     private Transform target_;
+    private GameObject avoidTarget_;
     private Queue<Transform> targets_;
     private int gear_;
     private Vector3 respawnPoint_;
     private bool initialised_ = false;
     private float waitTime_;
-
-    public bool followingTarget_ = true;
+    private bool followingTarget_ = true;
 
 	// Use this for initialization
 	void Start ()
@@ -59,8 +59,6 @@ public class Car : MonoBehaviour
         target_ = closestRoad.transform;
         targets_.Enqueue(target_.GetComponentInParent<Road>().end_.transform);
         transform.LookAt(target_);
-        //transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
-        //GetTargets();
     }
 
 	// Update is called once per frame
@@ -72,7 +70,11 @@ public class Car : MonoBehaviour
             return;
         }
 
-        if(waitTime_ > 0)
+        //steer towards the target
+        Steer();
+
+        //make sure the car isn't waiting
+        if (waitTime_ > 0)
         {
             waitTime_ -= Time.deltaTime;
             if(waitTime_ < 0)
@@ -81,13 +83,7 @@ public class Car : MonoBehaviour
                 followingTarget_ = true;
             }
             return;
-        }
-
-        if(followingTarget_)
-        {
-            Steer();
-        }
-        
+        }        
 
         if (controlled_)
         {
@@ -106,10 +102,12 @@ public class Car : MonoBehaviour
         if (controlled_)
         {
             tag = "Player";
+            GetComponent<Vision>().enabled = false;
         }
         else
         {
             tag = "Car";
+            GetComponent<Vision>().enabled = true;
         }
 
         //resetting
@@ -121,9 +119,17 @@ public class Car : MonoBehaviour
             Reset();
         }
 
+
+        
         //Debug.DrawLine(transform.position, target_.position, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
+    }
+
+    void LateUpdate()
+    {
+        //clear the avoid target
+        avoidTarget_ = null;
     }
 
     //handles response to input
@@ -179,8 +185,14 @@ public class Car : MonoBehaviour
         }
         else
         {
+            Vector3 targetPos_ = target_.position;
+            if(avoidTarget_)
+            {
+                //move the target to the left of the avoid target
+                targetPos_ = avoidTarget_.transform.position + Vector3.Cross(Vector3.up, avoidTarget_.transform.position - transform.position);
+            }
             //get the abosulte angle to the point
-            angle = Vector3.Angle(transform.forward, target_.position - transform.position);
+            angle = Vector3.Angle(transform.forward, targetPos_ - transform.position);
             //clamp it at the turning speed;
             if(angle > turnSpeed_)
             {
@@ -188,9 +200,9 @@ public class Car : MonoBehaviour
                 angle = turnSpeed_;
             }
             //get the right direction
-            angle *= Mathf.Sign(Vector3.Cross(transform.forward, target_.position - transform.position).y);
+            angle *= Mathf.Sign(Vector3.Cross(transform.forward, targetPos_ - transform.position).y);
 
-            Debug.DrawRay(transform.position, Quaternion.AngleAxis(angle, Vector3.up) * (transform.forward), Color.green);
+            //Debug.DrawLine(transform.position, targetPos_, Color.blue);
         }
 
         //steer the colliders
@@ -232,6 +244,8 @@ public class Car : MonoBehaviour
         //reset the transform
         transform.position = respawnPoint_;
         transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
+        body_.velocity = Vector3.zero;
+        body_.angularVelocity = Vector3.zero;
         //stop the wheels
         Brake();
     }
@@ -292,10 +306,25 @@ public class Car : MonoBehaviour
 
     void GetTargets()
     {
-        IEnumerable<Transform> newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
+        List<Transform> newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
         foreach (Transform target in newTargets)
         {
             targets_.Enqueue(target);
         }
+    }
+
+    public bool FollowingTarget()
+    {
+        return followingTarget_;
+    }
+
+    public void Avoid(GameObject other)
+    {
+        avoidTarget_ = other;
+    }
+
+    public void ToggleControlled()
+    {
+        controlled_ = !controlled_;
     }
 }

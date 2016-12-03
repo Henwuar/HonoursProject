@@ -9,6 +9,7 @@ TagManager:
   - Road
   - Ground
   - TrafficLight
+  - EventTracker
   layers:
   - Default
   - TransparentFX

@@ -78,6 +78,7 @@ public class Junction : MonoBehaviour
             ready_ = true;
         }
 
+        //update the traffic lights
         timer_ += Time.deltaTime;
         if(timer_ > lightTiming_)
         {
@@ -107,7 +108,7 @@ public class Junction : MonoBehaviour
         return ready_;
     }
 
-    public IEnumerable<Transform> GetNewTargets()
+    public List<Transform> GetNewTargets()
     {
         List<Transform> targets = new List<Transform>();
         //make sure there are connected junctions
