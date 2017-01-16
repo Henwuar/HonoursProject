@@ -9,10 +9,16 @@ public class Vision : MonoBehaviour
     private float visionDistance_;
     [SerializeField]
     private float stoppingDistance_;
+    [SerializeField]
+    private float lookAngle_;
+    [SerializeField]
+    private float lookStepAmount_;
 
     private Car car_;
     private Rigidbody body_;
     private EventSender eventSender_;
+
+    private float curAngle_ = 0;
 
 	// Use this for initialization
 	void Start ()
@@ -27,7 +33,16 @@ public class Vision : MonoBehaviour
     {
         //Raycast out to see if there is a car in front
         RaycastHit hit;
-        Ray ray = new Ray(transform.position + transform.forward, (transform.forward + body_.velocity.normalized).normalized);
+        //figure out the current view angle
+        Vector3 lookDirection = Quaternion.Euler(new Vector3(0, curAngle_-(lookAngle_*0.5f))) * transform.forward;
+        curAngle_ += lookStepAmount_;
+        if(curAngle_ > lookAngle_)
+        {
+            curAngle_ = 0;
+        }
+
+        Ray ray = new Ray(transform.position + transform.forward, (transform.forward + lookDirection.normalized).normalized);
+        Debug.DrawLine(transform.position, transform.position + (transform.forward + lookDirection.normalized).normalized * visionDistance_, Color.blue);
 
         Physics.Raycast(ray, out hit, visionDistance_);
         //check that the ray hit something
@@ -138,6 +153,14 @@ public class Vision : MonoBehaviour
         }
     }
 
+    void OnTriggerStay(Collider other)
+    {
+        if(other.gameObject.tag == "Car")
+        {
+            print("Hit Car");
+        }
+    }
+
     bool IsFacing(GameObject other)
     {
         float angle = Vector3.Angle(transform.forward, other.transform.forward);
@@ -147,4 +170,5 @@ public class Vision : MonoBehaviour
         }
         return false;
     }
+
 }

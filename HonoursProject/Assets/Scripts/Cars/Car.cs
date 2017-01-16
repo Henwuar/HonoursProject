@@ -144,7 +144,7 @@ public class Car : MonoBehaviour
                 Brake();
             }
             gear_ = 1;
-            Accelerate(Input.GetAxis("Accelerate"));
+            Accelerate(Input.GetAxis("Accelerate")*2);
         }
         else if (Input.GetAxis("Brake") <= 0) 
         {

@@ -8,6 +8,8 @@ public class EventTracker : MonoBehaviour
 {
     [SerializeField]
     private string outputPath_;
+    [SerializeField]
+    private bool trackData_;
 
     private float[] eventCount_;
     private InputField pathInput;
@@ -29,6 +31,7 @@ public class EventTracker : MonoBehaviour
         pathInput.onEndEdit.AddListener((input) => SetOutputPath(input));
         pathInput.text = outputPath_;
         pathInput.gameObject.SetActive(false);
+        trackData_ = true;
     }
 
     void Update()
@@ -56,17 +59,20 @@ public class EventTracker : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        string eventFile = "";
-        eventFile += "STOPPED_AT_LIGHT:";
-        eventFile += eventCount_[0].ToString() + "\n";
-        eventFile += "STOPPED_FOR_CAR:";
-        eventFile += eventCount_[1].ToString() + "\n";
-        eventFile += "COLLISION:";
-        eventFile += eventCount_[2].ToString();
+        if(trackData_)
+        {
+            string eventFile = "";
+            eventFile += "STOPPED_AT_LIGHT:";
+            eventFile += eventCount_[0].ToString() + "\n";
+            eventFile += "STOPPED_FOR_CAR:";
+            eventFile += eventCount_[1].ToString() + "\n";
+            eventFile += "COLLISION:";
+            eventFile += eventCount_[2].ToString();
 
-        System.DateTime now = System.DateTime.Now;
-        string fname = now.Year.ToString() + now.Month.ToString() + now.Day.ToString() + "_" + now.Hour.ToString() + now.Minute.ToString();
-        System.IO.File.WriteAllText(outputPath_ + "\\TrafficEvents_" + fname + ".txt", eventFile);
+            System.DateTime now = System.DateTime.Now;
+            string fname = now.Year.ToString() + now.Month.ToString() + now.Day.ToString() + "_" + now.Hour.ToString() + now.Minute.ToString();
+            System.IO.File.WriteAllText(outputPath_ + "\\TrafficEvents_" + fname + ".txt", eventFile);
+        }
     }
 
     public void AddEvent(TrafficEvent ev)
@@ -89,5 +95,10 @@ public class EventTracker : MonoBehaviour
         }
         PlayerPrefs.SetString("output", path);
         PlayerPrefs.Save();
+    }
+
+    public void toggleTrackData()
+    {
+        trackData_ = !trackData_;
     }
 }

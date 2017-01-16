@@ -113,7 +113,7 @@ Transform:
   m_GameObject: {fileID: 1000013084095238}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.8, y: -0.95, z: -1.75}
-  m_LocalScale: {x: 0.3, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 0.3, y: 0.9, z: 0.9}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 4000010842975710}
@@ -126,7 +126,7 @@ Transform:
   m_GameObject: {fileID: 1000011676717250}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.8, y: -0.95, z: 1.75}
-  m_LocalScale: {x: 0.3, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 0.3, y: 0.9, z: 0.9}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 4000010842975710}
@@ -138,8 +138,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010303715308}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.274805, y: 0.66249985, z: 19.984558}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: -33.064915, y: -4.7187417e-16, z: 21.251324}
+  m_LocalScale: {x: 0.65, y: 0.5, z: 0.5}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000013740502870}
@@ -156,7 +156,7 @@ Transform:
   m_GameObject: {fileID: 1000010422666428}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.8, y: -0.95, z: -1.75}
-  m_LocalScale: {x: 0.3, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 0.3, y: 0.9, z: 0.9}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 4000010842975710}
@@ -169,7 +169,7 @@ Transform:
   m_GameObject: {fileID: 1000013545837562}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.8, y: -0.95, z: 1.75}
-  m_LocalScale: {x: 0.3, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 0.3, y: 0.9, z: 0.9}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 4000010842975710}
@@ -394,6 +394,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visionDistance_: 5
   stoppingDistance_: 3
+  lookAngle_: 45
+  lookStepAmount_: 5
 --- !u!114 &114000013021729570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -435,7 +437,7 @@ WheelCollider:
   m_SuspensionSpring:
     spring: 1000000
     damper: 4500
-    targetPosition: 0.5
+    targetPosition: 1
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
@@ -464,7 +466,7 @@ WheelCollider:
   m_SuspensionSpring:
     spring: 1000000
     damper: 4500
-    targetPosition: 0.5
+    targetPosition: 1
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
@@ -493,7 +495,7 @@ WheelCollider:
   m_SuspensionSpring:
     spring: 1000000
     damper: 4500
-    targetPosition: 0.5
+    targetPosition: 1
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
@@ -522,7 +524,7 @@ WheelCollider:
   m_SuspensionSpring:
     spring: 1000000
     damper: 4500
-    targetPosition: 0.5
+    targetPosition: 1
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
