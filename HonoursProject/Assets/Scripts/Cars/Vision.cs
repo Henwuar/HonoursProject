@@ -19,6 +19,7 @@ public class Vision : MonoBehaviour
     private EventSender eventSender_;
 
     private float curAngle_ = 0;
+    private bool sweep_ = true;
 
 	// Use this for initialization
 	void Start ()
@@ -35,10 +36,13 @@ public class Vision : MonoBehaviour
         RaycastHit hit;
         //figure out the current view angle
         Vector3 lookDirection = Quaternion.Euler(new Vector3(0, curAngle_-(lookAngle_*0.5f))) * transform.forward;
-        curAngle_ += lookStepAmount_;
-        if(curAngle_ > lookAngle_)
+        if(sweep_)
         {
-            curAngle_ = 0;
+            curAngle_ += lookStepAmount_;
+            if (curAngle_ > lookAngle_)
+            {
+                curAngle_ = 0;
+            }
         }
 
         Ray ray = new Ray(transform.position + transform.forward, (transform.forward + lookDirection.normalized).normalized);
@@ -48,12 +52,17 @@ public class Vision : MonoBehaviour
         //check that the ray hit something
         if(hit.collider && (hit.collider.tag == "Car" || hit.collider.tag == "Player"))
         {
-            if(hit.distance < stoppingDistance_)
+            sweep_ = false;
+            if (hit.distance < stoppingDistance_ && hit.distance > stoppingDistance_ * 0.5f)
             {
                 //check if the car has just collided with another
                 if(car_.FollowingTarget())
                 {
-                    car_.Brake();
+                    //check if this car is moving faster than the other car
+                    if(body_.velocity.magnitude > hit.collider.GetComponent<Rigidbody>().velocity.magnitude)
+                    {
+                        car_.Brake();
+                    }
                     if(IsFacing(hit.collider.gameObject))
                     {
                         car_.Avoid(hit.collider.gameObject);
@@ -64,7 +73,6 @@ public class Vision : MonoBehaviour
                     car_.Accelerate(-1.0f);
                 }
                 //register an event happening with the event tracker
-
                 eventSender_.SendEvent(TrafficEvent.TE_STOPPED_FOR_CAR);
             }
             else if(hit.distance < stoppingDistance_ * 0.5f)
@@ -80,6 +88,10 @@ public class Vision : MonoBehaviour
         else if(eventSender_.CurEvent() == TrafficEvent.TE_STOPPED_FOR_CAR)
         {
             eventSender_.SendEvent(TrafficEvent.TE_NONE);
+        }
+        else
+        {
+            sweep_ = true;
         }
         if(hit.collider && hit.collider.tag == "TrafficLight")
         {

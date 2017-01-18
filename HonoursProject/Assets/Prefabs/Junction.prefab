@@ -22,6 +22,8 @@ GameObject:
   - 114: {fileID: 114000013972593288}
   - 65: {fileID: 65000013149958822}
   - 114: {fileID: 114000010446097776}
+  - 33: {fileID: 33000011021848024}
+  - 23: {fileID: 23000011646304944}
   m_Layer: 0
   m_Name: Junction
   m_TagString: Junction
@@ -42,6 +44,42 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!23 &23000011646304944
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011701746386}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 76f22486432d4714eb0512653e1ae2d2, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &33000011021848024
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011701746386}
+  m_Mesh: {fileID: 0}
 --- !u!65 &65000013149958822
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -82,3 +120,4 @@ MonoBehaviour:
   size_: 4
   laneSpacing_: 2
   lightTiming_: 3
+  availableDirections_: 

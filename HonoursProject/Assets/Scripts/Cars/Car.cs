@@ -17,6 +17,8 @@ public class Car : MonoBehaviour
     private float turnSpeed_;
     [SerializeField]
     private float stopDistance_;
+    [SerializeField]
+    private float wheelRotationSpeed_;
 
     private Rigidbody body_;
     private Transform target_;
@@ -57,7 +59,7 @@ public class Car : MonoBehaviour
         //chose a target road from them
         //int chosenRoad = Random.Range(0, roads.GetLength(0));
         target_ = closestRoad.transform;
-        targets_.Enqueue(target_.GetComponentInParent<Road>().end_.transform);
+        targets_.Enqueue(target_.GetComponentInParent<Road>().GetEnd());
         transform.LookAt(target_);
     }
 
@@ -185,14 +187,14 @@ public class Car : MonoBehaviour
         }
         else
         {
-            Vector3 targetPos_ = target_.position;
+            Vector3 targetPos = new Vector3(target_.position.x, transform.position.y, target_.position.z);
             if(avoidTarget_)
             {
                 //move the target to the left of the avoid target
-                targetPos_ = avoidTarget_.transform.position + Vector3.Cross(Vector3.up, avoidTarget_.transform.position - transform.position);
+                targetPos = avoidTarget_.transform.position + Vector3.Cross(Vector3.up, avoidTarget_.transform.position - transform.position);
             }
             //get the abosulte angle to the point
-            angle = Vector3.Angle(transform.forward, targetPos_ - transform.position);
+            angle = Vector3.Angle(transform.forward, targetPos - transform.position);
             //clamp it at the turning speed;
             if(angle > turnSpeed_)
             {
@@ -200,14 +202,12 @@ public class Car : MonoBehaviour
                 angle = turnSpeed_;
             }
             //get the right direction
-            angle *= Mathf.Sign(Vector3.Cross(transform.forward, targetPos_ - transform.position).y);
-
-            //Debug.DrawLine(transform.position, targetPos_, Color.blue);
+            angle *= Mathf.Sign(Vector3.Cross(transform.forward, targetPos - transform.position).y);
         }
 
         //steer the colliders
-        left.steerAngle = angle;
-        right.steerAngle = angle;
+        left.steerAngle = Mathf.Lerp(left.steerAngle, angle, wheelRotationSpeed_ * Time.deltaTime);
+        right.steerAngle = Mathf.Lerp(right.steerAngle, angle, wheelRotationSpeed_ * Time.deltaTime);
 
         //rotate the meshes
         left.gameObject.transform.localRotation = Quaternion.Euler(0, left.steerAngle, 0);
@@ -307,6 +307,30 @@ public class Car : MonoBehaviour
     void GetTargets()
     {
         List<Transform> newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
+        //check if a valid target has been provided
+        bool canContinue = false;
+        while(!canContinue)
+        {
+            if(newTargets.Count > 1)
+            {
+                Vector3 newDir = newTargets[1].position - newTargets[0].position;
+                float angle = Vector3.Angle(transform.forward, newDir);
+                //invalid - find new targets
+                if (angle > 135 && angle < 225)
+                {
+                    newTargets.Clear();
+                    newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
+                }
+                else
+                {
+                    canContinue = true;
+                }
+            }
+            else //not enough values to check - continue
+            {
+                canContinue = true;
+            }
+        }
         foreach (Transform target in newTargets)
         {
             targets_.Enqueue(target);

@@ -31,7 +31,7 @@ public class EventTracker : MonoBehaviour
         pathInput.onEndEdit.AddListener((input) => SetOutputPath(input));
         pathInput.text = outputPath_;
         pathInput.gameObject.SetActive(false);
-        trackData_ = true;
+        trackData_ = false;
     }
 
     void Update()

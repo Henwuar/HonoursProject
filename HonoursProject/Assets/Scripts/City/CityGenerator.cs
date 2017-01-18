@@ -73,6 +73,7 @@ public class CityGenerator : MonoBehaviour
                 //turn off all the colliders for the junctions
                 foreach (GameObject junction in junctions_)
                 {
+                    //junction.GetComponent<Junction>().Finalise();
                     junction.GetComponent<BoxCollider>().enabled = false;
                 }
 
