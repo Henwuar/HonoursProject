@@ -26,6 +26,7 @@ public class Junction : MonoBehaviour
     private float timer_;
     [SerializeField]
     private GameObject[] dirRoads_;
+    private bool lightsOn_ = true;
 
     void Start()
     {
@@ -88,15 +89,20 @@ public class Junction : MonoBehaviour
         if(timer_ > lightTiming_)
         {
             timer_ = 0;
-            lightRunner_++;
-            if(lightRunner_ >= lights_.Count)
+            lightsOn_ = !lightsOn_;
+            if(lightsOn_)
             {
-                lightRunner_ = 0;
+                lightRunner_++;
+                if (lightRunner_ >= lights_.Count)
+                {
+                    lightRunner_ = 0;
+                }
             }
+            
             //update the lights
             for(int i = 0; i < lights_.Count; i++)
             {
-                if(i == lightRunner_)
+                if(i == lightRunner_ && lightsOn_)
                 {
                     lights_[i].GetComponent<TrafficLight>().SetSignal(Signals.S_GO);
                 }

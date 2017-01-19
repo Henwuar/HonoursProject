@@ -190,8 +190,8 @@ public class Car : MonoBehaviour
             Vector3 targetPos = new Vector3(target_.position.x, transform.position.y, target_.position.z);
             if(avoidTarget_)
             {
-                //move the target to the left of the avoid target
-                targetPos = avoidTarget_.transform.position + Vector3.Cross(Vector3.up, avoidTarget_.transform.position - transform.position);
+                //move the target to the right of the avoid target
+                targetPos = avoidTarget_.transform.position - Vector3.Cross(Vector3.up, avoidTarget_.transform.position - transform.position);
             }
             //get the abosulte angle to the point
             angle = Vector3.Angle(transform.forward, targetPos - transform.position);

@@ -8,6 +8,8 @@ public class Vision : MonoBehaviour
     [SerializeField]
     private float visionDistance_;
     [SerializeField]
+    private float lookAheadMultiplier_;
+    [SerializeField]
     private float stoppingDistance_;
     [SerializeField]
     private float lookAngle_;
@@ -46,9 +48,11 @@ public class Vision : MonoBehaviour
         }
 
         Ray ray = new Ray(transform.position + transform.forward, (transform.forward + lookDirection.normalized).normalized);
-        Debug.DrawLine(transform.position, transform.position + (transform.forward + lookDirection.normalized).normalized * visionDistance_, Color.blue);
 
-        Physics.Raycast(ray, out hit, visionDistance_);
+        float lookAhead = Mathf.Clamp(body_.velocity.magnitude, 1, lookAheadMultiplier_);
+        Debug.DrawLine(transform.position, transform.position + (transform.forward + lookDirection.normalized).normalized * visionDistance_ * lookAhead, Color.blue);
+
+        Physics.Raycast(ray, out hit, visionDistance_*lookAhead);
         //check that the ray hit something
         if(hit.collider && (hit.collider.tag == "Car" || hit.collider.tag == "Player"))
         {
@@ -77,6 +81,7 @@ public class Vision : MonoBehaviour
             }
             else if(hit.distance < stoppingDistance_ * 0.5f)
             {
+                //stop following targets for the next frame
                 car_.Wait(Time.deltaTime);
                 car_.Brake();
             }

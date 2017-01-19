@@ -4,9 +4,11 @@ using System.Collections;
 public class CameraController : MonoBehaviour
 {
     [SerializeField]
-    private float moveSpeed;
+    private float moveSpeed_;
     [SerializeField]
-    private float rotateSpeed;
+    private float rotateSpeed_;
+    [SerializeField]
+    private float zoomSpeed_;
 
     private Vector3 eulerRotation;
 
@@ -38,21 +40,24 @@ public class CameraController : MonoBehaviour
             //right mouse button
             if (Input.GetMouseButton(1))
             {
-                eulerRotation.y += Input.GetAxis("Mouse X") * rotateSpeed;
-                eulerRotation.x -= Input.GetAxis("Mouse Y") * rotateSpeed;
+                eulerRotation.y += Input.GetAxis("Mouse X") * rotateSpeed_;
+                eulerRotation.x -= Input.GetAxis("Mouse Y") * rotateSpeed_;
             }
 
             transform.rotation = Quaternion.Euler(new Vector3(eulerRotation.x, eulerRotation.y, 0));
             Debug.DrawRay(transform.position, transform.forward, Color.blue);
 
             Vector3 moveDirection;
-            moveDirection.x = Input.GetAxis("Vertical") * moveSpeed;
-            moveDirection.y = Input.GetAxis("Horizontal") * moveSpeed;
-            moveDirection.z = Input.GetAxis("Up") * moveSpeed;
-            moveDirection = Vector3.ClampMagnitude(moveDirection, moveSpeed);
+            moveDirection.x = Input.GetAxis("Vertical") * moveSpeed_;
+            moveDirection.y = Input.GetAxis("Horizontal") * moveSpeed_;
+            moveDirection.z = Input.GetAxis("Up") * moveSpeed_;
+            moveDirection = Vector3.ClampMagnitude(moveDirection, moveSpeed_);
 
             Vector3 moveAmount = (moveDirection.x * transform.forward) + (moveDirection.y * transform.right) + (moveDirection.z * transform.up);
             transform.position += moveAmount * Time.deltaTime;
+
+            float scrollAmount = Input.GetAxis("Mouse ScrollWheel") * zoomSpeed_;
+            transform.position += transform.forward * scrollAmount;
 
             if(Input.GetKeyDown(KeyCode.Space))
             {
