@@ -20,6 +20,8 @@ public class CityGenerator : MonoBehaviour
     private int spawnedCars_ = 0;
     private bool canSpawn_ = false;
     private bool initialised_ = false;
+    private float carsInside_ = 0;
+    private Junction curJunction_;
 
     private GameObject[] junctions_;
     private GameObject[] cars_;
@@ -80,10 +82,15 @@ public class CityGenerator : MonoBehaviour
                 canSpawn_ = true;
                 initialised_ = true;
                 GetComponent<BoxCollider>().enabled = true;
+                SpawnCar();
             }
         }
-        
-        if (canSpawn_ && spawnedCars_ < numCars_)
+        else if(carsInside_ <= 0)
+        {
+            canSpawn_ = true;
+        }
+
+        if (canSpawn_ && spawnedCars_ < numCars_ && curJunction_.GetLightsOn())
         {
             SpawnCar();
         }
@@ -92,12 +99,15 @@ public class CityGenerator : MonoBehaviour
     void SpawnCar()
     {
         int junction = Random.Range(0, junctions_.GetLength(0));
+        curJunction_ = junctions_[junction].GetComponent<Junction>();
+
         transform.position = junctions_[junction].transform.position + Vector3.up;
 
         GameObject newCar = (GameObject)Instantiate(carPrefab_, transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
 
         newCar.GetComponent<Car>().Init();
         canSpawn_ = false;
+        carsInside_ = 0;
         spawnedCars_++;
     }
 
@@ -105,7 +115,8 @@ public class CityGenerator : MonoBehaviour
     {
         if(other.gameObject.tag == "Car")
         {
-            canSpawn_ = true;
+            //canSpawn_ = true;
+            carsInside_--;
         }
     }
 
@@ -114,6 +125,14 @@ public class CityGenerator : MonoBehaviour
         if (other.gameObject.tag == "Car")
         {
             canSpawn_ = false;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Car")
+        {
+            carsInside_++;
         }
     }
 }

@@ -394,7 +394,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visionDistance_: 5
   lookAheadMultiplier_: 2
-  stoppingDistance_: 2.5
+  stoppingDistance_: 3
   lookAngle_: 80
   lookStepAmount_: 10
 --- !u!114 &114000013021729570
@@ -423,10 +423,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controlled_: 0
   acceleration_: 10000
-  brakePower_: 100
+  brakePower_: 5e+10
   maxSpeed_: 5
   turnSpeed_: 45
-  stopDistance_: 2
+  arrivalDistance_: 2
   wheelRotationSpeed_: 5
 --- !u!146 &146000010227279530
 WheelCollider:

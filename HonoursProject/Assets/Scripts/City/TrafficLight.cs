@@ -23,11 +23,13 @@ public class TrafficLight : MonoBehaviour
         {
             redLight_.color = Color.red;
             greenLight_.color = Color.black;
+            gameObject.layer = LayerMask.NameToLayer("Default");
         }
         else
         {
             redLight_.color = Color.black;
             greenLight_.color = Color.green;
+            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         }
 	}
 

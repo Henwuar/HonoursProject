@@ -204,6 +204,11 @@ public class Junction : MonoBehaviour
 
     }
 
+    public bool GetLightsOn()
+    {
+        return lightsOn_;
+    }
+
     void FindConnections()
     {
         //clear the existing roads

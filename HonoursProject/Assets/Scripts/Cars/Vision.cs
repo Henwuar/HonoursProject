@@ -56,16 +56,16 @@ public class Vision : MonoBehaviour
         //check that the ray hit something
         if(hit.collider && (hit.collider.tag == "Car" || hit.collider.tag == "Player"))
         {
-            sweep_ = false;
             if (hit.distance < stoppingDistance_ && hit.distance > stoppingDistance_ * 0.5f)
             {
+                car_.SetStopping(true);
                 //check if the car has just collided with another
-                if(car_.FollowingTarget())
+                if (car_.FollowingTarget())
                 {
                     //check if this car is moving faster than the other car
                     if(body_.velocity.magnitude > hit.collider.GetComponent<Rigidbody>().velocity.magnitude)
                     {
-                        car_.Brake();
+                        car_.Brake(hit.distance / stoppingDistance_);
                     }
                     if(IsFacing(hit.collider.gameObject))
                     {
@@ -87,6 +87,7 @@ public class Vision : MonoBehaviour
             }
             else
             {
+                car_.SetStopping(false);
                 car_.Accelerate(0);
             }
         }
@@ -106,7 +107,8 @@ public class Vision : MonoBehaviour
                 if (hit.collider.gameObject.GetComponent<TrafficLight>().GetSignal() == Signals.S_STOP && hit.distance < stoppingDistance_)
                 {
                     car_.Wait(Time.deltaTime);
-                    car_.Brake();
+                    car_.Brake(hit.distance/stoppingDistance_);
+                    car_.SetStopping(true);
                     //register an event happening with the event tracker
                     eventSender_.SendEvent(TrafficEvent.TE_STOPPED_AT_LIGHT);
                 }
@@ -114,7 +116,21 @@ public class Vision : MonoBehaviour
                 {
                     eventSender_.SendEvent(TrafficEvent.TE_NONE);
                 }
+                if(hit.collider.gameObject.GetComponent<TrafficLight>().GetSignal() == Signals.S_GO)
+                {
+                    car_.SetStopping(false);
+                }
             }
+        }
+        //check if sweeping should be stopped
+        if(hit.collider && ((hit.collider.tag == "Car" || hit.collider.tag == "Player") || (hit.collider.tag == "TrafficLight" &&  IsFacing(hit.collider.gameObject))))
+        {
+            sweep_ = false;
+        }
+        else
+        {
+            sweep_ = true;
+            car_.SetStopping(false);
         }
 	}
 
@@ -136,6 +152,7 @@ public class Vision : MonoBehaviour
         GameObject other = collision.collider.gameObject;
         if(other.tag == "Car" || other.tag == "Player")
         {
+            car_.SetStopping(false);
             //head on collision
             if (IsFacing(other))
             {
@@ -165,16 +182,8 @@ public class Vision : MonoBehaviour
         {
             if (car_.DistanceToTarget() > other.GetComponent<Car>().DistanceToTarget())
             {
-                car_.Wait(2);
+                //car_.Wait(2);
             }
-        }
-    }
-
-    void OnTriggerStay(Collider other)
-    {
-        if(other.gameObject.tag == "Car")
-        {
-            print("Hit Car");
         }
     }
 

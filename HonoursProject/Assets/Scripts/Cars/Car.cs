@@ -16,7 +16,7 @@ public class Car : MonoBehaviour
     [SerializeField]
     private float turnSpeed_;
     [SerializeField]
-    private float stopDistance_;
+    private float arrivalDistance_;
     [SerializeField]
     private float wheelRotationSpeed_;
 
@@ -29,6 +29,7 @@ public class Car : MonoBehaviour
     private bool initialised_ = false;
     private float waitTime_;
     private bool followingTarget_ = true;
+    private bool stopping_ = false;
 
 	// Use this for initialization
 	void Start ()
@@ -117,7 +118,6 @@ public class Car : MonoBehaviour
         Physics.Raycast(transform.position, transform.up, out hit);
         if (hit.collider && hit.collider.gameObject.tag == "Ground")
         {
-            print("Reset");
             Reset();
         }
 
@@ -196,9 +196,9 @@ public class Car : MonoBehaviour
             //get the abosulte angle to the point
             angle = Vector3.Angle(transform.forward, targetPos - transform.position);
             //clamp it at the turning speed;
-            if(angle > turnSpeed_)
+            if(Mathf.Abs(angle) > turnSpeed_)
             {
-                //Brake();
+                //Brake(0.1f);
                 angle = turnSpeed_;
             }
             //get the right direction
@@ -215,26 +215,29 @@ public class Car : MonoBehaviour
     }
 
     //accelerates the vehicle along its forward vector
-    public void Accelerate(float direction)
+    public void Accelerate(float amount)
     {
-        float power = direction * acceleration_ * Time.deltaTime;
-        //add torque to the wheels
-        WheelCollider[] wheels = GetComponentsInChildren<WheelCollider>();
-        foreach (WheelCollider wheel in wheels)
+        if(!stopping_)
         {
-            wheel.motorTorque = power;
-            wheel.brakeTorque = 0.0f;
+            float power = amount * acceleration_ * Time.deltaTime;
+            //add torque to the wheels
+            WheelCollider[] wheels = GetComponentsInChildren<WheelCollider>();
+            foreach (WheelCollider wheel in wheels)
+            {
+                wheel.motorTorque = power;
+                wheel.brakeTorque = 0.0f;
+            }
         }
     }
 
     //decelerates the vehicle
-    public void Brake()
+    public void Brake(float amount = 1)
     {
         //add torque to the wheels
         WheelCollider[] wheels = GetComponentsInChildren<WheelCollider>();
         foreach (WheelCollider wheel in wheels)
         {
-            wheel.brakeTorque = body_.mass * brakePower_ * 0.1f;
+            wheel.brakeTorque = amount * body_.mass * brakePower_ * body_.velocity.magnitude;
             wheel.motorTorque = 0.0f;
         }
     }
@@ -252,7 +255,7 @@ public class Car : MonoBehaviour
 
     public void MoveToTarget()
     {
-        if (DistanceToTarget() > stopDistance_)
+        if (DistanceToTarget() > arrivalDistance_)
         {
             //make sure the car doesn't exceed the maximum speed
             if (body_.velocity.magnitude < maxSpeed_)
@@ -350,5 +353,10 @@ public class Car : MonoBehaviour
     public void ToggleControlled()
     {
         controlled_ = !controlled_;
+    }
+
+    public void SetStopping(bool value)
+    {
+        stopping_ = value;
     }
 }
