@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum CarState { CS_MOVING, CS_STOPPING, CS_STALLED, CS_STARTING}
+
 [RequireComponent(typeof(Rigidbody))]
 public class Car : MonoBehaviour
 {
@@ -19,9 +21,12 @@ public class Car : MonoBehaviour
     private float arrivalDistance_;
     [SerializeField]
     private float wheelRotationSpeed_;
+    [SerializeField]
+    private float brakeLightIntensity_;
 
     private Rigidbody body_;
     private Transform target_;
+    private Error error_ = null;
     private GameObject avoidTarget_;
     private Queue<Transform> targets_;
     private int gear_;
@@ -30,6 +35,10 @@ public class Car : MonoBehaviour
     private float waitTime_;
     private bool followingTarget_ = true;
     private bool stopping_ = false;
+    private CarState state_ = CarState.CS_MOVING;
+    private float curLightIntensity_;
+
+    private int[] statePriorities = {0, 0, 1, 2};
 
 	// Use this for initialization
 	void Start ()
@@ -38,6 +47,8 @@ public class Car : MonoBehaviour
         gear_ = 0;
         respawnPoint_ = transform.position;
         //initialised_ = false;
+        curLightIntensity_ = brakeLightIntensity_ * 0.5f;
+        error_ = GetComponent<Error>();
     }
 
     public void Init()
@@ -73,9 +84,14 @@ public class Car : MonoBehaviour
             return;
         }
 
+        //reset the current light intensity
+        curLightIntensity_ = brakeLightIntensity_ * 0.5f;
+        //clear the avoid target
+        avoidTarget_ = null;
+
         //steer towards the target
         Steer();
-
+        
         //make sure the car isn't waiting
         if (waitTime_ > 0)
         {
@@ -121,17 +137,11 @@ public class Car : MonoBehaviour
             Reset();
         }
 
-
+        UpdateLights();
         
         //Debug.DrawLine(transform.position, target_.position, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
-    }
-
-    void LateUpdate()
-    {
-        //clear the avoid target
-        avoidTarget_ = null;
     }
 
     //handles response to input
@@ -168,6 +178,34 @@ public class Car : MonoBehaviour
             if(gear_ == -1)
             {
                 Accelerate(-Input.GetAxis("Brake") * 0.5f);
+            }
+        }
+    }
+
+    void UpdateLights()
+    {
+        if(state_ != CarState.CS_STALLED)
+        {
+            Light[] tailLights = transform.Find("Taillights").GetComponentsInChildren<Light>();
+            foreach(Light light in tailLights)
+            {
+                light.intensity = curLightIntensity_;
+            }
+        }
+        else if (state_ == CarState.CS_STARTING)
+        {
+            Light[] tailLights = GetComponentsInChildren<Light>();
+            foreach (Light light in tailLights)
+            {
+                light.intensity = Random.Range(curLightIntensity_*0.5f, 2.0f * curLightIntensity_);
+            }
+        }
+        else
+        {
+            Light[] tailLights = GetComponentsInChildren<Light>();
+            foreach (Light light in tailLights)
+            {
+                light.intensity = 0;
             }
         }
     }
@@ -217,8 +255,12 @@ public class Car : MonoBehaviour
     //accelerates the vehicle along its forward vector
     public void Accelerate(float amount)
     {
-        if(!stopping_)
+        if(!stopping_ && state_ == CarState.CS_MOVING)
         {
+            if(error_)
+            {
+                error_.TestStall();
+            }
             float power = amount * acceleration_ * Time.deltaTime;
             //add torque to the wheels
             WheelCollider[] wheels = GetComponentsInChildren<WheelCollider>();
@@ -233,7 +275,10 @@ public class Car : MonoBehaviour
     //decelerates the vehicle
     public void Brake(float amount = 1)
     {
-        //add torque to the wheels
+        //apply the brake lights
+        curLightIntensity_ = brakeLightIntensity_;
+
+        //apply torque to the wheels
         WheelCollider[] wheels = GetComponentsInChildren<WheelCollider>();
         foreach (WheelCollider wheel in wheels)
         {
@@ -358,5 +403,19 @@ public class Car : MonoBehaviour
     public void SetStopping(bool value)
     {
         stopping_ = value;
+    }
+
+    public void SetState(CarState newState, bool overridePriority = false)
+    {
+        //check if the new state can be set based on its priority
+        if (statePriorities[(int)newState] >= statePriorities[(int)state_] || overridePriority)
+        {
+            state_ = newState;
+        }
+    }
+
+    public CarState GetState()
+    {
+        return state_;
     }
 }

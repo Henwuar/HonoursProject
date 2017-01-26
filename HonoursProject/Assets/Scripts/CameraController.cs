@@ -33,9 +33,10 @@ public class CameraController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 player.GetComponent<Car>().ToggleControlled();
+                player.GetComponent<Car>().Init();
             } 
         }
-        else if(GameObject.FindGameObjectsWithTag("Car").GetLength(0) > 0)
+        else
         {
             //right mouse button
             if (Input.GetMouseButton(1))
@@ -45,7 +46,6 @@ public class CameraController : MonoBehaviour
             }
 
             transform.rotation = Quaternion.Euler(new Vector3(eulerRotation.x, eulerRotation.y, 0));
-            Debug.DrawRay(transform.position, transform.forward, Color.blue);
 
             Vector3 moveDirection;
             moveDirection.x = Input.GetAxis("Vertical") * moveSpeed_;

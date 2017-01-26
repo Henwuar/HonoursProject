@@ -58,7 +58,7 @@ public class Vision : MonoBehaviour
         {
             if (hit.distance < stoppingDistance_ && hit.distance > stoppingDistance_ * 0.5f)
             {
-                car_.SetStopping(true);
+                car_.SetState(CarState.CS_STOPPING);
                 //check if the car has just collided with another
                 if (car_.FollowingTarget())
                 {
@@ -87,7 +87,7 @@ public class Vision : MonoBehaviour
             }
             else
             {
-                car_.SetStopping(false);
+                car_.SetState(CarState.CS_MOVING);
                 car_.Accelerate(0);
             }
         }
@@ -108,7 +108,7 @@ public class Vision : MonoBehaviour
                 {
                     car_.Wait(Time.deltaTime);
                     car_.Brake(hit.distance/stoppingDistance_);
-                    car_.SetStopping(true);
+                    car_.SetState(CarState.CS_STOPPING);
                     //register an event happening with the event tracker
                     eventSender_.SendEvent(TrafficEvent.TE_STOPPED_AT_LIGHT);
                 }
@@ -118,7 +118,7 @@ public class Vision : MonoBehaviour
                 }
                 if(hit.collider.gameObject.GetComponent<TrafficLight>().GetSignal() == Signals.S_GO)
                 {
-                    car_.SetStopping(false);
+                    car_.SetState(CarState.CS_MOVING);
                 }
             }
         }
@@ -130,7 +130,7 @@ public class Vision : MonoBehaviour
         else
         {
             sweep_ = true;
-            car_.SetStopping(false);
+            car_.SetState(CarState.CS_MOVING);
         }
 	}
 
@@ -152,7 +152,7 @@ public class Vision : MonoBehaviour
         GameObject other = collision.collider.gameObject;
         if(other.tag == "Car" || other.tag == "Player")
         {
-            car_.SetStopping(false);
+            car_.SetState(CarState.CS_MOVING);
             //head on collision
             if (IsFacing(other))
             {
