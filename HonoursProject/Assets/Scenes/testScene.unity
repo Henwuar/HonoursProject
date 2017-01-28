@@ -533,8 +533,8 @@ MonoBehaviour:
   size_: 750
   startPoint_: {x: -350, y: 0, z: -350}
   junctionSpacing_: 50
-  numCars_: 1
-  randomisation_: 3
+  numCars_: 1000
+  randomisation_: 2
 --- !u!4 &544859559
 Transform:
   m_ObjectHideFlags: 0
@@ -1094,7 +1094,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 3
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -1127,7 +1127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5889e04c5c973de40ae74780ac05e0fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed_: 10
+  moveSpeed_: 50
   rotateSpeed_: 5
   zoomSpeed_: 10
 --- !u!1 &1804318301

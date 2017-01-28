@@ -23,6 +23,8 @@ public class Car : MonoBehaviour
     private float wheelRotationSpeed_;
     [SerializeField]
     private float brakeLightIntensity_;
+    [SerializeField]
+    private float headLightIntensity_;
 
     private Rigidbody body_;
     private Transform target_;
@@ -36,9 +38,10 @@ public class Car : MonoBehaviour
     private bool followingTarget_ = true;
     private bool stopping_ = false;
     private CarState state_ = CarState.CS_MOVING;
+    private CarState prevState_ = CarState.CS_MOVING;
     private float curLightIntensity_;
 
-    private int[] statePriorities = {0, 0, 1, 2};
+    private int[] statePriorities = {0, 0, 2, 2};
 
 	// Use this for initialization
 	void Start ()
@@ -184,28 +187,41 @@ public class Car : MonoBehaviour
 
     void UpdateLights()
     {
-        if(state_ != CarState.CS_STALLED)
+        if(state_ == CarState.CS_STALLED)
         {
-            Light[] tailLights = transform.Find("Taillights").GetComponentsInChildren<Light>();
-            foreach(Light light in tailLights)
+            Light[] lights = GetComponentsInChildren<Light>();
+            foreach (Light light in lights)
             {
-                light.intensity = curLightIntensity_;
+                light.intensity = 0;
             }
         }
         else if (state_ == CarState.CS_STARTING)
         {
-            Light[] tailLights = GetComponentsInChildren<Light>();
+            float intensity = Random.Range(brakeLightIntensity_ * 0.5f, 2.0f * brakeLightIntensity_);
+            Light[] tailLights = transform.FindChild("Taillights").GetComponentsInChildren<Light>();
             foreach (Light light in tailLights)
             {
-                light.intensity = Random.Range(curLightIntensity_*0.5f, 2.0f * curLightIntensity_);
+                light.intensity = intensity;
+            }
+            intensity = Random.Range(headLightIntensity_ * 0.5f, 2.0f * headLightIntensity_);
+            Light[] headLights = transform.FindChild("Headlights").GetComponentsInChildren<Light>();
+            foreach (Light light in headLights)
+            {
+                light.intensity = intensity;
             }
         }
         else
         {
-            Light[] tailLights = GetComponentsInChildren<Light>();
+            //print(curLightIntensity_);
+            Light[] tailLights = transform.FindChild("Taillights").GetComponentsInChildren<Light>();
             foreach (Light light in tailLights)
             {
-                light.intensity = 0;
+                light.intensity = curLightIntensity_;
+            }
+            Light[] headLights = transform.FindChild("Headlights").GetComponentsInChildren<Light>();
+            foreach (Light light in headLights)
+            {
+                light.intensity = headLightIntensity_;
             }
         }
     }
@@ -255,9 +271,9 @@ public class Car : MonoBehaviour
     //accelerates the vehicle along its forward vector
     public void Accelerate(float amount)
     {
-        if(!stopping_ && state_ == CarState.CS_MOVING)
+        if(state_ == CarState.CS_MOVING)
         {
-            if(error_)
+            if(error_ && amount != 0 && !controlled_)
             {
                 error_.TestStall();
             }
@@ -300,6 +316,14 @@ public class Car : MonoBehaviour
 
     public void MoveToTarget()
     {
+        if(error_ && error_.GetDistracted())
+        {
+            //check if the body is stopped (account for slight drift)
+            if(body_.velocity.magnitude < 0.01f)
+            {
+                return;
+            }
+        }
         if (DistanceToTarget() > arrivalDistance_)
         {
             //make sure the car doesn't exceed the maximum speed
@@ -414,8 +438,14 @@ public class Car : MonoBehaviour
         }
     }
 
+    public void RevertState()
+    {
+        
+    }
+
     public CarState GetState()
     {
         return state_;
     }
+
 }

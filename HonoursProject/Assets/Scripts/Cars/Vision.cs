@@ -17,11 +17,13 @@ public class Vision : MonoBehaviour
     private float lookStepAmount_;
 
     private Car car_;
+    private Error error_ = null;
     private Rigidbody body_;
     private EventSender eventSender_;
 
     private float curAngle_ = 0;
     private bool sweep_ = true;
+    private float startAngle_ = 0;
 
 	// Use this for initialization
 	void Start ()
@@ -29,6 +31,7 @@ public class Vision : MonoBehaviour
         car_ = GetComponent<Car>();
         body_ = GetComponent<Rigidbody>();
         eventSender_ = GetComponent<EventSender>();
+        error_ = GetComponent<Error>();
 	}
 	
 	// Update is called once per frame
@@ -37,7 +40,11 @@ public class Vision : MonoBehaviour
         //Raycast out to see if there is a car in front
         RaycastHit hit;
         //figure out the current view angle
-        Vector3 lookDirection = Quaternion.Euler(new Vector3(0, curAngle_-(lookAngle_*0.5f))) * transform.forward;
+        Vector3 lookDirection = Quaternion.Euler(new Vector3(0, startAngle_ + curAngle_-(lookAngle_*0.5f))) * transform.forward;
+        if(error_ && error_.GetDistracted())
+        {
+            sweep_ = false;
+        }
         if(sweep_)
         {
             curAngle_ += lookStepAmount_;
@@ -103,7 +110,7 @@ public class Vision : MonoBehaviour
         {
             //make sure the traffic light is facing the car
             if(IsFacing(hit.collider.gameObject))
-            { 
+            {
                 if (hit.collider.gameObject.GetComponent<TrafficLight>().GetSignal() == Signals.S_STOP && hit.distance < stoppingDistance_)
                 {
                     car_.Wait(Time.deltaTime);
@@ -143,6 +150,10 @@ public class Vision : MonoBehaviour
             if (car_.DistanceToTarget() > other.GetComponent<Car>().DistanceToTarget())
             {
                 eventSender_.SendEvent(TrafficEvent.TE_COLLISION);
+            }
+            if(error_)
+            {
+                car_.SetState(CarState.CS_MOVING, true);
             }
         }
     }
@@ -197,4 +208,13 @@ public class Vision : MonoBehaviour
         return false;
     }
 
+    public void SetLookStartAngle(float value)
+    {
+        startAngle_ = value;
+    }
+
+    public float GetLookAngle()
+    {
+        return lookAngle_;
+    }
 }

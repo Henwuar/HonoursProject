@@ -28,7 +28,7 @@ public class CameraController : MonoBehaviour
             //move the camera behind the player
             transform.position = player.transform.position - (player.transform.forward * 4) + (Vector3.up * 2);
             //look at the player
-            transform.LookAt(player.transform.position + (player.transform.forward*3) + (player.GetComponent<Rigidbody>().velocity));
+            transform.LookAt(player.transform.position + (player.transform.forward * 3));// + (new Vector3(player.GetComponent<Rigidbody>().velocity));
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
