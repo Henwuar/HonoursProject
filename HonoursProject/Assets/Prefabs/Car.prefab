@@ -854,8 +854,8 @@ MonoBehaviour:
   stallChance_: 10
   stallSpeedMargin_: 0.05
   ignitionTime_: 2
-  distractionChance_: 100
-  distractionTime_: 1
+  distractionChance_: 10
+  distractionTime_: 3
 --- !u!114 &114000013021729570
 MonoBehaviour:
   m_ObjectHideFlags: 1

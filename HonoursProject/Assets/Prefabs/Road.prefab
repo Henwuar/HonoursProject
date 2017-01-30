@@ -485,8 +485,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db1d603e1e3627244988d92effe0a29a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parkingObject_: {fileID: 1000012142754474, guid: 2d9deed2b1316814d9cd5358f6aeba42,
+    type: 2}
   start_: {fileID: 4000013912434642}
   end_: {fileID: 4000013105100662}
+  parkingSize_: {x: 3, y: 6}
 --- !u!136 &136000014270608448
 CapsuleCollider:
   m_ObjectHideFlags: 1

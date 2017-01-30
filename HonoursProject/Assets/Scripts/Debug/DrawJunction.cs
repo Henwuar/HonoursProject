@@ -2,7 +2,6 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-[RequireComponent(typeof(Junction))]
 public class DrawJunction : MonoBehaviour
 {
 	

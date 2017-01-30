@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public enum TrafficEvent { TE_NONE = -1, TE_STOPPED_AT_LIGHT = 0, TE_STOPPED_FOR_CAR = 1, TE_COLLISION = 2};
+public enum TrafficEvent { TE_NONE = -1, TE_COLLISION = 0, TE_STALLED = 1, TE_DISTRACTED = 2 };
 
 public class EventTracker : MonoBehaviour
 {
@@ -62,11 +62,11 @@ public class EventTracker : MonoBehaviour
         if(trackData_)
         {
             string eventFile = "";
-            eventFile += "STOPPED_AT_LIGHT:";
-            eventFile += eventCount_[0].ToString() + "\n";
-            eventFile += "STOPPED_FOR_CAR:";
-            eventFile += eventCount_[1].ToString() + "\n";
             eventFile += "COLLISION:";
+            eventFile += eventCount_[0].ToString() + "\n";
+            eventFile += "STALLED:";
+            eventFile += eventCount_[1].ToString() + "\n";
+            eventFile += "DISTRACTED:";
             eventFile += eventCount_[2].ToString();
 
             System.DateTime now = System.DateTime.Now;

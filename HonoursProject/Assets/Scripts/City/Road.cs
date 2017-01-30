@@ -6,13 +6,18 @@ public enum VertexPosition { VP_TL = 1, VP_TR = 0, VP_BL = 3, VP_BR = 2}
 
 public class Road : MonoBehaviour
 {
+    public GameObject parkingObject_;
     [SerializeField]
     private Transform start_;
     [SerializeField]
     private Transform end_;
+    [SerializeField]
+    private Vector2 parkingSize_;
 
     private GameObject endJunction_;
     private GameObject startJunction_;
+
+    private List<GameObject> parking_;
 
     //mesh values
     private Vector3[] vertices_;
@@ -58,6 +63,20 @@ public class Road : MonoBehaviour
         mesh.vertices = vertices_;
         mesh.uv = uvs_;
         mesh.triangles = triangles_;
+
+        //Set up parking 
+        float roadLength = (endPos - startPos).magnitude;
+        //adjust to trim off ends
+        roadLength -= parkingSize_.y;
+        int numRoads = Mathf.FloorToInt(roadLength / parkingSize_.y);
+        Vector3 parkPos = startPos - right * width - right * parkingSize_.x * 0.5f;
+        parkPos += forward * parkingSize_.y;
+        for(int i = 0; i < numRoads; i++)
+        {
+            GameObject newParking = (GameObject)Instantiate(parkingObject_, parkPos, Quaternion.identity);
+            newParking.transform.SetParent(transform, true);
+            parkPos += forward * parkingSize_.y;
+        }
     }
 
     public void UpdateMesh()

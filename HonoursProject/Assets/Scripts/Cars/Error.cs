@@ -18,6 +18,7 @@ public class Error : MonoBehaviour
     private Car car_;
     private Vision vision_;
     private Rigidbody body_;
+    private EventSender eventSender_;
 
     private float ignition_ = 0;
     private float stallTime_ = 0;
@@ -31,6 +32,7 @@ public class Error : MonoBehaviour
         car_ = GetComponent<Car>();
         body_ = GetComponent<Rigidbody>();
         vision_ = GetComponent<Vision>();
+        eventSender_ = GetComponent<EventSender>();
 	}
 	
 	// Update is called once per frame
@@ -72,6 +74,7 @@ public class Error : MonoBehaviour
                     distractedTime_ = distractionTime_;
                     float maxAngle = vision_.GetLookAngle() * 2.0f;
                     vision_.SetLookStartAngle(Random.Range(-maxAngle, maxAngle));
+                    eventSender_.SendEvent(TrafficEvent.TE_DISTRACTED);
                 }
             }
             else
@@ -100,6 +103,7 @@ public class Error : MonoBehaviour
             {
                 wheel.motorTorque = 0.0f;
             }
+            eventSender_.SendEvent(TrafficEvent.TE_STALLED);
         }
     }
 

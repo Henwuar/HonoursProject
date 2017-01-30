@@ -83,8 +83,6 @@ public class Vision : MonoBehaviour
                 {
                     car_.Accelerate(-1.0f);
                 }
-                //register an event happening with the event tracker
-                eventSender_.SendEvent(TrafficEvent.TE_STOPPED_FOR_CAR);
             }
             else if(hit.distance < stoppingDistance_ * 0.5f)
             {
@@ -97,10 +95,6 @@ public class Vision : MonoBehaviour
                 car_.SetState(CarState.CS_MOVING);
                 car_.Accelerate(0);
             }
-        }
-        else if(eventSender_.CurEvent() == TrafficEvent.TE_STOPPED_FOR_CAR)
-        {
-            eventSender_.SendEvent(TrafficEvent.TE_NONE);
         }
         else
         {
@@ -116,12 +110,6 @@ public class Vision : MonoBehaviour
                     car_.Wait(Time.deltaTime);
                     car_.Brake(hit.distance/stoppingDistance_);
                     car_.SetState(CarState.CS_STOPPING);
-                    //register an event happening with the event tracker
-                    eventSender_.SendEvent(TrafficEvent.TE_STOPPED_AT_LIGHT);
-                }
-                else if(eventSender_.CurEvent() == TrafficEvent.TE_STOPPED_AT_LIGHT)
-                {
-                    eventSender_.SendEvent(TrafficEvent.TE_NONE);
                 }
                 if(hit.collider.gameObject.GetComponent<TrafficLight>().GetSignal() == Signals.S_GO)
                 {
