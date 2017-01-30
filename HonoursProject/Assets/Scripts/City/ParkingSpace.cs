@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Parking : MonoBehaviour
+public class ParkingSpace : MonoBehaviour
 {
     [SerializeField]
     public bool available;

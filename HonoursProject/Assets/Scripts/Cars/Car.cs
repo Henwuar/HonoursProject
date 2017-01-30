@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum CarState { CS_MOVING, CS_STOPPING, CS_STALLED, CS_STARTING}
+public enum CarState { CS_MOVING, CS_STOPPING, CS_STALLED, CS_STARTING, CS_PARKING}
 
 [RequireComponent(typeof(Rigidbody))]
 public class Car : MonoBehaviour
@@ -29,6 +29,7 @@ public class Car : MonoBehaviour
     private Rigidbody body_;
     private Transform target_;
     private Error error_ = null;
+    private Purpose purpose_ = null;
     private GameObject avoidTarget_;
     private Queue<Transform> targets_;
     private int gear_;
@@ -41,7 +42,7 @@ public class Car : MonoBehaviour
     private CarState prevState_ = CarState.CS_MOVING;
     private float curLightIntensity_;
 
-    private int[] statePriorities = {0, 0, 2, 2};
+    private int[] statePriorities = {0, 0, 1, 1, 2};
 
 	// Use this for initialization
 	void Start ()
@@ -52,6 +53,7 @@ public class Car : MonoBehaviour
         //initialised_ = false;
         curLightIntensity_ = brakeLightIntensity_ * 0.5f;
         error_ = GetComponent<Error>();
+        purpose_ = GetComponent<Purpose>();
     }
 
     public void Init()
@@ -142,7 +144,7 @@ public class Car : MonoBehaviour
 
         UpdateLights();
         
-        //Debug.DrawLine(transform.position, target_.position, Color.blue);
+        Debug.DrawLine(transform.position, target_.position, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
     }
@@ -271,7 +273,7 @@ public class Car : MonoBehaviour
     //accelerates the vehicle along its forward vector
     public void Accelerate(float amount)
     {
-        if(state_ == CarState.CS_MOVING)
+        if(state_ == CarState.CS_MOVING || state_ == CarState.CS_PARKING)
         {
             if(error_ && amount != 0 && !controlled_)
             {
@@ -340,16 +342,27 @@ public class Car : MonoBehaviour
         else
         {
             Brake();
-            //if stopped, find a new target
-            if(body_.velocity.magnitude < maxSpeed_*0.75f)
+            //if slowed enough, find a new target
+            if (body_.velocity.magnitude < maxSpeed_ * 0.75f)
             {
                 //make sure there are target
-                if(targets_.Count == 0)
+                if (targets_.Count == 0)
                 {
                     GetTargets();
                 }
-                //get a new target from the queue
-                target_ = targets_.Dequeue();
+                else if (purpose_)
+                {
+                    purpose_.TestPark();
+                }
+                if (state_ != CarState.CS_PARKING)
+                {
+                    //get a new target from the queue
+                    target_ = targets_.Dequeue();
+                }
+                /*else
+                {
+                    Wait(purpose_.GetStopTime());
+                }*/
             }
         }
     }
@@ -448,4 +461,13 @@ public class Car : MonoBehaviour
         return state_;
     }
 
+    public Transform GetCurTarget()
+    {
+        return target_;
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        target_ = newTarget;
+    }
 }

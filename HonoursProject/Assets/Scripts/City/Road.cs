@@ -17,6 +17,7 @@ public class Road : MonoBehaviour
     private GameObject endJunction_;
     private GameObject startJunction_;
 
+    [SerializeField]
     private List<GameObject> parking_;
 
     //mesh values
@@ -65,6 +66,7 @@ public class Road : MonoBehaviour
         mesh.triangles = triangles_;
 
         //Set up parking 
+        parking_ = new List<GameObject>();
         float roadLength = (endPos - startPos).magnitude;
         //adjust to trim off ends
         roadLength -= parkingSize_.y;
@@ -76,6 +78,7 @@ public class Road : MonoBehaviour
             GameObject newParking = (GameObject)Instantiate(parkingObject_, parkPos, Quaternion.identity);
             newParking.transform.SetParent(transform, true);
             parkPos += forward * parkingSize_.y;
+            parking_.Add(newParking);
         }
     }
 
@@ -129,5 +132,17 @@ public class Road : MonoBehaviour
     public Vector3 GetVertex(int index)
     {
         return vertices_[index];
+    }
+
+    public GameObject GetParkingSpace()
+    {
+        foreach(GameObject space in parking_)
+        {
+            if(space.GetComponent<ParkingSpace>().available)
+            {
+                return space;
+            }
+        }
+        return null;
     }
 }

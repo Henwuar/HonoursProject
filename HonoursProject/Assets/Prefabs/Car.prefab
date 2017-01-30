@@ -59,6 +59,7 @@ GameObject:
   - 64: {fileID: 64000013141773630}
   - 114: {fileID: 114000013021729570}
   - 114: {fileID: 114000011369103512}
+  - 114: {fileID: 114000011499458180}
   m_Layer: 0
   m_Name: Car
   m_TagString: Car
@@ -856,6 +857,19 @@ MonoBehaviour:
   ignitionTime_: 2
   distractionChance_: 10
   distractionTime_: 3
+--- !u!114 &114000011499458180
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010303715308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30af631f1b97dbd4cb06caca104956b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parkChance_: 100
+  stoppingTime_: 30
 --- !u!114 &114000013021729570
 MonoBehaviour:
   m_ObjectHideFlags: 1
