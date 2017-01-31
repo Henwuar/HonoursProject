@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum CarState { CS_MOVING, CS_STOPPING, CS_STALLED, CS_STARTING, CS_PARKING}
+public enum CarState { CS_MOVING, CS_STOPPING, CS_STALLED, CS_STARTING, CS_PARKING, CS_PARKED, CS_DEPARKING}
 
 [RequireComponent(typeof(Rigidbody))]
 public class Car : MonoBehaviour
@@ -27,22 +27,25 @@ public class Car : MonoBehaviour
     private float headLightIntensity_;
 
     private Rigidbody body_;
-    private Transform target_;
+    private Vector3 target_;
     private Error error_ = null;
     private Purpose purpose_ = null;
     private GameObject avoidTarget_;
-    private Queue<Transform> targets_;
+    private Queue<Vector3> targets_;
+    [SerializeField]
+    private GameObject curRoad_;
     private int gear_;
     private Vector3 respawnPoint_;
     private bool initialised_ = false;
     private float waitTime_;
     private bool followingTarget_ = true;
     private bool stopping_ = false;
+    [SerializeField]
     private CarState state_ = CarState.CS_MOVING;
     private CarState prevState_ = CarState.CS_MOVING;
     private float curLightIntensity_;
 
-    private int[] statePriorities = {0, 0, 1, 1, 2};
+    private int[] statePriorities = {0, 0, 1, 1, 2, 2, 3};
 
 	// Use this for initialization
 	void Start ()
@@ -59,7 +62,7 @@ public class Car : MonoBehaviour
     public void Init()
     {
         initialised_ = true;
-        targets_ = new Queue<Transform>();
+        targets_ = new Queue<Vector3>();
         //find all the available roads
         GameObject[] roads = GameObject.FindGameObjectsWithTag("Road");
         GameObject closestRoad = roads[0];
@@ -75,8 +78,9 @@ public class Car : MonoBehaviour
         }
         //chose a target road from them
         //int chosenRoad = Random.Range(0, roads.GetLength(0));
-        target_ = closestRoad.transform;
-        targets_.Enqueue(target_.GetComponentInParent<Road>().GetEnd());
+        target_ = closestRoad.transform.position;
+        curRoad_ = closestRoad.transform.parent.gameObject;
+        targets_.Enqueue(curRoad_.GetComponent<Road>().GetEnd().position);
         transform.LookAt(target_);
     }
 
@@ -143,8 +147,10 @@ public class Car : MonoBehaviour
         }
 
         UpdateLights();
-        
-        Debug.DrawLine(transform.position, target_.position, Color.blue);
+
+        //print(curRoad_);
+
+        Debug.DrawLine(transform.position, target_, Color.green);
         //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
     }
@@ -243,7 +249,7 @@ public class Car : MonoBehaviour
         }
         else
         {
-            Vector3 targetPos = new Vector3(target_.position.x, transform.position.y, target_.position.z);
+            Vector3 targetPos = new Vector3(target_.x, transform.position.y, target_.z);
             if(avoidTarget_)
             {
                 //move the target to the right of the avoid target
@@ -348,21 +354,25 @@ public class Car : MonoBehaviour
                 //make sure there are target
                 if (targets_.Count == 0)
                 {
-                    GetTargets();
+                    if(state_ == CarState.CS_PARKING)
+                    {
+                        state_ = CarState.CS_PARKED;
+                        return;
+                    }
+                    else
+                    {
+                        GetTargets();
+                    }
+                    
                 }
-                else if (purpose_)
+                else if (purpose_ && state_ != CarState.CS_PARKING)
                 {
                     purpose_.TestPark();
                 }
-                if (state_ != CarState.CS_PARKING)
-                {
-                    //get a new target from the queue
-                    target_ = targets_.Dequeue();
-                }
-                /*else
-                {
-                    Wait(purpose_.GetStopTime());
-                }*/
+                //get a new target from the queue
+                target_ = targets_.Dequeue();
+                
+                
             }
         }
     }
@@ -386,19 +396,24 @@ public class Car : MonoBehaviour
 
     public float DistanceToTarget()
     {
-        return Vector3.Distance(transform.position, target_.position);
+        return Vector3.Distance(transform.position, target_);
     }
 
     void GetTargets()
     {
-        List<Transform> newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
+        
+        curRoad_ = curRoad_.GetComponent<Road>().GetJunction().GetNewRoad(curRoad_);
+        Road newRoad = curRoad_.GetComponent<Road>();
+        targets_.Enqueue(newRoad.GetStart().position);
+        targets_.Enqueue(newRoad.GetEnd().position);
+        //List<Vector3> newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
         //check if a valid target has been provided
-        bool canContinue = false;
+        /*bool canContinue = false;
         while(!canContinue)
         {
             if(newTargets.Count > 1)
             {
-                Vector3 newDir = newTargets[1].position - newTargets[0].position;
+                Vector3 newDir = newTargets[1] - newTargets[0];
                 float angle = Vector3.Angle(transform.forward, newDir);
                 //invalid - find new targets
                 if (angle > 135 && angle < 225)
@@ -415,11 +430,11 @@ public class Car : MonoBehaviour
             {
                 canContinue = true;
             }
-        }
-        foreach (Transform target in newTargets)
+        }*/
+        /*foreach (Transform target in newTargets)
         {
             targets_.Enqueue(target);
-        }
+        }*/
     }
 
     public bool FollowingTarget()
@@ -461,13 +476,28 @@ public class Car : MonoBehaviour
         return state_;
     }
 
-    public Transform GetCurTarget()
+    public Vector3 GetCurTarget()
     {
         return target_;
     }
 
-    public void SetTarget(Transform newTarget)
+    public void SetTarget(Vector3 newTarget)
     {
         target_ = newTarget;
+    }
+
+    public void AddTarget(Vector3 target)
+    {
+        targets_.Enqueue(target);
+    }
+
+    public void ClearTargets()
+    {
+        targets_.Clear();
+    }
+
+    public GameObject GetCurRoad()
+    {
+        return curRoad_;
     }
 }

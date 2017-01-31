@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Purpose : MonoBehaviour
 {
@@ -26,14 +27,25 @@ public class Purpose : MonoBehaviour
     {
         if(Random.Range(0.0f, 100.0f) < parkChance_)
         {
-            car_.SetState(CarState.CS_PARKING);
-            GameObject newTarget = car_.GetCurTarget().parent.gameObject.GetComponent<Road>().GetParkingSpace();
-
-            //print(newTarget);
-            if (newTarget)
+            Road road = car_.GetCurRoad().GetComponent<Road>();
+            ParkingSpace parking = null;
+            if(road)
             {
-                newTarget.GetComponent<ParkingSpace>().available = false;
-                car_.SetTarget(newTarget.transform);
+                parking = road.GetParkingSpace().GetComponent<ParkingSpace>();
+            }
+            
+
+            if (parking)
+            {
+                car_.SetState(CarState.CS_PARKING);
+                parking.SetAvailable(false);
+                
+                car_.ClearTargets();
+                List<Vector3> newTargets = parking.GetEnterTargets();
+                foreach(Vector3 target in newTargets)
+                {
+                    car_.AddTarget(target);
+                }
             }
         }   
     }

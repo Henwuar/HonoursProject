@@ -14,9 +14,10 @@ public class Road : MonoBehaviour
     [SerializeField]
     private Vector2 parkingSize_;
 
+    private Vector3 direction_;
+
     private GameObject endJunction_;
     private GameObject startJunction_;
-
     [SerializeField]
     private List<GameObject> parking_;
 
@@ -75,11 +76,21 @@ public class Road : MonoBehaviour
         parkPos += forward * parkingSize_.y;
         for(int i = 0; i < numRoads; i++)
         {
+            //create the new parking space
             GameObject newParking = (GameObject)Instantiate(parkingObject_, parkPos, Quaternion.identity);
+            //give it the neccessary values
             newParking.transform.SetParent(transform, true);
+            newParking.GetComponent<ParkingSpace>().SetLength(parkingSize_.y);
+            newParking.transform.LookAt(newParking.transform.position + forward);
+
+            //move the position onto the next
             parkPos += forward * parkingSize_.y;
+
+            //add the parking to the list
             parking_.Add(newParking);
         }
+
+        direction_ = forward;
     }
 
     public void UpdateMesh()
@@ -97,6 +108,7 @@ public class Road : MonoBehaviour
     void Update()
     {
         Debug.DrawLine(start_.position, end_.position);
+        
     }
 
     public Junction GetJunction()
@@ -138,11 +150,26 @@ public class Road : MonoBehaviour
     {
         foreach(GameObject space in parking_)
         {
-            if(space.GetComponent<ParkingSpace>().available)
+            if(space.GetComponent<ParkingSpace>().GetAvailable())
             {
                 return space;
             }
         }
         return null;
+    }
+
+    public Vector3 GetPointOnRoad(Vector3 target)
+    {
+        Vector3 roadVec = end_.position - start_.position;
+        Vector3 targetVec = target - start_.position;
+        print(targetVec);
+        float distance = Vector3.Dot(targetVec, roadVec);
+
+        return start_.position + direction_.normalized * distance / roadVec.magnitude;
+    }
+
+    public Vector3 GetDirection()
+    {
+        return direction_;
     }
 }

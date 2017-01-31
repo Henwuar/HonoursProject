@@ -533,7 +533,7 @@ MonoBehaviour:
   size_: 750
   startPoint_: {x: -350, y: 0, z: -350}
   junctionSpacing_: 50
-  numCars_: 1000
+  numCars_: 1
   randomisation_: 2
 --- !u!4 &544859559
 Transform:

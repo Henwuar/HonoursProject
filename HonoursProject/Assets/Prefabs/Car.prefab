@@ -903,6 +903,8 @@ MonoBehaviour:
   wheelRotationSpeed_: 5
   brakeLightIntensity_: 5
   headLightIntensity_: 1
+  curRoad_: {fileID: 0}
+  state_: 0
 --- !u!146 &146000010227279530
 WheelCollider:
   m_ObjectHideFlags: 1

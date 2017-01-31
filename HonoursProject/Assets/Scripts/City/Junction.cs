@@ -119,22 +119,39 @@ public class Junction : MonoBehaviour
         return ready_;
     }
 
-    public List<Transform> GetNewTargets()
+    /*public List<Vector3> GetNewTargets()
     {
-        List<Transform> targets = new List<Transform>();
+        List<Vector3> targets = new List<Vector3>();
         //make sure there are connected junctions
         if(roads_.Count == 0)
         {
-            targets.Add(gameObject.transform);
+            targets.Add(gameObject.transform.position);
         }
         else
         {
             int id = Random.Range(0, roads_.Count);
-            targets.Add(roads_[id].GetComponent<Road>().GetStart());
-            targets.Add(roads_[id].GetComponent<Road>().GetEnd());
+            targets.Add(roads_[id].GetComponent<Road>().GetStart().position);
+            targets.Add(roads_[id].GetComponent<Road>().GetEnd().position);
             //targets.Add(roads_[id].GetComponent<Road>().endJunction_.transform);
         }
         return targets;
+    }*/
+
+    public GameObject GetNewRoad(GameObject curRoad)
+    {
+        GameObject newRoad = null;
+        if(roads_.Count > 0)
+        {
+            int id = Random.Range(0, roads_.Count);
+            newRoad = roads_[id];
+            //make sure the newroad isnt the opposite direction of the current road
+            while(Vector3.Angle(newRoad.GetComponent<Road>().GetDirection(), curRoad.GetComponent<Road>().GetDirection()) == 180)
+            {
+                id = Random.Range(0, roads_.Count);
+                newRoad = roads_[id];
+            }
+        }
+        return newRoad;
     }
 
     public void AddLight(GameObject light)
