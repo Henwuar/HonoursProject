@@ -895,15 +895,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlled_: 0
-  acceleration_: 10000
+  acceleration_: 100000
   brakePower_: 5e+10
-  maxSpeed_: 5
+  maxSpeed_: 5.5
   turnSpeed_: 45
   arrivalDistance_: 2
+  fineMovementMultiplier_: 0.4
   wheelRotationSpeed_: 5
   brakeLightIntensity_: 5
   headLightIntensity_: 1
-  curRoad_: {fileID: 0}
+  reverseAngleLimits_: {x: 165, y: 205}
   state_: 0
 --- !u!146 &146000010227279530
 WheelCollider:

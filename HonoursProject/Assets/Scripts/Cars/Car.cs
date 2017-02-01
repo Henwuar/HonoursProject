@@ -20,19 +20,23 @@ public class Car : MonoBehaviour
     [SerializeField]
     private float arrivalDistance_;
     [SerializeField]
+    private float fineMovementMultiplier_;
+    [SerializeField]
     private float wheelRotationSpeed_;
     [SerializeField]
     private float brakeLightIntensity_;
     [SerializeField]
     private float headLightIntensity_;
+    [SerializeField]
+    private Vector2 reverseAngleLimits_;
 
     private Rigidbody body_;
     private Vector3 target_;
+    private Vision vision_ = null;
     private Error error_ = null;
     private Purpose purpose_ = null;
     private GameObject avoidTarget_;
     private Queue<Vector3> targets_;
-    [SerializeField]
     private GameObject curRoad_;
     private int gear_;
     private Vector3 respawnPoint_;
@@ -57,6 +61,7 @@ public class Car : MonoBehaviour
         curLightIntensity_ = brakeLightIntensity_ * 0.5f;
         error_ = GetComponent<Error>();
         purpose_ = GetComponent<Purpose>();
+        vision_ = GetComponent<Vision>();
     }
 
     public void Init()
@@ -98,6 +103,24 @@ public class Car : MonoBehaviour
         //clear the avoid target
         avoidTarget_ = null;
 
+
+        //update the components based on state
+        if (state_ == CarState.CS_PARKED)
+        {
+            if (vision_)
+            {
+                vision_.enabled = false;
+            }
+
+        }
+        else
+        {
+            if (vision_)
+            {
+                vision_.enabled = true;
+            }
+        }
+
         //steer towards the target
         Steer();
         
@@ -121,7 +144,6 @@ public class Car : MonoBehaviour
         {
             MoveToTarget();
         }
-
 
         //make the respawn point follow the player
         respawnPoint_ = new Vector3(transform.position.x, respawnPoint_.y, transform.position.z);
@@ -195,7 +217,7 @@ public class Car : MonoBehaviour
 
     void UpdateLights()
     {
-        if(state_ == CarState.CS_STALLED)
+        if(state_ == CarState.CS_STALLED || state_ == CarState.CS_PARKED)
         {
             Light[] lights = GetComponentsInChildren<Light>();
             foreach (Light light in lights)
@@ -257,14 +279,21 @@ public class Car : MonoBehaviour
             }
             //get the abosulte angle to the point
             angle = Vector3.Angle(transform.forward, targetPos - transform.position);
-            //clamp it at the turning speed;
-            if(Mathf.Abs(angle) > turnSpeed_)
+            angle = Mathf.Abs(angle);
+
+            //clamp the angle correcting for reversing
+            if(angle > reverseAngleLimits_.x && angle < reverseAngleLimits_.y)
             {
-                //Brake(0.1f);
+                angle -= 180;
+                angle *= -1;
+            }
+            else if (Mathf.Abs(angle) > turnSpeed_)
+            {
                 angle = turnSpeed_;
             }
             //get the right direction
             angle *= Mathf.Sign(Vector3.Cross(transform.forward, targetPos - transform.position).y);
+            
         }
 
         //steer the colliders
@@ -332,13 +361,24 @@ public class Car : MonoBehaviour
                 return;
             }
         }
-        if (DistanceToTarget() > arrivalDistance_)
+
+        //apply the fine movement modifier
+        float distanceMultiplier = state_ == CarState.CS_PARKING ? fineMovementMultiplier_ : 1.0f;
+     
+        if (DistanceToTarget() > arrivalDistance_ * distanceMultiplier)
         {
             //make sure the car doesn't exceed the maximum speed
-            if (body_.velocity.magnitude < maxSpeed_)
+            if (body_.velocity.magnitude < maxSpeed_ * distanceMultiplier)
             {
-                float angle = Mathf.Abs(transform.FindChild("wheel_FL").GetComponent<WheelCollider>().steerAngle);
-                Accelerate(Mathf.Min(1/(angle/turnSpeed_), 2.5f));
+                float steerAngle = Mathf.Abs(transform.FindChild("wheel_FL").GetComponent<WheelCollider>().steerAngle);
+                float targetAngle = AngleToTarget();
+                float direction = 1.0f;
+                if (targetAngle > reverseAngleLimits_.x && targetAngle < reverseAngleLimits_.y && body_.velocity.magnitude < maxSpeed_ * 0.25f)
+                {
+                    print("reversing");
+                    direction *= -1.0f;
+                }
+                Accelerate(Mathf.Min(1/(steerAngle / turnSpeed_), 2.5f) * direction);
             }
             else
             {
@@ -349,7 +389,7 @@ public class Car : MonoBehaviour
         {
             Brake();
             //if slowed enough, find a new target
-            if (body_.velocity.magnitude < maxSpeed_ * 0.75f)
+            if (body_.velocity.magnitude < maxSpeed_ * 0.75f * distanceMultiplier)
             {
                 //make sure there are target
                 if (targets_.Count == 0)
@@ -371,7 +411,6 @@ public class Car : MonoBehaviour
                 }
                 //get a new target from the queue
                 target_ = targets_.Dequeue();
-                
                 
             }
         }
@@ -399,6 +438,12 @@ public class Car : MonoBehaviour
         return Vector3.Distance(transform.position, target_);
     }
 
+    float AngleToTarget()
+    {
+        Vector3 targetPos = new Vector3(target_.x, transform.position.y, target_.z);
+        return Vector3.Angle(transform.forward, targetPos - transform.position);
+    }
+
     void GetTargets()
     {
         
@@ -406,35 +451,6 @@ public class Car : MonoBehaviour
         Road newRoad = curRoad_.GetComponent<Road>();
         targets_.Enqueue(newRoad.GetStart().position);
         targets_.Enqueue(newRoad.GetEnd().position);
-        //List<Vector3> newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
-        //check if a valid target has been provided
-        /*bool canContinue = false;
-        while(!canContinue)
-        {
-            if(newTargets.Count > 1)
-            {
-                Vector3 newDir = newTargets[1] - newTargets[0];
-                float angle = Vector3.Angle(transform.forward, newDir);
-                //invalid - find new targets
-                if (angle > 135 && angle < 225)
-                {
-                    newTargets.Clear();
-                    newTargets = target_.gameObject.GetComponentInParent<Road>().GetJunction().GetNewTargets();
-                }
-                else
-                {
-                    canContinue = true;
-                }
-            }
-            else //not enough values to check - continue
-            {
-                canContinue = true;
-            }
-        }*/
-        /*foreach (Transform target in newTargets)
-        {
-            targets_.Enqueue(target);
-        }*/
     }
 
     public bool FollowingTarget()
@@ -499,5 +515,10 @@ public class Car : MonoBehaviour
     public GameObject GetCurRoad()
     {
         return curRoad_;
+    }
+
+    public float GetFineMovementMutliplier()
+    {
+        return fineMovementMultiplier_;
     }
 }

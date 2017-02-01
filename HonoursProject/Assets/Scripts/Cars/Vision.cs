@@ -60,10 +60,13 @@ public class Vision : MonoBehaviour
         Debug.DrawLine(transform.position, transform.position + (transform.forward + lookDirection.normalized).normalized * visionDistance_ * lookAhead, Color.blue);
 
         Physics.Raycast(ray, out hit, visionDistance_*lookAhead);
+
+        float stoppingMultiplier = car_.GetState() == CarState.CS_PARKING ? car_.GetFineMovementMutliplier() : 1.0f;
+
         //check that the ray hit something
         if(hit.collider && (hit.collider.tag == "Car" || hit.collider.tag == "Player"))
         {
-            if (hit.distance < stoppingDistance_ && hit.distance > stoppingDistance_ * 0.5f)
+            if (hit.distance < stoppingDistance_ * stoppingMultiplier && hit.distance > stoppingDistance_ * stoppingMultiplier * 0.5f)
             {
                 car_.SetState(CarState.CS_STOPPING);
                 //check if the car has just collided with another
@@ -84,7 +87,7 @@ public class Vision : MonoBehaviour
                     car_.Accelerate(-1.0f);
                 }
             }
-            else if(hit.distance < stoppingDistance_ * 0.5f)
+            else if(hit.distance < stoppingDistance_ * stoppingMultiplier * 0.5f)
             {
                 //stop following targets for the next frame
                 car_.Wait(Time.deltaTime);

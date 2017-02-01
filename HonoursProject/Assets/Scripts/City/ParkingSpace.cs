@@ -31,8 +31,10 @@ public class ParkingSpace : MonoBehaviour
         if(parentRoad)
         {
             //add the first target - point on road before parking
-            targets.Add(parentRoad.GetPointOnRoad(transform.position - transform.forward*length_*0.5f));
-            //add this position
+            targets.Add(parentRoad.GetPointOnRoad(transform.position - transform.forward*length_));
+            //move the car into the spot
+            targets.Add(transform.position - transform.forward * length_*0.25f);
+            //add the final stopping place
             targets.Add(transform.position);
         }
 

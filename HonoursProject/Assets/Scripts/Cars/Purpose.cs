@@ -9,7 +9,7 @@ public class Purpose : MonoBehaviour
     [SerializeField]
     private float stoppingTime_;
 
-    private Car car_; 
+    private Car car_;
 
 	// Use this for initialization
 	void Start ()
