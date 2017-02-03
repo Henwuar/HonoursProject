@@ -7,9 +7,12 @@ public class Purpose : MonoBehaviour
     [SerializeField]
     private float parkChance_;
     [SerializeField]
-    private float stoppingTime_;
+    private float parkingTime_;
 
     private Car car_;
+    private ParkingSpace curParking_ = null;
+
+    private float parkTimer_;
 
 	// Use this for initialization
 	void Start ()
@@ -20,13 +23,37 @@ public class Purpose : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-	
+	    if(car_.GetState() == CarState.CS_PARKED)
+        {
+            parkTimer_ += Time.deltaTime;
+            if(parkTimer_ > parkingTime_)
+            {
+                car_.SetState(CarState.CS_DEPARKING);
+                car_.ClearTargets();
+                List<Vector3> newTargets = curParking_.GetExitTargets();
+                foreach (Vector3 target in newTargets)
+                {
+                    car_.AddTarget(target);
+                }
+                parkTimer_ = 0;
+            }
+        }
+        else if(car_.GetState() == CarState.CS_MOVING)
+        {
+            if(curParking_)
+            {
+                print("resetting parking");
+                curParking_.SetAvailable(false);
+                curParking_ = null;
+            }
+        }
 	}
 
     public void TestPark()
     {
         if(Random.Range(0.0f, 100.0f) < parkChance_)
         {
+            print("set parking");
             Road road = car_.GetCurRoad().GetComponent<Road>();
             ParkingSpace parking = null;
             if(road)
@@ -46,12 +73,14 @@ public class Purpose : MonoBehaviour
                 {
                     car_.AddTarget(target);
                 }
+
+                curParking_ = parking;
             }
         }   
     }
 
     public float GetStopTime()
     {
-        return stoppingTime_;
+        return parkingTime_;
     }
 }

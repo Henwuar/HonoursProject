@@ -530,8 +530,8 @@ MonoBehaviour:
   junctionPrefab_: {fileID: 1000011701746386, guid: 5bd30bec681c1bf4c8de0e11436352ea,
     type: 2}
   carPrefab_: {fileID: 1000010303715308, guid: 935a773ec57e7fe409dd6f5e978bd5cb, type: 2}
-  size_: 200
-  startPoint_: {x: -350, y: 0, z: -350}
+  size_: 100
+  startPoint_: {x: -25, y: 0, z: -25}
   junctionSpacing_: 50
   numCars_: 100
   randomisation_: 2

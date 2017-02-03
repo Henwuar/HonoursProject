@@ -18,6 +18,7 @@ public class Vision : MonoBehaviour
 
     private Car car_;
     private Error error_ = null;
+    private Purpose purpose_ = null;
     private Rigidbody body_;
     private EventSender eventSender_;
 
@@ -32,6 +33,7 @@ public class Vision : MonoBehaviour
         body_ = GetComponent<Rigidbody>();
         eventSender_ = GetComponent<EventSender>();
         error_ = GetComponent<Error>();
+        purpose_ = GetComponent<Purpose>();
 	}
 	
 	// Update is called once per frame
@@ -40,11 +42,16 @@ public class Vision : MonoBehaviour
         //Raycast out to see if there is a car in front
         RaycastHit hit;
         //figure out the current view angle
+        /*if (car_.GetState() == CarState.CS_DEPARKING)
+        {
+            startAngle_ = 160.0f;
+        }*/
         Vector3 lookDirection = Quaternion.Euler(new Vector3(0, startAngle_ + curAngle_-(lookAngle_*0.5f))) * transform.forward;
         if(error_ && error_.GetDistracted())
         {
             sweep_ = false;
         }
+
         if(sweep_)
         {
             curAngle_ += lookStepAmount_;
@@ -61,7 +68,8 @@ public class Vision : MonoBehaviour
 
         Physics.Raycast(ray, out hit, visionDistance_*lookAhead);
 
-        float stoppingMultiplier = car_.GetState() == CarState.CS_PARKING ? car_.GetFineMovementMutliplier() : 1.0f;
+        bool stopping = car_.GetState() == CarState.CS_PARKING || car_.GetState() == CarState.CS_DEPARKING;
+        float stoppingMultiplier = stopping ? car_.GetFineMovementMutliplier() : 1.0f;
 
         //check that the ray hit something
         if(hit.collider && (hit.collider.tag == "Car" || hit.collider.tag == "Player"))
@@ -84,7 +92,7 @@ public class Vision : MonoBehaviour
                 }
                 else
                 {
-                    car_.Accelerate(-1.0f);
+                    car_.Accelerate(-0.5f);
                 }
             }
             else if(hit.distance < stoppingDistance_ * stoppingMultiplier * 0.5f)

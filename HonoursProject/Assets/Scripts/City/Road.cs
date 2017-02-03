@@ -162,7 +162,7 @@ public class Road : MonoBehaviour
     {
         Vector3 roadVec = end_.position - start_.position;
         Vector3 targetVec = target - start_.position;
-        print(targetVec);
+
         float distance = Vector3.Dot(targetVec, roadVec);
 
         return start_.position + direction_.normalized * distance / roadVec.magnitude;

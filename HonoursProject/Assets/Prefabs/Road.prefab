@@ -489,7 +489,8 @@ MonoBehaviour:
     type: 2}
   start_: {fileID: 4000013912434642}
   end_: {fileID: 4000013105100662}
-  parkingSize_: {x: 3, y: 6}
+  parkingSize_: {x: 2.5, y: 4}
+  parking_: []
 --- !u!136 &136000014270608448
 CapsuleCollider:
   m_ObjectHideFlags: 1

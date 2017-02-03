@@ -308,7 +308,8 @@ public class Car : MonoBehaviour
     //accelerates the vehicle along its forward vector
     public void Accelerate(float amount)
     {
-        if(state_ == CarState.CS_MOVING || state_ == CarState.CS_PARKING)
+        bool canMove = state_ == CarState.CS_MOVING || state_ == CarState.CS_PARKING || state_ == CarState.CS_DEPARKING;
+        if (canMove)
         {
             if(error_ && amount != 0 && !controlled_)
             {
@@ -363,7 +364,8 @@ public class Car : MonoBehaviour
         }
 
         //apply the fine movement modifier
-        float distanceMultiplier = state_ == CarState.CS_PARKING ? fineMovementMultiplier_ : 1.0f;
+        bool fineMovement = state_ == CarState.CS_PARKING || state_ == CarState.CS_DEPARKING;
+        float distanceMultiplier =  fineMovement ? fineMovementMultiplier_ : 1.0f;
      
         if (DistanceToTarget() > arrivalDistance_ * distanceMultiplier)
         {
@@ -375,7 +377,6 @@ public class Car : MonoBehaviour
                 float direction = 1.0f;
                 if (targetAngle > reverseAngleLimits_.x && targetAngle < reverseAngleLimits_.y && body_.velocity.magnitude < maxSpeed_ * 0.25f)
                 {
-                    print("reversing");
                     direction *= -1.0f;
                 }
                 Accelerate(Mathf.Min(1/(steerAngle / turnSpeed_), 2.5f) * direction);
@@ -399,18 +400,28 @@ public class Car : MonoBehaviour
                         state_ = CarState.CS_PARKED;
                         return;
                     }
-                    else
+                    else if(state_ == CarState.CS_DEPARKING)
+                    {
+                        print("new target please");
+                        state_ = CarState.CS_MOVING;
+                        targets_.Enqueue(curRoad_.GetComponent<Road>().GetEnd().position);
+                    }
+                    else if(state_ != CarState.CS_PARKED)
                     {
                         GetTargets();
                     }
                     
                 }
-                else if (purpose_ && state_ != CarState.CS_PARKING)
+                else if (purpose_ && state_ != CarState.CS_PARKING && state_ != CarState.CS_DEPARKING)
                 {
                     purpose_.TestPark();
                 }
-                //get a new target from the queue
-                target_ = targets_.Dequeue();
+                //double check that there are available targets
+                if (targets_.Count > 0)
+                {
+                    //get a new target from the queue
+                    target_ = targets_.Dequeue();
+                }
                 
             }
         }

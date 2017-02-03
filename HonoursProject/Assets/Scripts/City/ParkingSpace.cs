@@ -41,4 +41,20 @@ public class ParkingSpace : MonoBehaviour
         return targets;
     }
 
+    public List<Vector3> GetExitTargets()
+    {
+        List<Vector3> targets = new List<Vector3>();
+
+        Road parentRoad = GetComponentInParent<Road>();
+        if (parentRoad)
+        {
+            //add the first target - make car reverse slightly
+            targets.Add(transform.position - transform.forward * length_ * 0.25f);
+            //move the car onto the road
+            targets.Add(parentRoad.GetPointOnRoad(transform.position + transform.forward * length_));
+        }
+
+        return targets;
+    }
+
 }

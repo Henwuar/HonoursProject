@@ -855,7 +855,7 @@ MonoBehaviour:
   stallChance_: 10
   stallSpeedMargin_: 0.05
   ignitionTime_: 2
-  distractionChance_: 10
+  distractionChance_: 1
   distractionTime_: 3
 --- !u!114 &114000011499458180
 MonoBehaviour:
@@ -869,7 +869,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parkChance_: 100
-  stoppingTime_: 30
+  parkingTime_: 30
 --- !u!114 &114000013021729570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -900,7 +900,7 @@ MonoBehaviour:
   maxSpeed_: 5.5
   turnSpeed_: 45
   arrivalDistance_: 2
-  fineMovementMultiplier_: 0.4
+  fineMovementMultiplier_: 0.5
   wheelRotationSpeed_: 5
   brakeLightIntensity_: 5
   headLightIntensity_: 1
