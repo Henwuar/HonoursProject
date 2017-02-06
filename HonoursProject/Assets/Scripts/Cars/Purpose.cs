@@ -42,7 +42,6 @@ public class Purpose : MonoBehaviour
         {
             if(curParking_)
             {
-                print("resetting parking");
                 curParking_.SetAvailable(false);
                 curParking_ = null;
             }
@@ -53,7 +52,6 @@ public class Purpose : MonoBehaviour
     {
         if(Random.Range(0.0f, 100.0f) < parkChance_)
         {
-            print("set parking");
             Road road = car_.GetCurRoad().GetComponent<Road>();
             ParkingSpace parking = null;
             if(road)

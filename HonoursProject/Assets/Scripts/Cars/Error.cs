@@ -14,6 +14,8 @@ public class Error : MonoBehaviour
     private float distractionChance_;
     [SerializeField]
     private float distractionTime_;
+    [SerializeField]
+    private int distractionCheckFrames_;
 
     private Car car_;
     private Vision vision_;
@@ -25,6 +27,7 @@ public class Error : MonoBehaviour
     private bool stalled_ = false;
     private bool distracted_ = false;
     private float distractedTime_ = 0;
+    private int frameCounter_ = 0;
 
 	// Use this for initialization
 	void Start ()
@@ -68,13 +71,19 @@ public class Error : MonoBehaviour
         {
             if (!distracted_)
             {
-                if (Random.Range(0.0f, 100.0f) < distractionChance_)
+                frameCounter_++;
+                if(frameCounter_ >= distractionCheckFrames_)
                 {
-                    distracted_ = true;
-                    distractedTime_ = distractionTime_;
-                    float maxAngle = vision_.GetLookAngle() * 2.0f;
-                    vision_.SetLookStartAngle(Random.Range(-maxAngle, maxAngle));
-                    eventSender_.SendEvent(TrafficEvent.TE_DISTRACTED);
+                    print("could be dirstacted");
+                    frameCounter_ = 0;
+                    if (Random.Range(0.0f, 100.0f) < distractionChance_)
+                    {
+                        distracted_ = true;
+                        distractedTime_ = distractionTime_;
+                        float maxAngle = vision_.GetLookAngle() * 2.0f;
+                        vision_.SetLookStartAngle(Random.Range(-maxAngle, maxAngle));
+                        eventSender_.SendEvent(TrafficEvent.TE_DISTRACTED);
+                    }
                 }
             }
             else

@@ -79,29 +79,51 @@ public class CityGenerator : MonoBehaviour
                     junction.GetComponent<BoxCollider>().enabled = false;
                 }
 
+                CreateEntryPoint();
+
                 canSpawn_ = true;
                 initialised_ = true;
                 GetComponent<BoxCollider>().enabled = true;
                 SpawnCar();
             }
         }
-        else if(carsInside_ <= 0)
-        {
-            canSpawn_ = true;
-        }
 
-        if (canSpawn_ && spawnedCars_ < numCars_ && curJunction_.GetLightsOn())
+        if (canSpawn_ && spawnedCars_ < numCars_)
         {
             SpawnCar();
         }
     }
 
+    void CreateEntryPoint()
+    {
+        GameObject firstJunction = junctions_[0];
+        transform.position = startPoint_ - Vector3.forward*junctionSpacing_;
+        GameObject road = firstJunction.GetComponent<Junction>().road_;
+        float laneSpacing = firstJunction.GetComponent<Junction>().GetLaneSpacing();
+        //create a new road
+        GameObject newRoad = (GameObject)Instantiate(road, GameObject.Find("Roads").transform);
+        //get the offset values
+        Vector3 laneOffset = Vector3.Cross(firstJunction.transform.position - transform.position, Vector3.up).normalized * laneSpacing;
+        Vector3 sizeOffset = (firstJunction.transform.position - transform.position).normalized * firstJunction.GetComponent<Junction>().GetSize();
+        //set up the values of the road
+        newRoad.GetComponent<Road>().GetStart().position = transform.position + sizeOffset + laneOffset;
+        newRoad.GetComponent<Road>().GetEnd().position = firstJunction.transform.position - sizeOffset + laneOffset;
+        newRoad.GetComponent<Road>().SetEndJunction(firstJunction);
+        newRoad.GetComponent<Road>().SetStartJunction(gameObject);
+        newRoad.GetComponent<Road>().GetEnd().transform.FindChild("TrafficLight").transform.LookAt(newRoad.GetComponent<Road>().GetStart().position);
+        firstJunction.GetComponent<Junction>().AddLight(newRoad.GetComponent<Road>().GetEnd().FindChild("TrafficLight").gameObject);
+        newRoad.GetComponent<Road>().Init(laneSpacing, false);
+        
+        //move the spawn point up slightly
+        transform.position = transform.position + Vector3.up;
+    }
+
     void SpawnCar()
     {
-        int junction = Random.Range(0, junctions_.GetLength(0));
-        curJunction_ = junctions_[junction].GetComponent<Junction>();
+        //int junction = Random.Range(0, junctions_.GetLength(0));
+        //curJunction_ = junctions_[junction].GetComponent<Junction>();
 
-        transform.position = junctions_[junction].transform.position + Vector3.up;
+        //transform.position = junctions_[junction].transform.position + Vector3.up;
 
         GameObject newCar = (GameObject)Instantiate(carPrefab_, transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
 
@@ -115,8 +137,8 @@ public class CityGenerator : MonoBehaviour
     {
         if(other.gameObject.tag == "Car")
         {
-            //canSpawn_ = true;
-            carsInside_--;
+            canSpawn_ = true;
+            //carsInside_--;
         }
     }
 
@@ -132,7 +154,8 @@ public class CityGenerator : MonoBehaviour
     {
         if (other.gameObject.tag == "Car")
         {
-            carsInside_++;
+            //carsInside_++;
+            canSpawn_ = false;
         }
     }
 }

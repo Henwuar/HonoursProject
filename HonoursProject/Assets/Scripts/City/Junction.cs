@@ -263,4 +263,14 @@ public class Junction : MonoBehaviour
             return 0;
         }
     }
+
+    public float GetLaneSpacing()
+    {
+        return laneSpacing_;
+    }
+
+    public float GetSize()
+    {
+        return size_;
+    }
 }

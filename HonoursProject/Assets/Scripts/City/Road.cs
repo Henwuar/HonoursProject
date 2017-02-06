@@ -27,7 +27,7 @@ public class Road : MonoBehaviour
     private int[] triangles_;
 
     //creates the road mesh after start and end have been set
-    public void Init(float width)
+    public void Init(float width, bool initParking = true)
     {
         //find the forward and right values of the road
         Vector3 forward = (end_.position - start_.position).normalized;
@@ -68,26 +68,29 @@ public class Road : MonoBehaviour
 
         //Set up parking 
         parking_ = new List<GameObject>();
-        float roadLength = (endPos - startPos).magnitude;
-        //adjust to trim off ends
-        roadLength -= parkingSize_.y;
-        int numRoads = Mathf.FloorToInt(roadLength / parkingSize_.y);
-        Vector3 parkPos = startPos - right * width - right * parkingSize_.x * 0.5f;
-        parkPos += forward * parkingSize_.y;
-        for(int i = 0; i < numRoads; i++)
+        if(initParking)
         {
-            //create the new parking space
-            GameObject newParking = (GameObject)Instantiate(parkingObject_, parkPos, Quaternion.identity);
-            //give it the neccessary values
-            newParking.transform.SetParent(transform, true);
-            newParking.GetComponent<ParkingSpace>().SetLength(parkingSize_.y);
-            newParking.transform.LookAt(newParking.transform.position + forward);
-
-            //move the position onto the next
+            float roadLength = (endPos - startPos).magnitude;
+            //adjust to trim off ends
+            roadLength -= parkingSize_.y;
+            int numRoads = Mathf.FloorToInt(roadLength / parkingSize_.y);
+            Vector3 parkPos = startPos - right * width - right * parkingSize_.x * 0.5f;
             parkPos += forward * parkingSize_.y;
+            for (int i = 0; i < numRoads; i++)
+            {
+                //create the new parking space
+                GameObject newParking = (GameObject)Instantiate(parkingObject_, parkPos, Quaternion.identity);
+                //give it the neccessary values
+                newParking.transform.SetParent(transform, true);
 
-            //add the parking to the list
-            parking_.Add(newParking);
+                newParking.transform.LookAt(newParking.transform.position + forward);
+                newParking.GetComponent<ParkingSpace>().Init(parkingSize_.y, parkingSize_.x);
+                //move the position onto the next
+                parkPos += forward * parkingSize_.y;
+
+                //add the parking to the list
+                parking_.Add(newParking);
+            }
         }
 
         direction_ = forward;
