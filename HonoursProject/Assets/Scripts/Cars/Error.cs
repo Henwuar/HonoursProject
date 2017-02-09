@@ -74,7 +74,6 @@ public class Error : MonoBehaviour
                 frameCounter_++;
                 if(frameCounter_ >= distractionCheckFrames_)
                 {
-                    print("could be dirstacted");
                     frameCounter_ = 0;
                     if (Random.Range(0.0f, 100.0f) < distractionChance_)
                     {

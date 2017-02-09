@@ -216,4 +216,31 @@ public class Vision : MonoBehaviour
     {
         return lookAngle_;
     }
+
+    public float GetStoppingDistance()
+    {
+        return stoppingDistance_;
+    }
+
+    public void SetStoppingDistance(float value)
+    {
+        stoppingDistance_ = value;
+    }
+
+    public float GetVisionDistance()
+    {
+        return visionDistance_;
+    }
+
+    public void SetVisionDistance(float value)
+    {
+        visionDistance_ = value;
+    }
+
+    public void SetLookAngle(float value)
+    {
+        lookAngle_ = value;
+    }
+
+
 }
