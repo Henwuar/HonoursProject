@@ -124,4 +124,24 @@ public class Error : MonoBehaviour
     {
         return distracted_;
     }
+
+    public float GetDistractionChance()
+    {
+        return distractionChance_;
+    }
+
+    public void SetDistractionChance(float value)
+    {
+        distractionChance_ = value;
+    }
+
+    public float GetStallChance()
+    {
+        return stallChance_;
+    }
+
+    public void SetStallChance(float value)
+    {
+        stallChance_ = value;
+    }
 }

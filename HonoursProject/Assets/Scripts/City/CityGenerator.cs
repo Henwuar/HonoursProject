@@ -97,7 +97,7 @@ public class CityGenerator : MonoBehaviour
     void CreateEntryPoint()
     {
         GameObject firstJunction = junctions_[0];
-        transform.position = startPoint_ - Vector3.forward*junctionSpacing_;
+        transform.position = startPoint_ - Vector3.forward*junctionSpacing_*0.5f;
         GameObject road = firstJunction.GetComponent<Junction>().road_;
         float laneSpacing = firstJunction.GetComponent<Junction>().GetLaneSpacing();
         //create a new road

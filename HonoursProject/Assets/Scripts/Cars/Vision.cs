@@ -241,6 +241,4 @@ public class Vision : MonoBehaviour
     {
         lookAngle_ = value;
     }
-
-
 }

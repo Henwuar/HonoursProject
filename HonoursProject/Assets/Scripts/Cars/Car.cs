@@ -87,6 +87,12 @@ public class Car : MonoBehaviour
         curRoad_ = closestRoad.transform.parent.gameObject;
         targets_.Enqueue(curRoad_.GetComponent<Road>().GetEnd().position);
         transform.LookAt(target_);
+
+        Personality personality = GetComponent<Personality>();
+        if(personality)
+        {
+            personality.Init();
+        }
     }
 
 	// Update is called once per frame
@@ -531,5 +537,15 @@ public class Car : MonoBehaviour
     public float GetFineMovementMutliplier()
     {
         return fineMovementMultiplier_;
+    }
+
+    public float GetMaxSpeed()
+    {
+        return maxSpeed_;
+    }
+
+    public void SetMaxSpeed(float value)
+    {
+        maxSpeed_ = value;
     }
 }
