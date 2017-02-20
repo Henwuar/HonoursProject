@@ -56,7 +56,12 @@ public class Purpose : MonoBehaviour
             ParkingSpace parking = null;
             if(road)
             {
-                parking = road.GetParkingSpace().GetComponent<ParkingSpace>();
+                GameObject space = road.GetParkingSpace();
+                if(space)
+                {
+                    parking = space.GetComponent<ParkingSpace>();
+                }
+                
             }
             
 

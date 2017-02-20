@@ -5,6 +5,7 @@ public class CityGenerator : MonoBehaviour
 {
     public GameObject junctionPrefab_;
     public GameObject carPrefab_;
+    public GameObject buildingPrefab_;
 
     [SerializeField]
     private float size_;
@@ -16,11 +17,12 @@ public class CityGenerator : MonoBehaviour
     private int numCars_;
     [SerializeField]
     private float randomisation_;
+    [SerializeField]
+    private Vector2 buildingHeightBounds_;
 
     private int spawnedCars_ = 0;
     private bool canSpawn_ = false;
     private bool initialised_ = false;
-    private float carsInside_ = 0;
     private Junction curJunction_;
 
     private GameObject[] junctions_;
@@ -32,6 +34,7 @@ public class CityGenerator : MonoBehaviour
         //fill a square area with junctions
         GetComponent<BoxCollider>().enabled = false;
         int maxJunctions = Mathf.FloorToInt(size_ / junctionSpacing_);
+        junctions_ = new GameObject[maxJunctions * maxJunctions];
         Transform junctionContainer = GameObject.Find("Junctions").transform;
         for(int x = 0; x < maxJunctions; x++)
         {
@@ -43,18 +46,22 @@ public class CityGenerator : MonoBehaviour
                 //set up the position of the junction
                 Vector3 position = startPoint_ + new Vector3(x * junctionSpacing_, 0, y * junctionSpacing_) + random;
                 //create the junction at the position inside the junction container
-                Instantiate(junctionPrefab_, position, Quaternion.identity, junctionContainer);
+                GameObject newJunction = (GameObject)Instantiate(junctionPrefab_, position, Quaternion.identity, junctionContainer);
+
+                junctions_[maxJunctions * x + y] = newJunction;
             }
         }
-        //store the junctions and the cars
-        junctions_ = GameObject.FindGameObjectsWithTag("Junction");
+        //store the junctions
+        //junctions_ = GameObject.FindGameObjectsWithTag("Junction");
 
         //destroy all currently existing roads
         foreach(GameObject road in GameObject.FindGameObjectsWithTag("Road"))
         {
             DestroyImmediate(road);
         }
-	}
+
+        GameObject.FindGameObjectWithTag("CheckpointManager").GetComponent<CheckpointManager>().Init(maxJunctions, maxJunctions);
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -80,6 +87,7 @@ public class CityGenerator : MonoBehaviour
                 }
 
                 CreateEntryPoint();
+                CreateBuildings();
 
                 canSpawn_ = true;
                 initialised_ = true;
@@ -118,6 +126,37 @@ public class CityGenerator : MonoBehaviour
         transform.position = transform.position + Vector3.up;
     }
 
+    void CreateBuildings()
+    {
+        int citySideSize = Mathf.FloorToInt(size_ / junctionSpacing_);
+        GameObject buildingContainer = GameObject.FindGameObjectWithTag("Buildings");
+
+        for (int x = 0; x < citySideSize-1; x++)
+        {
+            for(int y = 0; y < citySideSize-1; y++)
+            {
+                int index = (citySideSize * x) + y;
+                
+                float xMin, xMax, zMin, zMax;
+                Transform[] curJunctions = { junctions_[index].transform, junctions_[index + 1].transform, junctions_[index + citySideSize].transform, junctions_[index + citySideSize + 1].transform };
+                //set up the bounds
+                xMin = Mathf.Min(curJunctions[0].position.x, curJunctions[1].position.x, curJunctions[2].position.x, curJunctions[3].position.x);
+                xMax = Mathf.Max(curJunctions[0].position.x, curJunctions[1].position.x, curJunctions[2].position.x, curJunctions[3].position.x);
+                zMin = Mathf.Min(curJunctions[0].position.z, curJunctions[1].position.z, curJunctions[2].position.z, curJunctions[3].position.z);
+                zMax = Mathf.Max(curJunctions[0].position.z, curJunctions[1].position.z, curJunctions[2].position.z, curJunctions[3].position.z);
+
+                Vector3 newPos = new Vector3(Mathf.Lerp(xMin, xMax, 0.5f), 0.0f, Mathf.Lerp(zMin, zMax, 0.5f));
+                Vector3 newScale = new Vector3(xMax - xMin, 0, zMax - zMin) * 0.6f;
+                newScale.y = Random.Range(buildingHeightBounds_.x, buildingHeightBounds_.y);
+
+                GameObject newBuilding = (GameObject)Instantiate(buildingPrefab_, newPos, Quaternion.identity, buildingContainer.transform);
+                newBuilding.transform.localScale = newScale;
+            }
+            
+        }
+        print(junctions_.Length);
+    }
+
     void SpawnCar()
     {
         //int junction = Random.Range(0, junctions_.GetLength(0));
@@ -129,17 +168,13 @@ public class CityGenerator : MonoBehaviour
 
         newCar.GetComponent<Car>().Init();
         canSpawn_ = false;
-        carsInside_ = 0;
         spawnedCars_++;
     }
 
     void OnTriggerExit(Collider other)
     {
-        if(other.gameObject.tag == "Car")
-        {
             canSpawn_ = true;
-            //carsInside_--;
-        }
+
     }
 
     void OnTriggerStay(Collider other)

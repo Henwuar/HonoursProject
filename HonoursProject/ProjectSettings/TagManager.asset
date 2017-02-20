@@ -10,6 +10,8 @@ TagManager:
   - Ground
   - TrafficLight
   - EventTracker
+  - CheckpointManager
+  - Buildings
   layers:
   - Default
   - TransparentFX

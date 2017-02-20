@@ -65,6 +65,7 @@ public class Road : MonoBehaviour
         mesh.vertices = vertices_;
         mesh.uv = uvs_;
         mesh.triangles = triangles_;
+        mesh.RecalculateNormals();
 
         //Set up parking 
         parking_ = new List<GameObject>();
@@ -83,8 +84,7 @@ public class Road : MonoBehaviour
                 //give it the neccessary values
                 newParking.transform.SetParent(transform, true);
 
-                newParking.transform.LookAt(newParking.transform.position + forward);
-                newParking.GetComponent<ParkingSpace>().Init(parkingSize_.y, parkingSize_.x);
+                newParking.GetComponent<ParkingSpace>().Init(parkingSize_.y, parkingSize_.x, forward);
                 //move the position onto the next
                 parkPos += forward * parkingSize_.y;
 

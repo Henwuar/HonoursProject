@@ -12,6 +12,8 @@ public class Car : MonoBehaviour
     [SerializeField]
     private float acceleration_;
     [SerializeField]
+    private float playerAcceleration_;
+    [SerializeField]
     private float brakePower_;
     [SerializeField]
     private float maxSpeed_;
@@ -29,6 +31,8 @@ public class Car : MonoBehaviour
     private float headLightIntensity_;
     [SerializeField]
     private Vector2 reverseAngleLimits_;
+    [SerializeField]
+    private Vector2 dragValues_;
 
     private Rigidbody body_;
     private Vector3 target_;
@@ -43,7 +47,6 @@ public class Car : MonoBehaviour
     private bool initialised_ = false;
     private float waitTime_;
     private bool followingTarget_ = true;
-    private bool stopping_ = false;
     [SerializeField]
     private CarState state_ = CarState.CS_MOVING;
     private CarState prevState_ = CarState.CS_MOVING;
@@ -96,7 +99,7 @@ public class Car : MonoBehaviour
     }
 
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
         //make sure the car is initialised
         if (!initialised_)
@@ -134,7 +137,7 @@ public class Car : MonoBehaviour
         if (waitTime_ > 0)
         {
             waitTime_ -= Time.deltaTime;
-            if(waitTime_ < 0)
+            if(waitTime_ <= 0)
             {
                 waitTime_ = 0;
                 followingTarget_ = true;
@@ -145,10 +148,15 @@ public class Car : MonoBehaviour
         if (controlled_)
         {
             HandleInput();
+            body_.drag = dragValues_.x;
         }
         else if(followingTarget_)
         {
             MoveToTarget();
+        }
+        if(!controlled_)
+        {
+            body_.drag = dragValues_.y;
         }
 
         //make the respawn point follow the player
@@ -194,8 +202,11 @@ public class Car : MonoBehaviour
             {
                 Brake();
             }
-            gear_ = 1;
-            Accelerate(Input.GetAxis("Accelerate")*2);
+            if(gear_ <= 0)
+            {
+                gear_ = 1;
+            }
+            Accelerate(Input.GetAxis("Accelerate")*playerAcceleration_);
         }
         else if (Input.GetAxis("Brake") <= 0) 
         {
@@ -315,6 +326,10 @@ public class Car : MonoBehaviour
     public void Accelerate(float amount)
     {
         bool canMove = state_ == CarState.CS_MOVING || state_ == CarState.CS_PARKING || state_ == CarState.CS_DEPARKING;
+        if (controlled_)
+        {
+            canMove = true;
+        }
         if (canMove)
         {
             if(error_ && amount != 0 && !controlled_)
@@ -483,11 +498,6 @@ public class Car : MonoBehaviour
     public void ToggleControlled()
     {
         controlled_ = !controlled_;
-    }
-
-    public void SetStopping(bool value)
-    {
-        stopping_ = value;
     }
 
     public void SetState(CarState newState, bool overridePriority = false)

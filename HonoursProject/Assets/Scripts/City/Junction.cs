@@ -86,7 +86,8 @@ public class Junction : MonoBehaviour
 
         //update the traffic lights
         timer_ += Time.deltaTime;
-        if(timer_ > lightTiming_)
+        float maxTime = lightsOn_ ? lightTiming_ : lightTiming_ * 0.5f;
+        if(timer_ > maxTime)
         {
             timer_ = 0;
             lightsOn_ = !lightsOn_;

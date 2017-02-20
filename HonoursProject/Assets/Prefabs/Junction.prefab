@@ -116,8 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   road_: {fileID: 1000012911402532, guid: 6270487509389aa4c8dea30a15a33ff6, type: 2}
   roads_: []
-  oneWay_: 0
   size_: 4
   laneSpacing_: 2
-  lightTiming_: 3
-  availableDirections_: 
+  lightTiming_: 5
+  dirRoads_: []

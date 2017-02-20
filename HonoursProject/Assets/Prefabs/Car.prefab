@@ -602,7 +602,7 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010303715308}
   serializedVersion: 2
-  m_Mass: 5000
+  m_Mass: 10000
   m_Drag: 1
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -914,15 +914,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controlled_: 0
   acceleration_: 100000
+  playerAcceleration_: 10
   brakePower_: 5e+10
   maxSpeed_: 5.5
   turnSpeed_: 45
-  arrivalDistance_: 2
+  arrivalDistance_: 2.5
   fineMovementMultiplier_: 0.5
   wheelRotationSpeed_: 5
   brakeLightIntensity_: 5
   headLightIntensity_: 1
   reverseAngleLimits_: {x: 165, y: 205}
+  dragValues_: {x: 0.5, y: 1}
+  followingTarget_: 1
   state_: 0
 --- !u!146 &146000010227279530
 WheelCollider:
@@ -948,7 +951,7 @@ WheelCollider:
     m_Stiffness: 1
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
-    m_ExtremumValue: 1
+    m_ExtremumValue: 1.5
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
@@ -977,7 +980,7 @@ WheelCollider:
     m_Stiffness: 1
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
-    m_ExtremumValue: 1
+    m_ExtremumValue: 1.5
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
@@ -1006,7 +1009,7 @@ WheelCollider:
     m_Stiffness: 1
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
-    m_ExtremumValue: 1
+    m_ExtremumValue: 1.5
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
@@ -1035,7 +1038,7 @@ WheelCollider:
     m_Stiffness: 1
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
-    m_ExtremumValue: 1
+    m_ExtremumValue: 1.5
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
     m_Stiffness: 1

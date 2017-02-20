@@ -125,6 +125,7 @@ public class Vision : MonoBehaviour
                 if(hit.collider.gameObject.GetComponent<TrafficLight>().GetSignal() == Signals.S_GO)
                 {
                     car_.SetState(CarState.CS_MOVING);
+                    //car_.SetFollowingTarget(true);
                 }
             }
         }
@@ -177,7 +178,12 @@ public class Vision : MonoBehaviour
                 car_.Wait(1);
                 if(Vector3.Cross(transform.right, other.transform.position - transform.position).y < 0)
                 {
+                    print("reversing");
                     car_.Accelerate(-1.0f);
+                }
+                else
+                {
+                    car_.Accelerate(1.0f);
                 }
 
             }
@@ -192,7 +198,7 @@ public class Vision : MonoBehaviour
         {
             if (car_.DistanceToTarget() > other.GetComponent<Car>().DistanceToTarget())
             {
-                //car_.Wait(2);
+                car_.Wait(Time.deltaTime*2);
             }
         }
     }
