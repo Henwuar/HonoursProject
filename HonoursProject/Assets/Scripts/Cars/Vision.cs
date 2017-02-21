@@ -178,7 +178,6 @@ public class Vision : MonoBehaviour
                 car_.Wait(1);
                 if(Vector3.Cross(transform.right, other.transform.position - transform.position).y < 0)
                 {
-                    print("reversing");
                     car_.Accelerate(-1.0f);
                 }
                 else

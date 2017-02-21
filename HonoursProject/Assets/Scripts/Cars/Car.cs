@@ -65,6 +65,8 @@ public class Car : MonoBehaviour
         error_ = GetComponent<Error>();
         purpose_ = GetComponent<Purpose>();
         vision_ = GetComponent<Vision>();
+
+        body_.centerOfMass = new Vector3(0, -0.95f);
     }
 
     public void Init()
@@ -227,7 +229,7 @@ public class Car : MonoBehaviour
             }
             if(gear_ == -1)
             {
-                Accelerate(-Input.GetAxis("Brake") * 0.5f);
+                Accelerate(-Input.GetAxis("Brake"));
             }
         }
     }
@@ -423,7 +425,6 @@ public class Car : MonoBehaviour
                     }
                     else if(state_ == CarState.CS_DEPARKING)
                     {
-                        print("new target please");
                         state_ = CarState.CS_MOVING;
                         targets_.Enqueue(curRoad_.GetComponent<Road>().GetEnd().position);
                     }

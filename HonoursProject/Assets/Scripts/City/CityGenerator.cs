@@ -23,10 +23,11 @@ public class CityGenerator : MonoBehaviour
     private int spawnedCars_ = 0;
     private bool canSpawn_ = false;
     private bool initialised_ = false;
-    private Junction curJunction_;
+    private int curEntryPoint_ = 0;
 
     private GameObject[] junctions_;
     private GameObject[] cars_;
+    private Vector3[] entryPoints_;
 
 	// Use this for initialization
 	void Start ()
@@ -60,7 +61,6 @@ public class CityGenerator : MonoBehaviour
             DestroyImmediate(road);
         }
 
-        GameObject.FindGameObjectWithTag("CheckpointManager").GetComponent<CheckpointManager>().Init(maxJunctions, maxJunctions);
     }
 	
 	// Update is called once per frame
@@ -79,14 +79,25 @@ public class CityGenerator : MonoBehaviour
             }
             if (canStart)
             {
+                //initialise the checkpoints
+                int maxJunctions = Mathf.FloorToInt(size_ / junctionSpacing_);
+                GameObject.FindGameObjectWithTag("CheckpointManager").GetComponent<CheckpointManager>().Init(maxJunctions, maxJunctions);
+
                 //turn off all the colliders for the junctions
                 foreach (GameObject junction in junctions_)
                 {
-                    //junction.GetComponent<Junction>().Finalise();
+                    junction.GetComponent<Junction>().InitLightRunner();
                     junction.GetComponent<BoxCollider>().enabled = false;
                 }
 
-                CreateEntryPoint();
+                entryPoints_ = new Vector3[maxJunctions];
+                for(int index = 0; index < maxJunctions; index++)
+                {
+                    entryPoints_[index] = CreateEntryPoint(index, -Vector3.right);
+                }
+
+                transform.position = entryPoints_[0] + Vector3.up;
+
                 CreateBuildings();
 
                 canSpawn_ = true;
@@ -99,13 +110,28 @@ public class CityGenerator : MonoBehaviour
         if (canSpawn_ && spawnedCars_ < numCars_)
         {
             SpawnCar();
+            if(spawnedCars_ >= numCars_)
+            {
+                print("done");
+            }
+        }
+
+        if(initialised_)
+        {
+            //move the generator along the entry points
+            curEntryPoint_++;
+            if (curEntryPoint_ >= entryPoints_.Length)
+            {
+                curEntryPoint_ = 0;
+            }
+            transform.position = entryPoints_[curEntryPoint_] + Vector3.up;
         }
     }
 
-    void CreateEntryPoint()
+    Vector3 CreateEntryPoint(int index, Vector3 direction)
     {
-        GameObject firstJunction = junctions_[0];
-        transform.position = startPoint_ - Vector3.forward*junctionSpacing_*0.5f;
+        GameObject firstJunction = junctions_[index];
+        transform.position = firstJunction.transform.position + direction*junctionSpacing_*0.5f;
         GameObject road = firstJunction.GetComponent<Junction>().road_;
         float laneSpacing = firstJunction.GetComponent<Junction>().GetLaneSpacing();
         //create a new road
@@ -121,9 +147,11 @@ public class CityGenerator : MonoBehaviour
         newRoad.GetComponent<Road>().GetEnd().transform.FindChild("TrafficLight").transform.LookAt(newRoad.GetComponent<Road>().GetStart().position);
         firstJunction.GetComponent<Junction>().AddLight(newRoad.GetComponent<Road>().GetEnd().FindChild("TrafficLight").gameObject);
         newRoad.GetComponent<Road>().Init(laneSpacing, false);
-        
+
+        return transform.position;
+
         //move the spawn point up slightly
-        transform.position = transform.position + Vector3.up;
+        //transform.position = transform.position + Vector3.up;
     }
 
     void CreateBuildings()
@@ -154,7 +182,6 @@ public class CityGenerator : MonoBehaviour
             }
             
         }
-        print(junctions_.Length);
     }
 
     void SpawnCar()
@@ -173,8 +200,7 @@ public class CityGenerator : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-            canSpawn_ = true;
-
+        canSpawn_ = true;
     }
 
     void OnTriggerStay(Collider other)

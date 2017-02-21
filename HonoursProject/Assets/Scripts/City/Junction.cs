@@ -274,4 +274,9 @@ public class Junction : MonoBehaviour
     {
         return size_;
     }
+
+    public void InitLightRunner()
+    {
+        lightRunner_ = Random.Range(0, lights_.Count);
+    }
 }

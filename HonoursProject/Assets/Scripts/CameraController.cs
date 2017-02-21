@@ -16,33 +16,43 @@ public class CameraController : MonoBehaviour
 
     private Vector3 eulerRotation;
 
-    // Use this for initialization
-    void Start ()
-    {
-	    
-	}
+    private bool toggled_ = false;
 	
+    void Update()
+    {
+        if (!toggled_ && Input.GetButtonDown("Toggle"))
+        {
+            toggled_ = true;
+        }
+    }
+
 	// Update is called once per frame
 	void FixedUpdate ()
     {
         //see if a car is being controlled
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         GameObject checkpoint = GameObject.FindGameObjectWithTag("CheckpointManager");
+
 	    if(player)
         {
+            //udpdate the player's compass
             playerCanvas_.SetActive(true);
-            float angle = Vector3.Angle(checkpoint.transform.position, player.transform.forward);
-            angle *= Mathf.Sign(Vector3.Cross(player.transform.forward, checkpoint.transform.position - player.transform.position).y);
-            arrow_.eulerAngles = new Vector3(0, 0, -angle);
+            Vector3 north = checkpoint.transform.position - player.transform.position;
+            float northHeading = Mathf.Atan2(north.z, north.x);
+            float angle = northHeading - Mathf.Atan2(player.transform.forward.z, player.transform.forward.x);
+            arrow_.eulerAngles = new Vector3(0, 0, angle * Mathf.Rad2Deg);
+
             //move the camera behind the player
             transform.position = player.transform.position - (player.transform.forward * 4) + (Vector3.up * 2);
             //look at the player
-            transform.LookAt(player.transform.position + (new Vector3(player.transform.forward.x, 0, player.transform.forward.z) * 3) + (new Vector3(player.GetComponent<Rigidbody>().velocity.x, 0, player.GetComponent<Rigidbody>().velocity.z)));
+            float playerDir = player.GetComponentInChildren<WheelCollider>().steerAngle;
+            transform.LookAt(player.transform.position +  (new Vector3(player.transform.forward.x, 0, player.transform.forward.z) * 3));// + (new Vector3(player.GetComponent<Rigidbody>().velocity.x, 0, player.GetComponent<Rigidbody>().velocity.z)));
 
-            if (Input.GetButtonDown("Toggle"))
+            if (toggled_)
             {
                 player.GetComponent<Car>().ToggleControlled();
                 player.GetComponent<Car>().Init();
+                toggled_ = false;
             }
         }
         else
@@ -69,10 +79,10 @@ public class CameraController : MonoBehaviour
             float scrollAmount = Input.GetAxis("Mouse ScrollWheel") * zoomSpeed_;
             transform.position += transform.forward * scrollAmount;
 
-            if(Input.GetButton("Toggle"))
+            if(toggled_)
             {
-                print("space");
                 GameObject.FindGameObjectWithTag("Car").GetComponent<Car>().ToggleControlled();
+                toggled_ = false;
             }
         }
 	}

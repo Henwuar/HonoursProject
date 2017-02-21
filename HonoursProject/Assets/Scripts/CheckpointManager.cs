@@ -33,6 +33,9 @@ public class CheckpointManager : MonoBehaviour
 
     public void Init(int cityWidth, int cityHeight)
     {
+        //make sure start has been called
+        Start();
+
         //randomly generate a series of checkpoints
         if(random_)
         {
