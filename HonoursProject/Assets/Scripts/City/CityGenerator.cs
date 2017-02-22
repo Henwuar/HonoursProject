@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class CityGenerator : MonoBehaviour
 {
     public GameObject junctionPrefab_;
     public GameObject carPrefab_;
     public GameObject buildingPrefab_;
+    public Text carCount_;
 
     [SerializeField]
     private float size_;
@@ -94,6 +96,37 @@ public class CityGenerator : MonoBehaviour
                     junction.GetComponent<BoxCollider>().enabled = false;
                 }
 
+
+                while(spawnedCars_ < numCars_)
+                {
+                    bool foundSpace = false;
+                    //loop through all the roads and place a car in the first available parking space
+                    foreach (GameObject road in GameObject.FindGameObjectsWithTag("Road"))
+                    {
+                        //check that the road has a parking space
+                        GameObject parking = road.GetComponent<Road>().GetParkingSpace();
+                        if(parking)
+                        {
+                            foundSpace = true;
+                            if (spawnedCars_ < numCars_)
+                            {
+                                SpawnParkedCar(road);
+                            }
+                            else
+                            {
+                                //break from both loops
+                                foundSpace = false;
+                                break;
+                            }
+                        }
+                    }
+                    //no spaces were found in any roads
+                    if(!foundSpace)
+                    {
+                        break;
+                    }
+                }
+
                 entryPoints_ = new Vector3[maxJunctions*4];
                 for(int index = 0; index < maxJunctions*4; index++)
                 {
@@ -115,6 +148,8 @@ public class CityGenerator : MonoBehaviour
                             break;
                     }
                 }
+                
+
 
                 transform.position = entryPoints_[0] + Vector3.up;
 
@@ -123,7 +158,7 @@ public class CityGenerator : MonoBehaviour
                 canSpawn_ = true;
                 initialised_ = true;
                 GetComponent<BoxCollider>().enabled = true;
-                SpawnCar();
+                //SpawnCar();
             }
         }
 
@@ -137,6 +172,7 @@ public class CityGenerator : MonoBehaviour
         }
 
 
+        carCount_.text = "Cars: " + spawnedCars_.ToString("D3");
         /*if (!Physics.CheckBox(transform.position, GetComponent<BoxCollider>().size * 0.5f, Quaternion.identity, LayerMask.NameToLayer("CarCheck")))
         {
             canSpawn_ = true;
@@ -154,7 +190,7 @@ public class CityGenerator : MonoBehaviour
             Time.timeScale = 1.0f;
         }*/
 
-        if (initialised_)
+        if (initialised_ && spawnedCars_ < numCars_)
         {
             //move the generator along the entry points
             curEntryPoint_++;
@@ -204,6 +240,7 @@ public class CityGenerator : MonoBehaviour
                 int index = (citySideSize * x) + y;
                 
                 float xMin, xMax, zMin, zMax;
+                //gather the junctions to form a building between
                 Transform[] curJunctions = { junctions_[index].transform, junctions_[index + 1].transform, junctions_[index + citySideSize].transform, junctions_[index + citySideSize + 1].transform };
                 //set up the bounds
                 xMin = Mathf.Min(curJunctions[0].position.x, curJunctions[1].position.x, curJunctions[2].position.x, curJunctions[3].position.x);
@@ -232,6 +269,15 @@ public class CityGenerator : MonoBehaviour
         GameObject newCar = (GameObject)Instantiate(carPrefab_, transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
 
         newCar.GetComponent<Car>().Init();
+        canSpawn_ = false;
+        spawnedCars_++;
+    }
+
+    void SpawnParkedCar(GameObject road)
+    {
+        GameObject newCar = (GameObject)Instantiate(carPrefab_, transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
+
+        newCar.GetComponent<Car>().InitParked(road.GetComponent<Road>());
         canSpawn_ = false;
         spawnedCars_++;
     }

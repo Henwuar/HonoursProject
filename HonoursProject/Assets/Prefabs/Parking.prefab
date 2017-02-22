@@ -25,7 +25,7 @@ GameObject:
   - 114: {fileID: 114000011397437122}
   m_Layer: 0
   m_Name: Parking
-  m_TagString: Untagged
+  m_TagString: Parking
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

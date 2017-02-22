@@ -12,6 +12,7 @@ TagManager:
   - EventTracker
   - CheckpointManager
   - Buildings
+  - Parking
   layers:
   - Default
   - TransparentFX

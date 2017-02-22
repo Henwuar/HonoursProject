@@ -54,9 +54,13 @@ public class CameraController : MonoBehaviour
                 player.GetComponent<Car>().Init();
                 toggled_ = false;
             }
+
+            GameObject.FindGameObjectWithTag("CheckpointManager").GetComponent<CheckpointManager>().StartTimer();
         }
         else
         {
+
+            GameObject.FindGameObjectWithTag("CheckpointManager").GetComponent<CheckpointManager>().StopTimer();
             playerCanvas_.SetActive(false);
             //right mouse button
             if (Input.GetMouseButton(1))

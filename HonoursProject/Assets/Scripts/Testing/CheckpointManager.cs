@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class CheckpointManager : MonoBehaviour
 {
+    public Text clock_;
+
     [SerializeField]
     private bool random_;
     [SerializeField]
@@ -28,6 +31,15 @@ public class CheckpointManager : MonoBehaviour
 	    if(timing_)
         {
             timer_ += Time.deltaTime;
+
+            //set up the string to display
+            string clockText = "";
+            float milliseconds = timer_ - Mathf.Floor(timer_);
+            float seconds = Mathf.Floor(timer_) % 60 + milliseconds;
+            float minutes = Mathf.Floor(timer_ / 60);
+            clockText = minutes.ToString() + ":" + seconds.ToString("F2");
+            //apply the string
+            clock_.text = clockText;
         }
 	}
 
@@ -84,6 +96,11 @@ public class CheckpointManager : MonoBehaviour
 
     public void StartTimer()
     {
+        timing_ = true;
+    }
 
+    public void StopTimer()
+    {
+        timing_ = false;
     }
 }

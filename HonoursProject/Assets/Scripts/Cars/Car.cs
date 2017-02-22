@@ -100,6 +100,33 @@ public class Car : MonoBehaviour
         }
     }
 
+    public void InitParked(Road road)
+    {
+        initialised_ = true;
+        targets_ = new Queue<Vector3>();
+
+        curRoad_ = road.gameObject;
+        GameObject parking = road.GetParkingSpace();
+
+        transform.position = parking.transform.position + Vector3.up;
+        transform.LookAt(transform.position + parking.transform.forward, Vector3.up);
+        parking.GetComponent<ParkingSpace>().SetAvailable(false);
+        state_ = CarState.CS_DEPARKING;
+
+        foreach(Vector3 target in parking.GetComponent<ParkingSpace>().GetExitTargets())
+        {
+            targets_.Enqueue(target);
+        }
+
+        target_ = targets_.Dequeue();
+
+        Personality personality = GetComponent<Personality>();
+        if (personality)
+        {
+            personality.Init();
+        }
+    }
+
 	// Update is called once per frame
 	void FixedUpdate ()
     {
@@ -287,6 +314,10 @@ public class Car : MonoBehaviour
         if (controlled_)
         {
             angle = Input.GetAxis("Horizontal") * turnSpeed_;
+            float speed = body_.velocity.magnitude;
+            float modifier = Mathf.Clamp(speed / maxSpeed_, 0.1f, 1.0f) * 10;
+            angle = Mathf.Clamp(angle / modifier, -turnSpeed_, turnSpeed_);
+            print(angle);
         }
         else
         {

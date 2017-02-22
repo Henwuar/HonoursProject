@@ -143,8 +143,9 @@ public class Vision : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        body_.AddForce(-transform.forward * body_.mass);
         GameObject other = collision.collider.gameObject;
-        if (other.tag == "Car")
+        if (other.tag == "Car" || other.tag == "Player")
         {
             //make sure only one car registers the event
             if (car_.DistanceToTarget() > other.GetComponent<Car>().DistanceToTarget())
@@ -155,6 +156,14 @@ public class Vision : MonoBehaviour
             {
                 car_.SetState(CarState.CS_MOVING, true);
             }
+        }
+
+        //prevent the car from locking up
+        if(tag == "Player")
+        {
+            car_.Brake(0);
+            car_.Accelerate(0);
+            body_.velocity *= 0.1f;
         }
     }
 
