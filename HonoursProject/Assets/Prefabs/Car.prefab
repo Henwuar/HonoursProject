@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000011081125650}
   - 108: {fileID: 108000012309001130}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000010520959840}
   - 108: {fileID: 108000012842023434}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,7 +61,7 @@ GameObject:
   - 114: {fileID: 114000011369103512}
   - 114: {fileID: 114000011499458180}
   - 114: {fileID: 114000010399849956}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Car
   m_TagString: Car
   m_Icon: {fileID: 0}
@@ -79,7 +79,7 @@ GameObject:
   - 33: {fileID: 33000012829365212}
   - 23: {fileID: 23000012791154610}
   - 146: {fileID: 146000013028181310}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: wheel_BR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013586967428}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Headlights
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000014225573884}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Taillights
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000014057398342}
   - 108: {fileID: 108000012740269244}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spotlight (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143,7 +143,7 @@ GameObject:
   - 33: {fileID: 33000010021008538}
   - 23: {fileID: 23000011845893660}
   - 146: {fileID: 146000010227279530}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: wheel_FR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,7 +159,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000011116574852}
   - 108: {fileID: 108000013942563994}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   - 33: {fileID: 33000011935440856}
   - 23: {fileID: 23000013657578122}
   - 146: {fileID: 146000010286746560}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: wheel_BL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -193,7 +193,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000012295294716}
   - 108: {fileID: 108000013060588528}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spotlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +209,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000011254352010}
   - 108: {fileID: 108000011629971238}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,7 +227,7 @@ GameObject:
   - 33: {fileID: 33000013706986262}
   - 23: {fileID: 23000013469907632}
   - 146: {fileID: 146000010227593768}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: wheel_FL
   m_TagString: Untagged
   m_Icon: {fileID: 0}

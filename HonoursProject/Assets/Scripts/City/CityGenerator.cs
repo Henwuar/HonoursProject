@@ -52,8 +52,6 @@ public class CityGenerator : MonoBehaviour
                 junctions_[maxJunctions * x + y] = newJunction;
             }
         }
-        //store the junctions
-        //junctions_ = GameObject.FindGameObjectsWithTag("Junction");
 
         //destroy all currently existing roads
         foreach(GameObject road in GameObject.FindGameObjectsWithTag("Road"))
@@ -61,6 +59,12 @@ public class CityGenerator : MonoBehaviour
             DestroyImmediate(road);
         }
 
+        //set up the ground plane
+        GameObject ground = GameObject.FindGameObjectWithTag("Ground");
+        Vector3 endPoint = startPoint_ + new Vector3(size_, 0, size_);
+        ground.transform.position = Vector3.Lerp(startPoint_, endPoint, 0.5f) - Vector3.up * 0.11f;
+        float scale = size_ * 0.125f;
+        ground.transform.localScale = new Vector3(scale, scale, scale);
     }
 	
 	// Update is called once per frame
@@ -90,10 +94,26 @@ public class CityGenerator : MonoBehaviour
                     junction.GetComponent<BoxCollider>().enabled = false;
                 }
 
-                entryPoints_ = new Vector3[maxJunctions];
-                for(int index = 0; index < maxJunctions; index++)
+                entryPoints_ = new Vector3[maxJunctions*4];
+                for(int index = 0; index < maxJunctions*4; index++)
                 {
-                    entryPoints_[index] = CreateEntryPoint(index, -Vector3.right);
+                    int side = Mathf.FloorToInt(index / maxJunctions);
+
+                    switch(side)
+                    {
+                        case 0:
+                            entryPoints_[index] = CreateEntryPoint(index, -Vector3.right);
+                            break;
+                        case 1:
+                            entryPoints_[index] = CreateEntryPoint(junctions_.Length - (index % maxJunctions) - 1, Vector3.right);
+                            break;
+                        case 2:
+                            entryPoints_[index] = CreateEntryPoint((index % maxJunctions) * maxJunctions, -Vector3.forward);
+                            break;
+                        case 3:
+                            entryPoints_[index] = CreateEntryPoint((index % maxJunctions) * maxJunctions + maxJunctions - 1, Vector3.forward);
+                            break;
+                    }
                 }
 
                 transform.position = entryPoints_[0] + Vector3.up;
@@ -116,7 +136,25 @@ public class CityGenerator : MonoBehaviour
             }
         }
 
-        if(initialised_)
+
+        /*if (!Physics.CheckBox(transform.position, GetComponent<BoxCollider>().size * 0.5f, Quaternion.identity, LayerMask.NameToLayer("CarCheck")))
+        {
+            canSpawn_ = true;
+        }*/
+        /*if(spawnedCars_ < numCars_)
+        {
+            Time.timeScale = 5.0f;
+            if (!Physics.CheckBox(transform.position, GetComponent<BoxCollider>().size * 0.5f, Quaternion.identity, LayerMask.NameToLayer("CarCheck")))
+            {
+                canSpawn_ = true;
+            }
+        }
+        else
+        {
+            Time.timeScale = 1.0f;
+        }*/
+
+        if (initialised_)
         {
             //move the generator along the entry points
             curEntryPoint_++;

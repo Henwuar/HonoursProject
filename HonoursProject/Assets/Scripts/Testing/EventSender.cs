@@ -9,6 +9,8 @@ public class EventSender : MonoBehaviour
     [SerializeField]
     private TrafficEvent prevEvent_;
 
+    private bool visible_;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -18,9 +20,13 @@ public class EventSender : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-	    if(curEvent_ != prevEvent_ && curEvent_ != TrafficEvent.TE_NONE)
+        visible_ = GetComponent<Renderer>().isVisible;
+        if(visible_)
         {
-            tracker_.AddEvent(curEvent_);
+            if (curEvent_ != prevEvent_ && curEvent_ != TrafficEvent.TE_NONE)
+            {
+                tracker_.AddEvent(curEvent_);
+            }
         }
         prevEvent_ = curEvent_;
 	}

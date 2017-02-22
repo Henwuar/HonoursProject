@@ -84,6 +84,19 @@ public class CameraController : MonoBehaviour
                 GameObject.FindGameObjectWithTag("Car").GetComponent<Car>().ToggleControlled();
                 toggled_ = false;
             }
+
+            if(Input.GetMouseButtonDown(0))
+            {
+            
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                Physics.Raycast(ray, out hit);
+                
+                if(hit.collider && hit.collider.tag == "Car")
+                {
+                    hit.collider.gameObject.GetComponent<Car>().ToggleControlled();
+                }
+            }
         }
 	}
 }

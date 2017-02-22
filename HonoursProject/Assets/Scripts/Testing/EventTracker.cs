@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public enum TrafficEvent { TE_NONE = -1, TE_COLLISION = 0, TE_STALLED = 1, TE_DISTRACTED = 2 };
+public enum TrafficEvent { TE_NONE = -1, TE_COLLISION = 0, TE_STALLED = 1, TE_DISTRACTED = 2, TE_PARKED = 3 };
 
 public class EventTracker : MonoBehaviour
 {
@@ -25,7 +25,7 @@ public class EventTracker : MonoBehaviour
         {
             outputPath_ = "C:\\TrafficEvents";
         }
-        eventCount_ = new float[3];
+        eventCount_ = new float[4];
         pathInput = transform.GetChild(0).GetComponent<InputField>();
         //set up the input field to pass its string to this object
         pathInput.onEndEdit.AddListener((input) => SetOutputPath(input));
@@ -59,6 +59,7 @@ public class EventTracker : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        //save out the file
         if(trackData_)
         {
             string eventFile = "";
@@ -67,7 +68,9 @@ public class EventTracker : MonoBehaviour
             eventFile += "STALLED:";
             eventFile += eventCount_[1].ToString() + "\n";
             eventFile += "DISTRACTED:";
-            eventFile += eventCount_[2].ToString();
+            eventFile += eventCount_[2].ToString() + "\n";
+            eventFile += "PARKED:";
+            eventFile += eventCount_[3].ToString();
 
             System.DateTime now = System.DateTime.Now;
             string fname = now.Year.ToString() + now.Month.ToString() + now.Day.ToString() + "_" + now.Hour.ToString() + now.Minute.ToString();
