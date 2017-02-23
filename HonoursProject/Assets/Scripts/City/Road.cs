@@ -107,13 +107,6 @@ public class Road : MonoBehaviour
         mesh.triangles = triangles_;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Debug.DrawLine(start_.position, end_.position);
-        
-    }
-
     public Junction GetJunction()
     {
         return endJunction_.GetComponent<Junction>();

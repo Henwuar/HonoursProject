@@ -61,6 +61,7 @@ GameObject:
   - 114: {fileID: 114000011369103512}
   - 114: {fileID: 114000011499458180}
   - 114: {fileID: 114000010399849956}
+  - 114: {fileID: 114000010347104398}
   m_Layer: 8
   m_Name: Car
   m_TagString: Car
@@ -826,6 +827,21 @@ Light:
   m_BounceIntensity: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114000010347104398
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010303715308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 958be33c6b28a604fa977b2f3ca1a44d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  affectedComponents_:
+  - {fileID: 114000010858333526}
+  frameSkip_: 20
+  maxUpdateDistance_: 100
 --- !u!114 &114000010399849956
 MonoBehaviour:
   m_ObjectHideFlags: 1

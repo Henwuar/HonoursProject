@@ -807,7 +807,6 @@ GameObject:
   - 4: {fileID: 544859559}
   - 114: {fileID: 544859558}
   - 65: {fileID: 544859560}
-  - 54: {fileID: 544859561}
   m_Layer: 0
   m_Name: City Generator
   m_TagString: Untagged
@@ -835,7 +834,7 @@ MonoBehaviour:
   size_: 500
   startPoint_: {x: -25, y: 0, z: -25}
   junctionSpacing_: 50
-  numCars_: 100
+  numCars_: 250
   randomisation_: 2
   buildingHeightBounds_: {x: 7.5, y: 20}
 --- !u!4 &544859559
@@ -863,21 +862,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &544859561
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 544859557}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 14
-  m_CollisionDetection: 1
 --- !u!1 &1004680200
 GameObject:
   m_ObjectHideFlags: 0

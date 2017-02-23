@@ -14,12 +14,19 @@ public class TrafficLight : MonoBehaviour
     {
         redLight_ = transform.FindChild("Red").GetComponent<Renderer>().material;
         greenLight_ = transform.FindChild("Green").GetComponent<Renderer>().material;
-	}
-	
-	// Update is called once per frame
-	void Update ()
+        greenLight_.color = Color.black;
+    }
+
+    public Signals GetSignal()
     {
-	    if(currentSignal_ == Signals.S_STOP)
+        return currentSignal_;
+    }
+
+    public void SetSignal(Signals signal)
+    {
+        currentSignal_ = signal;
+
+        if (currentSignal_ == Signals.S_STOP)
         {
             redLight_.color = Color.red;
             greenLight_.color = Color.black;
@@ -31,15 +38,5 @@ public class TrafficLight : MonoBehaviour
             greenLight_.color = Color.green;
             gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         }
-	}
-
-    public Signals GetSignal()
-    {
-        return currentSignal_;
-    }
-
-    public void SetSignal(Signals signal)
-    {
-        currentSignal_ = signal;
     }
 }

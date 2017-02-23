@@ -204,18 +204,19 @@ public class Car : MonoBehaviour
         }
 
         //resetting
-        RaycastHit hit;
+        
+        /*RaycastHit hit;
         Physics.Raycast(transform.position, transform.up, out hit);
         if (hit.collider && hit.collider.gameObject.tag == "Ground")
         {
             Reset();
-        }
+        }*/
 
         UpdateLights();
 
         //print(curRoad_);
 
-        Debug.DrawLine(transform.position, target_, Color.green);
+        //Debug.DrawLine(transform.position, target_, Color.green);
         //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
     }
@@ -315,9 +316,9 @@ public class Car : MonoBehaviour
         {
             angle = Input.GetAxis("Horizontal") * turnSpeed_;
             float speed = body_.velocity.magnitude;
-            float modifier = Mathf.Clamp(speed / maxSpeed_, 0.1f, 1.0f) * 10;
-            angle = Mathf.Clamp(angle / modifier, -turnSpeed_, turnSpeed_);
-            print(angle);
+            float maxTurn = Mathf.Clamp(1 - Mathf.Min((speed / maxSpeed_), 1.0f), 0.25f, 1.0f);
+            angle = angle * maxTurn;
+            //print(angle);
         }
         else
         {
