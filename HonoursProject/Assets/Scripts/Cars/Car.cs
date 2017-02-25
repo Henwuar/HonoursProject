@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum CarState { CS_MOVING, CS_STOPPING, CS_STALLED, CS_STARTING, CS_PARKING, CS_PARKED, CS_DEPARKING}
+public enum CarState { CS_MOVING, CS_STOPPING, CS_STALLED, CS_STARTING, CS_PARKING, CS_PARKED, CS_DEPARKING, CS_CRASHED}
 
 [RequireComponent(typeof(Rigidbody))]
 public class Car : MonoBehaviour
@@ -52,7 +52,7 @@ public class Car : MonoBehaviour
     private CarState prevState_ = CarState.CS_MOVING;
     private float curLightIntensity_;
 
-    private int[] statePriorities = {0, 0, 1, 1, 2, 2, 3};
+    private int[] statePriorities = {0, 0, 1, 1, 2, 2, 3, 4};
 
 	// Use this for initialization
 	void Start ()
@@ -102,6 +102,8 @@ public class Car : MonoBehaviour
 
     public void InitParked(Road road)
     {
+        Start();
+
         initialised_ = true;
         targets_ = new Queue<Vector3>();
 
@@ -125,6 +127,10 @@ public class Car : MonoBehaviour
         {
             personality.Init();
         }
+        if(purpose_)
+        {
+            purpose_.SetParkingSpace(parking.GetComponent<ParkingSpace>());
+        }
     }
 
 	// Update is called once per frame
@@ -138,6 +144,18 @@ public class Car : MonoBehaviour
 
         //reset the current light intensity
         curLightIntensity_ = brakeLightIntensity_ * 0.5f;
+
+
+        if (state_ == CarState.CS_CRASHED && !controlled_)
+        {
+            //if the car isn't visible reset it
+            if (!GetComponent<Renderer>().isVisible)
+            {
+                InitParked(curRoad_.GetComponent<Road>());
+            }
+            return;
+        }
+
         //clear the avoid target
         avoidTarget_ = null;
 
@@ -161,7 +179,22 @@ public class Car : MonoBehaviour
 
         //steer towards the target
         Steer();
-        
+
+
+        //update the tag of the car
+        if (controlled_)
+        {
+            tag = "Player";
+            GetComponent<Vision>().enabled = false;
+            state_ = CarState.CS_MOVING;
+        }
+        else
+        {
+            tag = "Car";
+            GetComponent<Vision>().enabled = true;
+        }
+
+        UpdateLights();
         //make sure the car isn't waiting
         if (waitTime_ > 0)
         {
@@ -189,19 +222,7 @@ public class Car : MonoBehaviour
         }
 
         //make the respawn point follow the player
-        respawnPoint_ = new Vector3(transform.position.x, respawnPoint_.y, transform.position.z);
-
-        //update the tag of the car
-        if (controlled_)
-        {
-            tag = "Player";
-            GetComponent<Vision>().enabled = false;
-        }
-        else
-        {
-            tag = "Car";
-            GetComponent<Vision>().enabled = true;
-        }
+        //respawnPoint_ = new Vector3(transform.position.x, respawnPoint_.y, transform.position.z);
 
         //resetting
         
@@ -212,7 +233,6 @@ public class Car : MonoBehaviour
             Reset();
         }*/
 
-        UpdateLights();
 
         //print(curRoad_);
 
@@ -264,7 +284,7 @@ public class Car : MonoBehaviour
 
     void UpdateLights()
     {
-        if(state_ == CarState.CS_STALLED || state_ == CarState.CS_PARKED)
+        if(state_ == CarState.CS_STALLED || state_ == CarState.CS_PARKED || state_ == CarState.CS_CRASHED)
         {
             Light[] lights = GetComponentsInChildren<Light>();
             foreach (Light light in lights)
@@ -538,7 +558,10 @@ public class Car : MonoBehaviour
         //check if the new state can be set based on its priority
         if (statePriorities[(int)newState] >= statePriorities[(int)state_] || overridePriority)
         {
-            state_ = newState;
+            if(state_ != CarState.CS_CRASHED)
+            {
+                state_ = newState;
+            }
         }
     }
 

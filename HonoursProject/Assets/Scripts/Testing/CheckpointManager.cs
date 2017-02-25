@@ -34,10 +34,10 @@ public class CheckpointManager : MonoBehaviour
 
             //set up the string to display
             string clockText = "";
-            float milliseconds = timer_ - Mathf.Floor(timer_);
-            float seconds = Mathf.Floor(timer_) % 60 + milliseconds;
-            float minutes = Mathf.Floor(timer_ / 60);
-            clockText = minutes.ToString() + ":" + seconds.ToString("F2");
+            int milliseconds = (int)((timer_ - Mathf.Floor(timer_)) * 100);
+            int seconds = Mathf.FloorToInt(timer_) % 60;// + milliseconds;
+            int minutes = Mathf.FloorToInt(timer_ / 60);
+            clockText = minutes.ToString("D2") + ":" + seconds.ToString("D2") + "." + milliseconds.ToString("D2");
             //apply the string
             clock_.text = clockText;
         }

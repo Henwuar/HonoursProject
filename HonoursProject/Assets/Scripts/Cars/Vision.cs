@@ -143,7 +143,19 @@ public class Vision : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        body_.AddForce(-transform.forward * body_.mass);
+        if(collision.relativeVelocity.magnitude > car_.GetMaxSpeed() * 0.25f)
+        {
+            car_.SetState(CarState.CS_CRASHED);
+            print("crash");
+        }
+        else
+        {
+            print("bump");
+            if(purpose_)
+            {
+                purpose_.SetParkingChance(101.0f);
+            }
+        }
         GameObject other = collision.collider.gameObject;
         if (other.tag == "Car" || other.tag == "Player")
         {
@@ -170,7 +182,7 @@ public class Vision : MonoBehaviour
     void OnCollisionStay(Collision collision)
     {
         GameObject other = collision.collider.gameObject;
-        if(other.tag == "Car" || other.tag == "Player")
+        if((other.tag == "Car" || other.tag == "Player") && car_.GetState() != CarState.CS_CRASHED)
         {
             car_.SetState(CarState.CS_MOVING);
             //head on collision

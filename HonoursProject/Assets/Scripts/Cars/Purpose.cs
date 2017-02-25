@@ -86,4 +86,14 @@ public class Purpose : MonoBehaviour
     {
         return parkingTime_;
     }
+
+    public void SetParkingSpace(ParkingSpace newSpace)
+    {
+        curParking_ = newSpace;
+    }
+
+    public void SetParkingChance(float value)
+    {
+        parkChance_ = value;
+    }
 }

@@ -35,6 +35,10 @@ public class Personality : MonoBehaviour
             defensiveness_ = Random.Range(0.0f, 1.0f);
             inattentiveness_ = Random.Range(0.0f, 1.0f);
 
+            if(purpose_)
+            {
+                purpose_.SetParkingChance(Random.Range(5, 50));
+            }
             //print("a: " + aggression_ + "   d: " + defensiveness_ + "   i: " + inattentiveness_);
         }
     }
