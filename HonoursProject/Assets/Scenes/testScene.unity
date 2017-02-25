@@ -834,7 +834,7 @@ MonoBehaviour:
   size_: 500
   startPoint_: {x: -25, y: 0, z: -25}
   junctionSpacing_: 50
-  numCars_: 250
+  numCars_: 200
   randomisation_: 2
   buildingHeightBounds_: {x: 7.5, y: 20}
 --- !u!4 &544859559
