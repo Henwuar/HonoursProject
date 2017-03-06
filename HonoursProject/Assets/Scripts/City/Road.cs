@@ -13,6 +13,8 @@ public class Road : MonoBehaviour
     private Transform end_;
     [SerializeField]
     private Vector2 parkingSize_;
+    [SerializeField]
+    private float congestedCheckTime_;
 
     private Vector3 direction_;
 
@@ -20,6 +22,9 @@ public class Road : MonoBehaviour
     private GameObject startJunction_;
     [SerializeField]
     private List<GameObject> parking_;
+
+    private bool congested_;
+    private float congestionTimer_;
 
     //mesh values
     private Vector3[] vertices_;
@@ -94,6 +99,7 @@ public class Road : MonoBehaviour
         }
 
         direction_ = forward;
+        //GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     public void UpdateMesh()

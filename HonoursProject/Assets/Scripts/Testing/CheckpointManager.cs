@@ -17,6 +17,8 @@ public class CheckpointManager : MonoBehaviour
 
     private float timer_ = 0.0f;
     private bool timing_ = false;
+    private bool complete_ = false;
+    private Vector2 citySize_;
 
     // Use this for initialization
 	void Start ()
@@ -32,19 +34,15 @@ public class CheckpointManager : MonoBehaviour
         {
             timer_ += Time.deltaTime;
 
-            //set up the string to display
-            string clockText = "";
-            int milliseconds = (int)((timer_ - Mathf.Floor(timer_)) * 100);
-            int seconds = Mathf.FloorToInt(timer_) % 60;// + milliseconds;
-            int minutes = Mathf.FloorToInt(timer_ / 60);
-            clockText = minutes.ToString("D2") + ":" + seconds.ToString("D2") + "." + milliseconds.ToString("D2");
+
             //apply the string
-            clock_.text = clockText;
+            clock_.text = GetTimerString();
         }
 	}
 
     public void Init(int cityWidth, int cityHeight)
     {
+        print("initing");
         //make sure start has been called
         Start();
 
@@ -73,6 +71,7 @@ public class CheckpointManager : MonoBehaviour
             }
         }
 
+        citySize_ = new Vector2(cityWidth, cityHeight);
         transform.parent.position = checkpoints_.Peek();
     }
 
@@ -88,10 +87,19 @@ public class CheckpointManager : MonoBehaviour
             else
             {
                 timing_ = false;
-                print("DONE: " + timer_);
+                complete_ = true;
+                GetComponent<Renderer>().enabled = false;
             }
         }
         
+    }
+
+    public void Reset()
+    {
+        Init(Mathf.FloorToInt(citySize_.x), Mathf.FloorToInt(citySize_.y));
+        GetComponent<Renderer>().enabled = true;
+        complete_ = false;
+        timer_ = 0;
     }
 
     public void StartTimer()
@@ -102,5 +110,34 @@ public class CheckpointManager : MonoBehaviour
     public void StopTimer()
     {
         timing_ = false;
+    }
+
+    public Vector3 GetStart()
+    {
+        return checkpoints_.Peek();
+    }
+
+    public bool Complete()
+    {
+        return complete_;
+    }
+
+    public string GetTimerString()
+    {
+        string clockText = "";
+        int milliseconds = (int)((timer_ - Mathf.Floor(timer_)) * 100);
+        int seconds = Mathf.FloorToInt(timer_) % 60;// + milliseconds;
+        int minutes = Mathf.FloorToInt(timer_ / 60);
+        clockText = minutes.ToString("D2") + ":" + seconds.ToString("D2") + "." + milliseconds.ToString("D2");
+        return clockText;
+    }
+
+    public Vector3 GetCheckpoint(int index)
+    {
+        if(index < numCheckpoints_)
+        {
+            return checkpoints_.ToArray()[index];
+        }
+        return Vector3.zero;
     }
 }

@@ -33,6 +33,12 @@ public class Car : MonoBehaviour
     private Vector2 reverseAngleLimits_;
     [SerializeField]
     private Vector2 dragValues_;
+    [SerializeField]
+    private float minEnginePitch_;
+    [SerializeField]
+    private float enginePitchMultiplier_;
+    [SerializeField]
+    AudioClip[] hornNoises_;
 
     private Rigidbody body_;
     private Vector3 target_;
@@ -41,6 +47,7 @@ public class Car : MonoBehaviour
     private Purpose purpose_ = null;
     private GameObject avoidTarget_;
     private Queue<Vector3> targets_;
+    [SerializeField]
     private GameObject curRoad_;
     private int gear_;
     private Vector3 respawnPoint_;
@@ -51,6 +58,7 @@ public class Car : MonoBehaviour
     private CarState state_ = CarState.CS_MOVING;
     private CarState prevState_ = CarState.CS_MOVING;
     private float curLightIntensity_;
+    private AudioSource audioSource_;
 
     private int[] statePriorities = {0, 0, 1, 1, 2, 2, 3, 4};
 
@@ -67,6 +75,8 @@ public class Car : MonoBehaviour
         vision_ = GetComponent<Vision>();
 
         body_.centerOfMass = new Vector3(0, -0.95f);
+
+        audioSource_ = GetComponent<AudioSource>();
     }
 
     public void Init()
@@ -89,9 +99,13 @@ public class Car : MonoBehaviour
         //chose a target road from them
         //int chosenRoad = Random.Range(0, roads.GetLength(0));
         target_ = closestRoad.transform.position;
-        curRoad_ = closestRoad.transform.parent.gameObject;
-        targets_.Enqueue(curRoad_.GetComponent<Road>().GetEnd().position);
-        transform.LookAt(target_);
+        curRoad_ = closestRoad.transform.gameObject;
+        if(curRoad_)
+        {
+            targets_.Enqueue(curRoad_.GetComponent<Road>().GetEnd().transform.position);
+            transform.LookAt(target_);
+        }
+        
 
         Personality personality = GetComponent<Personality>();
         if(personality)
@@ -109,27 +123,35 @@ public class Car : MonoBehaviour
 
         curRoad_ = road.gameObject;
         GameObject parking = road.GetParkingSpace();
-
-        transform.position = parking.transform.position + Vector3.up;
-        transform.LookAt(transform.position + parking.transform.forward, Vector3.up);
-        parking.GetComponent<ParkingSpace>().SetAvailable(false);
-        state_ = CarState.CS_DEPARKING;
-
-        foreach(Vector3 target in parking.GetComponent<ParkingSpace>().GetExitTargets())
+        if (parking)
         {
-            targets_.Enqueue(target);
+
+            transform.position = parking.transform.position + Vector3.up;
+            transform.LookAt(transform.position + parking.transform.forward, Vector3.up);
+            parking.GetComponent<ParkingSpace>().SetAvailable(false);
+            state_ = CarState.CS_DEPARKING;
+
+            foreach (Vector3 target in parking.GetComponent<ParkingSpace>().GetExitTargets())
+            {
+                targets_.Enqueue(target);
+            }
+
+            target_ = targets_.Dequeue();
+
+            Personality personality = GetComponent<Personality>();
+            if (personality)
+            {
+                personality.Init();
+            }
+            if (purpose_)
+            {
+                purpose_.SetParkingSpace(parking.GetComponent<ParkingSpace>());
+            }
+
         }
-
-        target_ = targets_.Dequeue();
-
-        Personality personality = GetComponent<Personality>();
-        if (personality)
+        else
         {
-            personality.Init();
-        }
-        if(purpose_)
-        {
-            purpose_.SetParkingSpace(parking.GetComponent<ParkingSpace>());
+            targets_.Enqueue(road.GetComponent<Road>().GetEnd().position);
         }
     }
 
@@ -144,7 +166,7 @@ public class Car : MonoBehaviour
 
         //reset the current light intensity
         curLightIntensity_ = brakeLightIntensity_ * 0.5f;
-
+        UpdateAudio();
 
         if (state_ == CarState.CS_CRASHED && !controlled_)
         {
@@ -323,6 +345,35 @@ public class Car : MonoBehaviour
         }
     }
 
+    void UpdateAudio()
+    {
+        //engine off
+        if(state_ == CarState.CS_CRASHED ||  state_ == CarState.CS_PARKED || state_ == CarState.CS_STALLED)
+        {
+            audioSource_.Stop();
+        }
+        //starting
+        else if(state_ == CarState.CS_STARTING)
+        {
+            if(!audioSource_.isPlaying)
+            {
+                audioSource_.Play();
+            }
+            audioSource_.volume = Random.Range(0.0f, 1.0f);
+            audioSource_.pitch = minEnginePitch_ + enginePitchMultiplier_;
+        }
+        //moving normally
+        else
+        {
+            if(!audioSource_.isPlaying)
+            {
+                audioSource_.Play();
+            }
+            audioSource_.volume = 1.0f;
+            audioSource_.pitch = minEnginePitch_ + (body_.velocity.magnitude / maxSpeed_) * enginePitchMultiplier_;
+        }
+    }
+
     //rotates the vehicle based on input
     public void Steer()
     {
@@ -385,7 +436,7 @@ public class Car : MonoBehaviour
             canMove = true;
         }
         if (canMove)
-        {
+        {    
             if(error_ && amount != 0 && !controlled_)
             {
                 error_.TestStall();
@@ -613,5 +664,12 @@ public class Car : MonoBehaviour
     public void SetMaxSpeed(float value)
     {
         maxSpeed_ = value;
+    }
+
+    public void ToggleImprovements(bool value)
+    {
+        GetComponent<Personality>().enabled = value;
+        GetComponent<Purpose>().enabled = value;
+        GetComponent<Error>().enabled = value;
     }
 }

@@ -14,10 +14,16 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private Transform arrow_;
 
-    private Vector3 eulerRotation;
+    private Vector3 eulerRotation_;
+    private GameObject following_ = null;
 
     private bool toggled_ = false;
 	
+    public void Init()
+    {
+        eulerRotation_ = transform.eulerAngles;
+    }
+
     void Update()
     {
         if (!toggled_ && Input.GetButtonDown("Toggle"))
@@ -48,14 +54,27 @@ public class CameraController : MonoBehaviour
             float playerDir = player.GetComponentInChildren<WheelCollider>().steerAngle;
             transform.LookAt(player.transform.position +  (new Vector3(player.transform.forward.x, 0, player.transform.forward.z) * 3));// + (new Vector3(player.GetComponent<Rigidbody>().velocity.x, 0, player.GetComponent<Rigidbody>().velocity.z)));
 
-            if (toggled_)
+            /*if (toggled_)
             {
                 player.GetComponent<Car>().ToggleControlled();
                 player.GetComponent<Car>().Init();
                 toggled_ = false;
-            }
+            }*/
 
-            GameObject.FindGameObjectWithTag("CheckpointManager").GetComponent<CheckpointManager>().StartTimer();
+            //GameObject.FindGameObjectWithTag("CheckpointManager")
+            //checkpoint.GetComponent<CheckpointManager>().StartTimer();
+        }
+        else if(following_)
+        {
+            transform.position = following_.GetComponent<Car>().GetCurRoad().GetComponent<Road>().GetJunction().gameObject.transform.position + Vector3.up * 5;
+            transform.LookAt(following_.transform);
+
+            if(toggled_)
+            {
+                following_ = null;
+                toggled_ = false;
+                eulerRotation_ = transform.eulerAngles;
+            }
         }
         else
         {
@@ -65,11 +84,11 @@ public class CameraController : MonoBehaviour
             //right mouse button
             if (Input.GetMouseButton(1))
             {
-                eulerRotation.y += Input.GetAxis("Mouse X") * rotateSpeed_;
-                eulerRotation.x -= Input.GetAxis("Mouse Y") * rotateSpeed_;
+                eulerRotation_.y += Input.GetAxis("Mouse X") * rotateSpeed_;
+                eulerRotation_.x -= Input.GetAxis("Mouse Y") * rotateSpeed_;
             }
 
-            transform.rotation = Quaternion.Euler(new Vector3(eulerRotation.x, eulerRotation.y, 0));
+            transform.rotation = Quaternion.Euler(new Vector3(eulerRotation_.x, eulerRotation_.y, 0));
 
             Vector3 moveDirection;
             moveDirection.x = Input.GetAxis("Vertical") * moveSpeed_;
@@ -85,20 +104,19 @@ public class CameraController : MonoBehaviour
 
             if(toggled_)
             {
-                GameObject.FindGameObjectWithTag("Car").GetComponent<Car>().ToggleControlled();
+                following_ = GameObject.FindGameObjectWithTag("Car");
                 toggled_ = false;
             }
 
             if(Input.GetMouseButtonDown(0))
             {
-            
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 Physics.Raycast(ray, out hit);
                 
                 if(hit.collider && hit.collider.tag == "Car")
                 {
-                    hit.collider.gameObject.GetComponent<Car>().ToggleControlled();
+                    following_ = hit.collider.gameObject;
                 }
             }
         }

@@ -15,6 +15,8 @@ public class Vision : MonoBehaviour
     private float lookAngle_;
     [SerializeField]
     private float lookStepAmount_;
+    [SerializeField]
+    private AudioClip crashNoise_;
 
     private Car car_;
     private Error error_ = null;
@@ -143,14 +145,20 @@ public class Vision : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if(collision.relativeVelocity.magnitude > car_.GetMaxSpeed() * 0.25f)
+        if(collision.collider.tag != "Ground")
+        {
+            GetComponent<AudioSource>().PlayOneShot(crashNoise_);
+        }
+        if(tag == "Player")
+        {
+            return;
+        }
+        if (collision.relativeVelocity.magnitude > car_.GetMaxSpeed() * 0.25f)
         {
             car_.SetState(CarState.CS_CRASHED);
-            print("crash");
         }
         else
         {
-            print("bump");
             if(purpose_)
             {
                 purpose_.SetParkingChance(101.0f);
@@ -181,6 +189,10 @@ public class Vision : MonoBehaviour
 
     void OnCollisionStay(Collision collision)
     {
+        if (tag == "Player")
+        {
+            return;
+        }
         GameObject other = collision.collider.gameObject;
         if((other.tag == "Car" || other.tag == "Player") && car_.GetState() != CarState.CS_CRASHED)
         {
@@ -213,6 +225,10 @@ public class Vision : MonoBehaviour
 
     void OnCollisionExit(Collision collision)
     {
+        if (tag == "Player")
+        {
+            return;
+        }
         GameObject other = collision.collider.gameObject;
         if (other.tag == "Car")
         {

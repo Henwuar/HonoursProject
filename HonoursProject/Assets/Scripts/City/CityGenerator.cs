@@ -158,6 +158,11 @@ public class CityGenerator : MonoBehaviour
                 canSpawn_ = true;
                 initialised_ = true;
                 GetComponent<BoxCollider>().enabled = true;
+
+                Camera.main.transform.position = startPoint_ + Vector3.up * junctionSpacing_;
+                Vector3 lookAtPoint = Vector3.Lerp(startPoint_, startPoint_ + Vector3.forward * size_ + Vector3.right * size_, 0.25f);
+                Camera.main.transform.LookAt(lookAtPoint);
+                Camera.main.GetComponent<CameraController>().Init();
                 //SpawnCar();
             }
         }
