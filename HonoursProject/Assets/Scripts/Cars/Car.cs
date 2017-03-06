@@ -45,6 +45,7 @@ public class Car : MonoBehaviour
     private Vision vision_ = null;
     private Error error_ = null;
     private Purpose purpose_ = null;
+    private Personality personality_ = null;
     private GameObject avoidTarget_;
     private Queue<Vector3> targets_;
     [SerializeField]
@@ -59,6 +60,8 @@ public class Car : MonoBehaviour
     private CarState prevState_ = CarState.CS_MOVING;
     private float curLightIntensity_;
     private AudioSource audioSource_;
+    [SerializeField]
+    List<GameObject> lights_;
 
     private int[] statePriorities = {0, 0, 1, 1, 2, 2, 3, 4};
 
@@ -73,10 +76,18 @@ public class Car : MonoBehaviour
         error_ = GetComponent<Error>();
         purpose_ = GetComponent<Purpose>();
         vision_ = GetComponent<Vision>();
+        personality_ = GetComponent<Personality>();
 
         body_.centerOfMass = new Vector3(0, -0.95f);
 
         audioSource_ = GetComponent<AudioSource>();
+        audioSource_.volume = 0.5f;
+        //gather all the lights
+        lights_ = new List<GameObject>();
+        lights_.Add(transform.Find("Headlights").GetChild(0).gameObject);
+        lights_.Add(transform.Find("Headlights").GetChild(1).gameObject);
+        lights_.Add(transform.Find("Taillights").GetChild(0).gameObject);
+        lights_.Add(transform.Find("Taillights").GetChild(1).gameObject);
     }
 
     public void Init()
@@ -181,7 +192,6 @@ public class Car : MonoBehaviour
         //clear the avoid target
         avoidTarget_ = null;
 
-
         //update the components based on state
         if (state_ == CarState.CS_PARKED)
         {
@@ -216,7 +226,6 @@ public class Car : MonoBehaviour
             GetComponent<Vision>().enabled = true;
         }
 
-        UpdateLights();
         //make sure the car isn't waiting
         if (waitTime_ > 0)
         {
@@ -243,11 +252,12 @@ public class Car : MonoBehaviour
             body_.drag = dragValues_.y;
         }
 
+        UpdateLights();
         //make the respawn point follow the player
         //respawnPoint_ = new Vector3(transform.position.x, respawnPoint_.y, transform.position.z);
 
         //resetting
-        
+
         /*RaycastHit hit;
         Physics.Raycast(transform.position, transform.up, out hit);
         if (hit.collider && hit.collider.gameObject.tag == "Ground")
@@ -306,18 +316,27 @@ public class Car : MonoBehaviour
 
     void UpdateLights()
     {
-        if(state_ == CarState.CS_STALLED || state_ == CarState.CS_PARKED || state_ == CarState.CS_CRASHED)
+        if (state_ == CarState.CS_STALLED || state_ == CarState.CS_PARKED || state_ == CarState.CS_CRASHED)
         {
-            Light[] lights = GetComponentsInChildren<Light>();
-            foreach (Light light in lights)
+            foreach(GameObject light in lights_)
             {
-                light.intensity = 0;
+                Material material= light.GetComponent<Renderer>().material;
+                Color curColour = material.GetColor("_MainColour");
+                curColour.a = 0.1f;
+                material.SetColor("_MainColour", curColour);
             }
         }
         else if (state_ == CarState.CS_STARTING)
         {
             float intensity = Random.Range(brakeLightIntensity_ * 0.5f, 2.0f * brakeLightIntensity_);
-            Light[] tailLights = transform.FindChild("Taillights").GetComponentsInChildren<Light>();
+            foreach (GameObject light in lights_)
+            {
+                Material material = light.GetComponent<Renderer>().material;
+                Color curColour = material.GetColor("_MainColour");
+                curColour.a = intensity;
+                material.SetColor("_MainColour", curColour);
+            }
+            /*Light[] tailLights = transform.FindChild("Taillights").GetComponentsInChildren<Light>();
             foreach (Light light in tailLights)
             {
                 light.intensity = intensity;
@@ -327,12 +346,26 @@ public class Car : MonoBehaviour
             foreach (Light light in headLights)
             {
                 light.intensity = intensity;
-            }
+            }*/
         }
         else
         {
             //print(curLightIntensity_);
-            Light[] tailLights = transform.FindChild("Taillights").GetComponentsInChildren<Light>();
+            foreach (GameObject light in lights_)
+            {
+                Material material = light.GetComponent<Renderer>().material;
+                Color curColour = material.GetColor("_MainColour");
+                if (light.transform.parent.name == "Headlights")
+                {
+                    curColour.a = headLightIntensity_;
+                }
+                else
+                {
+                    curColour.a = curLightIntensity_;
+                }
+                material.SetColor("_MainColour", curColour);
+            }
+            /*Light[] tailLights = transform.FindChild("Taillights").GetComponentsInChildren<Light>();
             foreach (Light light in tailLights)
             {
                 light.intensity = curLightIntensity_;
@@ -341,7 +374,7 @@ public class Car : MonoBehaviour
             foreach (Light light in headLights)
             {
                 light.intensity = headLightIntensity_;
-            }
+            }*/
         }
     }
 
@@ -369,7 +402,7 @@ public class Car : MonoBehaviour
             {
                 audioSource_.Play();
             }
-            audioSource_.volume = 1.0f;
+            audioSource_.volume = 0.25f;
             audioSource_.pitch = minEnginePitch_ + (body_.velocity.magnitude / maxSpeed_) * enginePitchMultiplier_;
         }
     }
@@ -668,8 +701,8 @@ public class Car : MonoBehaviour
 
     public void ToggleImprovements(bool value)
     {
-        GetComponent<Personality>().enabled = value;
-        GetComponent<Purpose>().enabled = value;
-        GetComponent<Error>().enabled = value;
+        personality_.enabled = value;
+        purpose_.enabled = value;
+        error_.enabled = value;
     }
 }

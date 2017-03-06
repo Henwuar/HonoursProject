@@ -74,6 +74,13 @@ public class TestingManager : MonoBehaviour
             carRotation.y = Mathf.Round(carRotation.y / 90) * 90;
             car_.transform.eulerAngles = carRotation;
             stage_ = 1;
+            
+            foreach(GameObject car in GameObject.FindGameObjectsWithTag("Car"))
+            {
+                car.GetComponent<Car>().ToggleImprovements(useImprovements_);
+            }
+            
+
         }
     }
 
@@ -131,9 +138,15 @@ public class TestingManager : MonoBehaviour
         }
         running_ = false;
         timer_ = countIn_;
-        stage_ = 0;
         checkpoints_.Reset();
         countDownText_.color = Color.black;
         countDownText_.text = "";
+        if(test_ == TestingType.TT_BOTH)
+        {
+            useImprovements_ = true;
+        }
+        stage_ = 0;
+        
+        
     }
 }

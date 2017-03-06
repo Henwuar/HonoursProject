@@ -42,7 +42,6 @@ public class CheckpointManager : MonoBehaviour
 
     public void Init(int cityWidth, int cityHeight)
     {
-        print("initing");
         //make sure start has been called
         Start();
 
