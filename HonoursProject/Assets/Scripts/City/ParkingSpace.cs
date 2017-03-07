@@ -8,6 +8,11 @@ public class ParkingSpace : MonoBehaviour
     private bool available_;
     private float length_;
 
+    void Update()
+    {
+        Debug.DrawRay(transform.position, transform.forward, Color.red);
+    }
+
     public void SetAvailable(bool value)
     {
         available_ = value;
@@ -79,8 +84,12 @@ public class ParkingSpace : MonoBehaviour
             //add the first target - point on road before parking
             targets.Add(parentRoad.GetPointOnRoad(transform.position - transform.forward*length_));
             //move the car into the spot
-            targets.Add(transform.position - transform.forward * length_*0.25f);
-            //add the final stopping place
+            targets.Add(transform.position - transform.forward * length_*0.25f + transform.right*0.5f);
+            //move the car further into the spot
+            targets.Add(transform.position);// + transform.forward * length_*0.25f);
+            //align the car better
+            targets.Add(transform.position + transform.forward * length_ * 0.25f + transform.right * 0.5f);
+            targets.Add(transform.position - transform.forward * length_ * 0.25f);// - transform.right * 0.5f);
             targets.Add(transform.position);
         }
 
@@ -103,4 +112,9 @@ public class ParkingSpace : MonoBehaviour
         return targets;
     }
 
+
+    public Vector3 GetDirection()
+    {
+        return transform.forward;
+    }
 }

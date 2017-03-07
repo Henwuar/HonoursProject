@@ -28,6 +28,7 @@ public class Vision : MonoBehaviour
     private bool sweep_ = true;
     private float startAngle_ = 0;
     private bool prevObjectAhead_ = false;
+    private bool objectAhead_ = false;
 
 	// Use this for initialization
 	void Start ()
@@ -69,7 +70,7 @@ public class Vision : MonoBehaviour
         float lookAhead = Mathf.Clamp(body_.velocity.magnitude, 1, lookAheadMultiplier_);
         Debug.DrawLine(transform.position, transform.position + (transform.forward + lookDirection.normalized).normalized * visionDistance_ * lookAhead, Color.blue);
 
-        bool objectAhead = Physics.Raycast(ray, out hit, visionDistance_*lookAhead);
+        objectAhead_ = Physics.Raycast(ray, out hit, visionDistance_*lookAhead);
 
         bool stopping = car_.GetState() == CarState.CS_PARKING || car_.GetState() == CarState.CS_DEPARKING;
         float stoppingMultiplier = stopping ? car_.GetFineMovementMutliplier() : 1.0f;
@@ -143,7 +144,7 @@ public class Vision : MonoBehaviour
             car_.SetState(CarState.CS_MOVING);
         }
 
-        if(!objectAhead)
+        if(!objectAhead_)
         {
             if(prevObjectAhead_)
             {
@@ -153,12 +154,13 @@ public class Vision : MonoBehaviour
                 }
             }
         }
-        prevObjectAhead_ = objectAhead;
+        prevObjectAhead_ = objectAhead_;
 	}
 
     void OnCollisionEnter(Collision collision)
     {
-        if(collision.collider.tag != "Ground")
+        GameObject other = collision.collider.gameObject;
+        if (other.tag != "Ground")
         {
             GetComponent<AudioSource>().PlayOneShot(crashNoise_);
         }
@@ -174,10 +176,10 @@ public class Vision : MonoBehaviour
         {
             if(purpose_)
             {
+                car_.MoveAwayFrom(other);
                 purpose_.SetParkingChance(101.0f);
             }
         }
-        GameObject other = collision.collider.gameObject;
         if (other.tag == "Car" || other.tag == "Player")
         {
             //make sure only one car registers the event
@@ -295,5 +297,10 @@ public class Vision : MonoBehaviour
     public void SetLookAngle(float value)
     {
         lookAngle_ = value;
+    }
+
+    public bool ObjectAhead()
+    {
+        return objectAhead_;
     }
 }

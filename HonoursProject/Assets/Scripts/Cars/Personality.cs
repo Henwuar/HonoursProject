@@ -73,6 +73,17 @@ public class Personality : MonoBehaviour
             vision_.SetLookAngle(lookAngle);
         }
 
+        if(purpose_)
+        {
+            float impatience = purpose_.GetImpatience();
+            impatience += GetModifier(impatience, aggression_);
+            purpose_.SetImpatience(impatience);
+
+            float impatienceSpeed = purpose_.GetImpatienceIncSpeed();
+            impatienceSpeed += GetModifier(impatienceSpeed, aggression_);
+            purpose_.SetImpatenceIncSpeed(impatienceSpeed);
+        }
+
         //increase their top speed
         float topSpeed = car_.GetMaxSpeed();
         topSpeed += GetModifier(topSpeed, aggression_);
@@ -111,6 +122,14 @@ public class Personality : MonoBehaviour
             distractionChance -= GetModifier(distractionChance, defensiveness_);
             error_.SetDistractionChance(distractionChance);
         }
+
+        if (purpose_)
+        {
+            //reduce angle that the car will try and achieve while parking
+            float parkAngle = purpose_.GetParkedAngle();
+            parkAngle -= GetModifier(parkAngle, inattentiveness_);
+            purpose_.SetParkedAngle(parkAngle);
+        }
     }
 
     void InitAttentiveness()
@@ -131,6 +150,14 @@ public class Personality : MonoBehaviour
             float reactionTime = error_.GetReactionTime(false);
             reactionTime += GetModifier(reactionTime, inattentiveness_);
             error_.SetReactionTime(reactionTime);
+        }
+
+        if(purpose_)
+        {
+            //increase angle that the car will try and achieve while parking
+            float parkAngle = purpose_.GetParkedAngle();
+            parkAngle += GetModifier(parkAngle, inattentiveness_);
+            purpose_.SetParkedAngle(parkAngle);
         }
     }
 }

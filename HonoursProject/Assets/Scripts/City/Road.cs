@@ -78,10 +78,10 @@ public class Road : MonoBehaviour
         {
             float roadLength = (endPos - startPos).magnitude;
             //adjust to trim off ends
-            roadLength -= parkingSize_.y;
-            int numRoads = Mathf.FloorToInt(roadLength / parkingSize_.y);
+            roadLength -= parkingSize_.y * 2;
+            int numRoads = Mathf.FloorToInt(roadLength / parkingSize_.y) - 1;
             Vector3 parkPos = startPos - right * width - right * parkingSize_.x * 0.5f;
-            parkPos += forward * parkingSize_.y;
+            parkPos += forward * parkingSize_.y*2;
             for (int i = 0; i < numRoads; i++)
             {
                 //create the new parking space

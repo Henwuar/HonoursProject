@@ -38,8 +38,6 @@ public class Car : MonoBehaviour
     [SerializeField]
     private float enginePitchMultiplier_;
     [SerializeField]
-    AudioClip[] hornNoises_;
-    [SerializeField]
     private float crashResetTime_;
 
     private Rigidbody body_;
@@ -61,7 +59,6 @@ public class Car : MonoBehaviour
     private CarState state_ = CarState.CS_MOVING;
     private float curLightIntensity_;
     private AudioSource audioSource_;
-    [SerializeField]
     List<GameObject> lights_;
     private float resetTimer_;
 
@@ -280,7 +277,7 @@ public class Car : MonoBehaviour
 
         //print(curRoad_);
 
-        //Debug.DrawLine(transform.position, target_, Color.green);
+        Debug.DrawLine(transform.position, target_, Color.green);
         //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
         //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
     }
@@ -445,27 +442,51 @@ public class Car : MonoBehaviour
                 targetPos = avoidTarget_.transform.position - Vector3.Cross(Vector3.up, avoidTarget_.transform.position - transform.position);
             }
             //get the abosulte angle to the point
-            angle = Vector3.Angle(transform.forward, targetPos - transform.position);
-            angle = Mathf.Abs(angle);
+            Vector3 direction = targetPos - transform.position;
+            if(Reversing())
+            {
+                direction = Vector3.Reflect(direction, Vector3.forward);
+            }
+
+            angle = Vector3.Angle(transform.forward, direction);
+            //angle = Mathf.Abs(angle);
 
             //clamp the angle correcting for reversing
-            if(angle > reverseAngleLimits_.x && angle < reverseAngleLimits_.y)
+            /*if(Reversing())
             {
+                angle = Vector3.Angle(-transform.forward, targetPos - transform.position);
+                //Mathf.Clamp(angle, -turnSpeed_, turnSpeed_);
                 angle -= 180;
                 angle *= -1;
-            }
-            else if (Mathf.Abs(angle) > turnSpeed_)
+            }*/
+            if (Mathf.Abs(angle) > turnSpeed_)
             {
                 angle = turnSpeed_;
             }
             //get the right direction
-            angle *= Mathf.Sign(Vector3.Cross(transform.forward, targetPos - transform.position).y);
+            if(!Reversing())
+            {
+                angle *= Mathf.Sign(Vector3.Cross(transform.forward, direction).y);
+            }
+            else
+            {
+                angle *= Mathf.Sign(Vector3.Cross(direction, transform.forward).y);
+            }
+            
             
         }
 
         //steer the colliders
-        left.steerAngle = Mathf.Lerp(left.steerAngle, angle, wheelRotationSpeed_ * Time.deltaTime);
-        right.steerAngle = Mathf.Lerp(right.steerAngle, angle, wheelRotationSpeed_ * Time.deltaTime);
+        if(!Reversing())
+        {
+            left.steerAngle = Mathf.Lerp(left.steerAngle, angle, wheelRotationSpeed_ * Time.deltaTime);
+            right.steerAngle = Mathf.Lerp(right.steerAngle, angle, wheelRotationSpeed_ * Time.deltaTime);
+        }
+        else
+        {
+            left.steerAngle = angle;
+            right.steerAngle = angle;
+        }
 
         //rotate the meshes
         left.gameObject.transform.localRotation = Quaternion.Euler(0, left.steerAngle, 0);
@@ -544,9 +565,8 @@ public class Car : MonoBehaviour
             if (body_.velocity.magnitude < maxSpeed_ * distanceMultiplier)
             {
                 float steerAngle = Mathf.Abs(transform.FindChild("wheel_FL").GetComponent<WheelCollider>().steerAngle);
-                float targetAngle = AngleToTarget();
                 float direction = 1.0f;
-                if (targetAngle > reverseAngleLimits_.x && targetAngle < reverseAngleLimits_.y && body_.velocity.magnitude < maxSpeed_ * 0.25f)
+                if(Reversing())
                 {
                     direction *= -1.0f;
                 }
@@ -614,6 +634,14 @@ public class Car : MonoBehaviour
         
     }
 
+    public void MoveAwayFrom(GameObject other)
+    {
+        print("moving away");
+        targets_.Clear();
+        targets_.Enqueue(target_);
+        target_ = transform.position - (other.transform.position - transform.position).normalized * 2.0f;
+    }
+
     public float DistanceToTarget()
     {
         return Vector3.Distance(transform.position, target_);
@@ -634,6 +662,13 @@ public class Car : MonoBehaviour
         targets_.Enqueue(newRoad.GetEnd().position);
     }
 
+    bool Reversing()
+    {
+        Vector3 dir = transform.position - target_;
+        float dot = Vector3.Dot(transform.forward, dir);
+        return (dot > -Mathf.Cos(Mathf.Deg2Rad * turnSpeed_*2));
+    }
+        
     public bool FollowingTarget()
     {
         return followingTarget_;

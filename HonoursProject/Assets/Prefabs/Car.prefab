@@ -87,6 +87,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1000011631545160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000014180395938}
+  - 82: {fileID: 82000014234761720}
+  m_Layer: 8
+  m_Name: Horn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000011676717250
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,7 +269,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010303715308}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 205.07254, y: 499.81265, z: 215.60236}
+  m_LocalPosition: {x: 18.408434, y: 7.7922506, z: -23.343332}
   m_LocalScale: {x: 0.65, y: 0.5, z: 0.5}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -263,6 +279,7 @@ Transform:
   - {fileID: 4000010068701432}
   - {fileID: 4000014260535090}
   - {fileID: 4000013586967428}
+  - {fileID: 4000014180395938}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &4000011773707286
@@ -345,6 +362,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4000010842975710}
   m_RootOrder: 0
+--- !u!4 &4000014180395938
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011631545160}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 4000010842975710}
+  m_RootOrder: 6
 --- !u!4 &4000014260535090
 Transform:
   m_ObjectHideFlags: 1
@@ -730,7 +760,7 @@ AudioSource:
   Priority: 256
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 75
+  MaxDistance: 100
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -785,6 +815,80 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!82 &82000014234761720
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011631545160}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 100
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &114000010399849956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -796,7 +900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57c8c04797bcdc4796475a1023d8a26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  random_: 1
+  random_: 0
   aggression_: 0
   defensiveness_: 0
   inattentiveness_: 0
@@ -847,8 +951,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30af631f1b97dbd4cb06caca104956b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parkChance_: 5
-  parkingTime_: 30
+  parkChance_: 100
+  parkingTime_: 1
+  baseImpatience_: 20
+  hornNoises_:
+  - {fileID: 8300000, guid: 7cec853e6af8e154dab8d90de250ae81, type: 3}
+  - {fileID: 8300000, guid: c493dd2a10acaaa4a8e9d41ef8a84414, type: 3}
+  impatienceIncSpeed_: 1
+  parkedAngle_: 10
 --- !u!114 &114000013021729570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -884,15 +994,13 @@ MonoBehaviour:
   wheelRotationSpeed_: 5
   brakeLightIntensity_: 1
   headLightIntensity_: 1
-  reverseAngleLimits_: {x: 165, y: 205}
+  reverseAngleLimits_: {x: 150, y: 210}
   dragValues_: {x: 0.25, y: 0.8}
   minEnginePitch_: 0.5
   enginePitchMultiplier_: 0.25
-  hornNoises_: []
   crashResetTime_: 10
   curRoad_: {fileID: 0}
   state_: 0
-  lights_: []
 --- !u!146 &146000010227279530
 WheelCollider:
   m_ObjectHideFlags: 1
