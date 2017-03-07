@@ -6,6 +6,8 @@ public enum TrafficEvent { TE_NONE = -1, TE_COLLISION = 0, TE_STALLED = 1, TE_DI
 
 public class EventTracker : MonoBehaviour
 {
+    public Text sessionText_;
+
     [SerializeField]
     private string outputPath_;
     [SerializeField]
@@ -13,6 +15,7 @@ public class EventTracker : MonoBehaviour
 
     private float[] eventCount_;
     private InputField pathInput;
+    private int sessionNumber_;
 
     // Use this for initialization
     void Start ()
@@ -25,6 +28,17 @@ public class EventTracker : MonoBehaviour
         {
             outputPath_ = "C:\\TrafficEvents";
         }
+        if(PlayerPrefs.HasKey("session"))
+        {
+            sessionNumber_ = PlayerPrefs.GetInt("session") + 1;
+        }
+        else
+        {
+            sessionNumber_ = 0;
+        }
+        PlayerPrefs.SetInt("session", sessionNumber_);
+        PlayerPrefs.Save();
+
         eventCount_ = new float[4];
         pathInput = transform.GetChild(0).GetComponent<InputField>();
         //set up the input field to pass its string to this object
@@ -42,6 +56,23 @@ public class EventTracker : MonoBehaviour
             Time.timeScale = 0.0f;            
         }
 
+        if(Input.GetKeyDown(KeyCode.KeypadPlus))
+        {
+            sessionNumber_++;
+            PlayerPrefs.SetInt("session", sessionNumber_);
+            PlayerPrefs.Save();
+        }
+        if(Input.GetKeyDown(KeyCode.KeypadMinus))
+        {
+            if(sessionNumber_ > 0)
+            {
+                sessionNumber_--;
+                PlayerPrefs.SetInt("session", sessionNumber_);
+                PlayerPrefs.Save();
+            }
+            
+        }
+
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             if (pathInput.gameObject.activeSelf)
@@ -55,32 +86,37 @@ public class EventTracker : MonoBehaviour
             }
             
         }
-    } 
 
-    void OnApplicationQuit()
+        sessionText_.text = sessionNumber_.ToString();
+    }
+
+    public void WriteData(bool improved)
     {
-        //save out the file
-        if(trackData_)
-        {
-            string eventFile = "";
-            eventFile += "COLLISION:";
-            eventFile += eventCount_[0].ToString() + "\n";
-            eventFile += "STALLED:";
-            eventFile += eventCount_[1].ToString() + "\n";
-            eventFile += "DISTRACTED:";
-            eventFile += eventCount_[2].ToString() + "\n";
-            eventFile += "PARKED:";
-            eventFile += eventCount_[3].ToString();
+        string eventFile = "";
+        eventFile += "COLLISION:";
+        eventFile += eventCount_[0].ToString() + "\n";
+        eventFile += "STALLED:";
+        eventFile += eventCount_[1].ToString() + "\n";
+        eventFile += "DISTRACTED:";
+        eventFile += eventCount_[2].ToString() + "\n";
+        eventFile += "PARKED:";
+        eventFile += eventCount_[3].ToString();
 
-            System.DateTime now = System.DateTime.Now;
-            string fname = now.Year.ToString() + now.Month.ToString() + now.Day.ToString() + "_" + now.Hour.ToString() + now.Minute.ToString();
-            System.IO.File.WriteAllText(outputPath_ + "\\TrafficEvents_" + fname + ".txt", eventFile);
+        System.DateTime now = System.DateTime.Now;
+        string fname = sessionNumber_.ToString();//now.Year.ToString() + now.Month.ToString() + now.Day.ToString() + "_" + now.Hour.ToString() + now.Minute.ToString();
+        if(improved)
+        {
+            fname += "_I";
         }
+        System.IO.File.WriteAllText(outputPath_ + "\\TrafficEvents_" + fname + ".txt", eventFile);
+
+        //reset the events;
+        eventCount_ = new float[4];
     }
 
     public void AddEvent(TrafficEvent ev)
     {
-        if(ev != TrafficEvent.TE_NONE)
+        if(ev != TrafficEvent.TE_NONE && trackData_)
         {
             eventCount_[(int)ev]++;
         }
@@ -103,5 +139,10 @@ public class EventTracker : MonoBehaviour
     public void toggleTrackData()
     {
         trackData_ = !trackData_;
+    }
+
+    public void SetTrackData(bool value)
+    {
+        trackData_ = value;
     }
 }

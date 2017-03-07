@@ -126,6 +126,11 @@ public class Personality : MonoBehaviour
             float distractionChance = error_.GetDistractionChance();
             distractionChance += GetModifier(distractionChance, inattentiveness_);
             error_.SetDistractionChance(distractionChance);
+
+            //increase the reaction time
+            float reactionTime = error_.GetReactionTime(false);
+            reactionTime += GetModifier(reactionTime, inattentiveness_);
+            error_.SetReactionTime(reactionTime);
         }
     }
 }

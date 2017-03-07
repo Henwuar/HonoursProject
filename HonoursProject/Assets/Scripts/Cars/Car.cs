@@ -39,6 +39,8 @@ public class Car : MonoBehaviour
     private float enginePitchMultiplier_;
     [SerializeField]
     AudioClip[] hornNoises_;
+    [SerializeField]
+    private float crashResetTime_;
 
     private Rigidbody body_;
     private Vector3 target_;
@@ -57,11 +59,11 @@ public class Car : MonoBehaviour
     private bool followingTarget_ = true;
     [SerializeField]
     private CarState state_ = CarState.CS_MOVING;
-    private CarState prevState_ = CarState.CS_MOVING;
     private float curLightIntensity_;
     private AudioSource audioSource_;
     [SerializeField]
     List<GameObject> lights_;
+    private float resetTimer_;
 
     private int[] statePriorities = {0, 0, 1, 1, 2, 2, 3, 4};
 
@@ -88,6 +90,8 @@ public class Car : MonoBehaviour
         lights_.Add(transform.Find("Headlights").GetChild(1).gameObject);
         lights_.Add(transform.Find("Taillights").GetChild(0).gameObject);
         lights_.Add(transform.Find("Taillights").GetChild(1).gameObject);
+
+        resetTimer_ = 0;
     }
 
     public void Init()
@@ -184,7 +188,11 @@ public class Car : MonoBehaviour
             //if the car isn't visible reset it
             if (!GetComponent<Renderer>().isVisible)
             {
-                InitParked(curRoad_.GetComponent<Road>());
+                resetTimer_ += Time.deltaTime;
+                if(resetTimer_ > crashResetTime_)
+                {
+                    InitParked(curRoad_.GetComponent<Road>());
+                }
             }
             return;
         }
@@ -232,6 +240,10 @@ public class Car : MonoBehaviour
             waitTime_ -= Time.deltaTime;
             if(waitTime_ <= 0)
             {
+                if(state_ == CarState.CS_CRASHED)
+                {
+                    InitParked(curRoad_.GetComponent<Road>());
+                }
                 waitTime_ = 0;
                 followingTarget_ = true;
             }
@@ -587,7 +599,7 @@ public class Car : MonoBehaviour
 
     public void Wait(float time, bool additive = false)
     {
-        if(followingTarget_)
+        if(followingTarget_ && time > 0)
         {
             if (additive)
             {

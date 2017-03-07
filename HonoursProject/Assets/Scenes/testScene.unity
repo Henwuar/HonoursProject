@@ -359,7 +359,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPrefab_: {fileID: 1000010303715308, guid: 935a773ec57e7fe409dd6f5e978bd5cb, type: 2}
   checkpoints_: {fileID: 1466242142}
-  test_: 1
+  events_: {fileID: 1818271943}
+  test_: 0
   useImprovements_: 0
   countDownText_: {fileID: 1069336357}
 --- !u!1 &191558875
@@ -377,7 +378,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &191558876
 RectTransform:
   m_ObjectHideFlags: 0
@@ -791,7 +792,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 90, y: -40}
+  m_AnchoredPosition: {x: 90, y: -20}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &317510760
@@ -1140,7 +1141,6 @@ MonoBehaviour:
   carPrefab_: {fileID: 1000010303715308, guid: 935a773ec57e7fe409dd6f5e978bd5cb, type: 2}
   buildingPrefab_: {fileID: 1000010111011364, guid: 91fe9962fc5f8cc42bcdf069cea4d821,
     type: 2}
-  carCount_: {fileID: 1504817280}
   size_: 500
   startPoint_: {x: -25, y: 0, z: -25}
   junctionSpacing_: 50
@@ -1857,7 +1857,7 @@ MonoBehaviour:
   clock_: {fileID: 1308445611}
   random_: 0
   numCheckpoints_: 2
-  junctionIndices_: 0000000001000000
+  junctionIndices_: 000000000900000027000000230000005f000000630000004f000000350000001700000000000000
 --- !u!1 &1480256549
 GameObject:
   m_ObjectHideFlags: 0
@@ -1931,7 +1931,7 @@ GameObject:
   - 222: {fileID: 1504817281}
   - 114: {fileID: 1504817280}
   m_Layer: 5
-  m_Name: NumCars
+  m_Name: Session
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1953,7 +1953,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 5, y: 5}
-  m_SizeDelta: {x: 80, y: 30}
+  m_SizeDelta: {x: 80, y: 15}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1504817280
 MonoBehaviour:
@@ -1987,7 +1987,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Cars: 000'
+  m_Text: 0
 --- !u!222 &1504817281
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2285,6 +2285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5eda643b9fa955429ba46bbc32c8f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sessionText_: {fileID: 1504817280}
   outputPath_: C:\TrafficEvents
   trackData_: 0
 --- !u!224 &1818271944

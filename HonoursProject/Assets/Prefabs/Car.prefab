@@ -835,6 +835,7 @@ MonoBehaviour:
   distractionChance_: 10
   distractionTime_: 2
   distractionCheckFrames_: 60
+  reactionTime_: 0.5
 --- !u!114 &114000011499458180
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -888,6 +889,7 @@ MonoBehaviour:
   minEnginePitch_: 0.5
   enginePitchMultiplier_: 0.25
   hornNoises_: []
+  crashResetTime_: 10
   curRoad_: {fileID: 0}
   state_: 0
   lights_: []

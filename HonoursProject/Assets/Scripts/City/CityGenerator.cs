@@ -7,7 +7,7 @@ public class CityGenerator : MonoBehaviour
     public GameObject junctionPrefab_;
     public GameObject carPrefab_;
     public GameObject buildingPrefab_;
-    public Text carCount_;
+    //public Text carCount_;
 
     [SerializeField]
     private float size_;
@@ -177,7 +177,7 @@ public class CityGenerator : MonoBehaviour
         }
 
 
-        carCount_.text = "Cars: " + spawnedCars_.ToString("D3");
+        //carCount_.text = "Cars: " + spawnedCars_.ToString("D3");
         /*if (!Physics.CheckBox(transform.position, GetComponent<BoxCollider>().size * 0.5f, Quaternion.identity, LayerMask.NameToLayer("CarCheck")))
         {
             canSpawn_ = true;

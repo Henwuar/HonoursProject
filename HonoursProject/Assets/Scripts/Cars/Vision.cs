@@ -27,6 +27,7 @@ public class Vision : MonoBehaviour
     private float curAngle_ = 0;
     private bool sweep_ = true;
     private float startAngle_ = 0;
+    private bool prevObjectAhead_ = false;
 
 	// Use this for initialization
 	void Start ()
@@ -68,7 +69,7 @@ public class Vision : MonoBehaviour
         float lookAhead = Mathf.Clamp(body_.velocity.magnitude, 1, lookAheadMultiplier_);
         Debug.DrawLine(transform.position, transform.position + (transform.forward + lookDirection.normalized).normalized * visionDistance_ * lookAhead, Color.blue);
 
-        Physics.Raycast(ray, out hit, visionDistance_*lookAhead);
+        bool objectAhead = Physics.Raycast(ray, out hit, visionDistance_*lookAhead);
 
         bool stopping = car_.GetState() == CarState.CS_PARKING || car_.GetState() == CarState.CS_DEPARKING;
         float stoppingMultiplier = stopping ? car_.GetFineMovementMutliplier() : 1.0f;
@@ -141,6 +142,18 @@ public class Vision : MonoBehaviour
             sweep_ = true;
             car_.SetState(CarState.CS_MOVING);
         }
+
+        if(!objectAhead)
+        {
+            if(prevObjectAhead_)
+            {
+                if(error_)
+                {
+                    car_.Wait(error_.GetReactionTime());
+                }
+            }
+        }
+        prevObjectAhead_ = objectAhead;
 	}
 
     void OnCollisionEnter(Collision collision)

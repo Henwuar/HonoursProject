@@ -51,8 +51,7 @@ public class CameraController : MonoBehaviour
             //move the camera behind the player
             transform.position = player.transform.position - (player.transform.forward * 4) + (Vector3.up * 2);
             //look at the player
-            float playerDir = player.GetComponentInChildren<WheelCollider>().steerAngle;
-            transform.LookAt(player.transform.position +  (new Vector3(player.transform.forward.x, 0, player.transform.forward.z) * 3));// + (new Vector3(player.GetComponent<Rigidbody>().velocity.x, 0, player.GetComponent<Rigidbody>().velocity.z)));
+            transform.LookAt(player.transform.position +  (new Vector3(player.transform.forward.x, 0, player.transform.forward.z) * 3));
 
             /*if (toggled_)
             {

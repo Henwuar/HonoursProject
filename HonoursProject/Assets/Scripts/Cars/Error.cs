@@ -16,6 +16,8 @@ public class Error : MonoBehaviour
     private float distractionTime_;
     [SerializeField]
     private int distractionCheckFrames_;
+    [SerializeField]
+    private float reactionTime_;
 
     private Car car_;
     private Vision vision_;
@@ -143,5 +145,20 @@ public class Error : MonoBehaviour
     public void SetStallChance(float value)
     {
         stallChance_ = value;
+    }
+
+    public float GetReactionTime(bool random = true)
+    {
+        float randomness = 0;
+        if(random)
+        {
+            randomness = Random.Range(-reactionTime_ * 0.5f, reactionTime_ * 0.5f);
+        }
+        return reactionTime_ + randomness;
+    }
+
+    public void SetReactionTime(float value)
+    {
+        reactionTime_ = value;
     }
 }

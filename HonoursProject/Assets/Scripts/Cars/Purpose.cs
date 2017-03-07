@@ -61,10 +61,8 @@ public class Purpose : MonoBehaviour
                 {
                     parking = space.GetComponent<ParkingSpace>();
                 }
-                
             }
             
-
             if (parking)
             {
                 car_.SetState(CarState.CS_PARKING);

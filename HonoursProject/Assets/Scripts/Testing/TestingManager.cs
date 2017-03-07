@@ -8,6 +8,7 @@ public class TestingManager : MonoBehaviour
 {
     public GameObject carPrefab_;
     public CheckpointManager checkpoints_;
+    public EventTracker events_;
 
     [SerializeField]
     private TestingType test_;
@@ -53,10 +54,12 @@ public class TestingManager : MonoBehaviour
             {
                 useImprovements_ = Random.Range(0, 100) < 50.0f;
             }
-            else
+            else if(!running_)
             {
                 useImprovements_ = false;
             }
+
+            running_ = false;
 
             Vector3 startPos = checkpoints_.GetStart() + Vector3.up;
             car_ = (GameObject)Instantiate(carPrefab_, startPos, Quaternion.identity);
@@ -101,6 +104,7 @@ public class TestingManager : MonoBehaviour
                 countDownText_.text = "GO!";
                 checkpoints_.StartTimer();
                 car_.GetComponent<Car>().enabled = true;
+                events_.SetTrackData(true);
             }
             if(timer_ <= 0)
             {
@@ -124,6 +128,7 @@ public class TestingManager : MonoBehaviour
     {
         countDownText_.CrossFadeAlpha(1, 0.5f, true);
         countDownText_.text = "FINISHED!";// + checkpoints_.GetTimerString();
+        events_.SetTrackData(false);
         if(Input.GetButtonDown("Start"))
         {
             CleanUp();
@@ -141,12 +146,14 @@ public class TestingManager : MonoBehaviour
         checkpoints_.Reset();
         countDownText_.color = Color.black;
         countDownText_.text = "";
+
+        events_.WriteData(useImprovements_);
+
         if(test_ == TestingType.TT_BOTH)
         {
             useImprovements_ = true;
+            running_ = true;
         }
         stage_ = 0;
-        
-        
     }
 }
