@@ -1138,7 +1138,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   junctionPrefab_: {fileID: 1000011701746386, guid: 5bd30bec681c1bf4c8de0e11436352ea,
     type: 2}
-  carPrefab_: {fileID: 1000010303715308, guid: 935a773ec57e7fe409dd6f5e978bd5cb, type: 2}
+  carPrefabs_:
+  - {fileID: 1000012439562276, guid: f459987913c5a044c8b70b5697342777, type: 2}
+  - {fileID: 1000010303715308, guid: 935a773ec57e7fe409dd6f5e978bd5cb, type: 2}
+  - {fileID: 1000014156734006, guid: e412692d41f29164aa04c9aef19e3ec9, type: 2}
+  - {fileID: 1000011306649300, guid: 3e335f9c2d910554891fefc7b155ce23, type: 2}
+  - {fileID: 1000010777197990, guid: fb3c7450366d0bb48a55e5dc91ea5653, type: 2}
   buildingPrefab_: {fileID: 1000010111011364, guid: 91fe9962fc5f8cc42bcdf069cea4d821,
     type: 2}
   size_: 500

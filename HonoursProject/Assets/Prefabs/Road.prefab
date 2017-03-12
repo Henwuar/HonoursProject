@@ -502,7 +502,7 @@ MonoBehaviour:
     type: 2}
   start_: {fileID: 4000013912434642}
   end_: {fileID: 4000013105100662}
-  parkingSize_: {x: 2.5, y: 4}
+  parkingSize_: {x: 2.5, y: 4.5}
   congestedCheckTime_: 0
   parking_: []
 --- !u!136 &136000014270608448

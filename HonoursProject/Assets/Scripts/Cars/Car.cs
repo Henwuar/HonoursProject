@@ -89,6 +89,9 @@ public class Car : MonoBehaviour
         lights_.Add(transform.Find("Taillights").GetChild(1).gameObject);
 
         resetTimer_ = 0;
+
+        //randomise the colour
+        GetComponent<Renderer>().material.color = Random.ColorHSV();
     }
 
     public void Init()
@@ -163,7 +166,11 @@ public class Car : MonoBehaviour
         }
         else
         {
+            print("no parking");
             targets_.Enqueue(road.GetComponent<Road>().GetEnd().position);
+            state_ = CarState.CS_MOVING;
+            transform.position = road.GetPointOnRoad(transform.position);
+            transform.LookAt(targets_.Peek());
         }
     }
 
@@ -183,7 +190,7 @@ public class Car : MonoBehaviour
         if (state_ == CarState.CS_CRASHED && !controlled_)
         {
             //if the car isn't visible reset it
-            if (!GetComponent<Renderer>().isVisible)
+            if (!GetComponent<Renderer>().isVisible || !GameObject.FindGameObjectWithTag("Player"))
             {
                 resetTimer_ += Time.deltaTime;
                 if(resetTimer_ > crashResetTime_)
@@ -216,7 +223,6 @@ public class Car : MonoBehaviour
 
         //steer towards the target
         Steer();
-
 
         //update the tag of the car
         if (controlled_)

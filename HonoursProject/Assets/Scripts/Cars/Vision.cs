@@ -104,6 +104,14 @@ public class Vision : MonoBehaviour
                 //stop following targets for the next frame
                 car_.Wait(Time.deltaTime);
                 car_.Brake();
+
+                if(hit.rigidbody && hit.rigidbody.velocity.magnitude > car_.GetMaxSpeed()*0.5f)
+                {
+                    if(purpose_)
+                    {
+                        purpose_.SoundHorn();
+                    }
+                }
             }
             else
             {
@@ -164,6 +172,12 @@ public class Vision : MonoBehaviour
         {
             GetComponent<AudioSource>().PlayOneShot(crashNoise_);
         }
+
+        if(purpose_)
+        {
+            purpose_.SoundHorn();
+        }
+
         if(tag == "Player")
         {
             return;

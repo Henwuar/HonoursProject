@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class CityGenerator : MonoBehaviour
 {
     public GameObject junctionPrefab_;
-    public GameObject carPrefab_;
+    public GameObject[] carPrefabs_;
     public GameObject buildingPrefab_;
     //public Text carCount_;
 
@@ -207,6 +207,12 @@ public class CityGenerator : MonoBehaviour
         }
     }
 
+    GameObject ChooseCar()
+    {
+        int index = Random.Range(0, carPrefabs_.Length);
+        return carPrefabs_[index];
+    }
+
     Vector3 CreateEntryPoint(int index, Vector3 direction)
     {
         GameObject firstJunction = junctions_[index];
@@ -271,7 +277,7 @@ public class CityGenerator : MonoBehaviour
 
         //transform.position = junctions_[junction].transform.position + Vector3.up;
 
-        GameObject newCar = (GameObject)Instantiate(carPrefab_, transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
+        GameObject newCar = (GameObject)Instantiate(ChooseCar(), transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
 
         newCar.GetComponent<Car>().Init();
         canSpawn_ = false;
@@ -280,7 +286,7 @@ public class CityGenerator : MonoBehaviour
 
     void SpawnParkedCar(GameObject road)
     {
-        GameObject newCar = (GameObject)Instantiate(carPrefab_, transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
+        GameObject newCar = (GameObject)Instantiate(ChooseCar(), transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
 
         newCar.GetComponent<Car>().InitParked(road.GetComponent<Road>());
         canSpawn_ = false;

@@ -128,15 +128,20 @@ public class Purpose : MonoBehaviour
         //test if the car is going to honk
         if (Random.Range(0.0f, 100.0f) < impatience_)
         {
-            if (!hornSource_.isPlaying)
-            {
-                hornSource_.clip = hornNoises_[Random.Range(0, hornNoises_.Length)];
-                hornSource_.Play();
-                impatience_ = baseImpatience_;
-            }
+            SoundHorn();
         }
         //make them more impatient
         impatience_ += impatienceIncSpeed_;
+    }
+
+    public void SoundHorn()
+    {
+        if (!hornSource_.isPlaying)
+        {
+            hornSource_.clip = hornNoises_[Random.Range(0, hornNoises_.Length)];
+            hornSource_.Play();
+            impatience_ = baseImpatience_;
+        }
     }
 
     public float GetStopTime()
