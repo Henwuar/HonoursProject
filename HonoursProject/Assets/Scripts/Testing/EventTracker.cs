@@ -88,6 +88,10 @@ public class EventTracker : MonoBehaviour
         }
 
         sessionText_.text = sessionNumber_.ToString();
+        if(GameObject.Find("TestingManager").GetComponent<TestingManager>().UseImprovements())
+        {
+            sessionText_.text += "_I";
+        }
     }
 
     public void WriteData(bool improved)

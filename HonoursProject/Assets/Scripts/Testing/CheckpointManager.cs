@@ -37,6 +37,13 @@ public class CheckpointManager : MonoBehaviour
 
             //apply the string
             clock_.text = GetTimerString();
+
+
+            GetComponent<Renderer>().enabled = true;
+        }
+        else
+        {
+            GetComponent<Renderer>().enabled = false;
         }
 	}
 
@@ -87,7 +94,6 @@ public class CheckpointManager : MonoBehaviour
             {
                 timing_ = false;
                 complete_ = true;
-                GetComponent<Renderer>().enabled = false;
             }
         }
         

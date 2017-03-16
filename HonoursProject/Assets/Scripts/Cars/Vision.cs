@@ -40,6 +40,11 @@ public class Vision : MonoBehaviour
         purpose_ = GetComponent<Purpose>();
 	}
 	
+    void OnAwake()
+    {
+        Start();
+    }
+
 	// Update is called once per frame
 	void FixedUpdate ()
     {
@@ -78,6 +83,18 @@ public class Vision : MonoBehaviour
         //check that the ray hit something
         if(hit.collider && (hit.collider.tag == "Car" || hit.collider.tag == "Player"))
         {
+            //check if there's a car coming towards them at speed
+            if (hit.rigidbody && hit.rigidbody.velocity.magnitude > car_.GetMaxSpeed() * 0.25f)
+            {
+                if (IsFacing(hit.collider.gameObject))
+                {
+                    if (purpose_)
+                    {
+                        purpose_.SoundHorn();
+                    }
+                }
+            }
+
             if (hit.distance < stoppingDistance_ * stoppingMultiplier && hit.distance > stoppingDistance_ * stoppingMultiplier * 0.5f)
             {
                 car_.SetState(CarState.CS_STOPPING);
@@ -104,14 +121,13 @@ public class Vision : MonoBehaviour
                 //stop following targets for the next frame
                 car_.Wait(Time.deltaTime);
                 car_.Brake();
-
-                if(hit.rigidbody && hit.rigidbody.velocity.magnitude > car_.GetMaxSpeed()*0.5f)
+                /*if(hit.rigidbody && hit.rigidbody.velocity.magnitude > car_.GetMaxSpeed()*0.5f)
                 {
                     if(purpose_)
                     {
                         purpose_.SoundHorn();
                     }
-                }
+                }*/
             }
             else
             {

@@ -608,7 +608,7 @@ public class Car : MonoBehaviour
                     }
                     
                 }
-                else if (purpose_ && state_ != CarState.CS_PARKING && state_ != CarState.CS_DEPARKING)
+                else if (purpose_.enabled && state_ != CarState.CS_PARKING && state_ != CarState.CS_DEPARKING)
                 {
                     purpose_.TestPark();
                 }

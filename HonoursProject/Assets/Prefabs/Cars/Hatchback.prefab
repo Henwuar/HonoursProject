@@ -758,7 +758,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0.47
   MinDistance: 1
   MaxDistance: 100
   Pan2D: 0
@@ -958,8 +958,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30af631f1b97dbd4cb06caca104956b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parkChance_: 100
-  parkingTime_: 1
+  parkChance_: 10
+  parkingTime_: 30
   baseImpatience_: 20
   hornNoises_:
   - {fileID: 8300000, guid: 7cec853e6af8e154dab8d90de250ae81, type: 3}

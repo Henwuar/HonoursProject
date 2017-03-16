@@ -87,6 +87,9 @@ public class CameraController : MonoBehaviour
                 eulerRotation_.x -= Input.GetAxis("Mouse Y") * rotateSpeed_;
             }
 
+            eulerRotation_.y += Input.GetAxis("RightStick X") * rotateSpeed_;
+            eulerRotation_.x += Input.GetAxis("RightStick Y") * rotateSpeed_;
+
             transform.rotation = Quaternion.Euler(new Vector3(eulerRotation_.x, eulerRotation_.y, 0));
 
             Vector3 moveDirection;

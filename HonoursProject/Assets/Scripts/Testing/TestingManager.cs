@@ -52,7 +52,25 @@ public class TestingManager : MonoBehaviour
             //set up the testing
             if (test_ == TestingType.TT_AB)
             {
-                useImprovements_ = Random.Range(0, 100) < 50.0f;
+                if(PlayerPrefs.HasKey("PrevImprovements"))
+                {
+                    if(PlayerPrefs.GetInt("PrevImprovements") == 0)
+                    {
+                        useImprovements_ = true;
+                        PlayerPrefs.SetInt("PrevImprovements", 1);
+                    }
+                    else
+                    {
+                        useImprovements_ = false;
+                        PlayerPrefs.SetInt("PrevImprovements", 0);
+                    }
+                }
+                else
+                {
+                    useImprovements_ = false;
+                    PlayerPrefs.SetInt("PrevImprovements", 0);
+                }
+                PlayerPrefs.Save();
             }
             else if(!running_)
             {
@@ -155,5 +173,10 @@ public class TestingManager : MonoBehaviour
             running_ = true;
         }
         stage_ = 0;
+    }
+
+    public bool UseImprovements()
+    {
+        return useImprovements_;
     }
 }
