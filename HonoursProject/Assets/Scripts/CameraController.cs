@@ -13,6 +13,8 @@ public class CameraController : MonoBehaviour
     private GameObject playerCanvas_;
     [SerializeField]
     private Transform arrow_;
+    [SerializeField]
+    private GameObject debugDisplay_;
 
     private Vector3 eulerRotation_;
     private GameObject following_ = null;
@@ -68,7 +70,7 @@ public class CameraController : MonoBehaviour
             transform.position = following_.GetComponent<Car>().GetCurRoad().GetComponent<Road>().GetJunction().gameObject.transform.position + Vector3.up * 5;
             transform.LookAt(following_.transform);
 
-            if(toggled_)
+            if (toggled_)
             {
                 following_ = null;
                 toggled_ = false;
@@ -104,23 +106,28 @@ public class CameraController : MonoBehaviour
             float scrollAmount = Input.GetAxis("Mouse ScrollWheel") * zoomSpeed_;
             transform.position += transform.forward * scrollAmount;
 
-            if(toggled_)
+            if (toggled_)
             {
                 following_ = GameObject.FindGameObjectWithTag("Car");
                 toggled_ = false;
             }
+        }
 
-            if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !player)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit);
+
+            if (hit.collider && hit.collider.tag == "Car")
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-                Physics.Raycast(ray, out hit);
-                
-                if(hit.collider && hit.collider.tag == "Car")
-                {
-                    following_ = hit.collider.gameObject;
-                }
+                following_ = hit.collider.gameObject;
             }
         }
-	}
+
+        if(!player)
+        {
+            debugDisplay_.GetComponent<DebugDisplayManager>().SetSelectedCar(following_);
+        }
+    }
 }

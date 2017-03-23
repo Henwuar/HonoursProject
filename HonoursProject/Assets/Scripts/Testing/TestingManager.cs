@@ -35,7 +35,11 @@ public class TestingManager : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        switch(stage_)
+        if(Input.GetKeyDown(KeyCode.Delete))
+        {
+            CleanUp();
+        }
+        switch (stage_)
         {
             case 0: Stage0(); break;
             case 1: Stage1(); break;

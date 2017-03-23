@@ -61,6 +61,7 @@ public class Car : MonoBehaviour
     private AudioSource audioSource_;
     List<GameObject> lights_;
     private float resetTimer_;
+    private GameObject stateText_;
 
     private int[] statePriorities = {0, 0, 1, 1, 2, 2, 3, 4};
 
@@ -92,6 +93,8 @@ public class Car : MonoBehaviour
 
         //randomise the colour
         GetComponent<Renderer>().material.color = Random.ColorHSV();
+
+        stateText_ = transform.FindChild("StateText").gameObject;
     }
 
     public void Init()
@@ -186,6 +189,8 @@ public class Car : MonoBehaviour
         //reset the current light intensity
         curLightIntensity_ = brakeLightIntensity_ * 0.5f;
         UpdateAudio();
+
+        UpdateStateText();
 
         if (state_ == CarState.CS_CRASHED && !controlled_)
         {
@@ -757,5 +762,15 @@ public class Car : MonoBehaviour
         personality_.enabled = value;
         purpose_.enabled = value;
         error_.enabled = value;
+    }
+
+    public void ToggleStateText()
+    {
+        stateText_.SetActive(!stateText_.activeSelf);
+    }
+
+    void UpdateStateText()
+    {
+        stateText_.GetComponent<TextMesh>().text = state_.ToString();
     }
 }

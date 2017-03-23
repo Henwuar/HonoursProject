@@ -193,4 +193,9 @@ public class Purpose : MonoBehaviour
     {
         parkedAngle_ = value;
     }
+
+    public float GetParkChance()
+    {
+        return parkChance_;
+    }
 }

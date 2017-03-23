@@ -76,6 +76,10 @@ public class Vision : MonoBehaviour
         Debug.DrawLine(transform.position, transform.position + (transform.forward + lookDirection.normalized).normalized * visionDistance_ * lookAhead, Color.blue);
 
         objectAhead_ = Physics.Raycast(ray, out hit, visionDistance_*lookAhead);
+        if(objectAhead_ && hit.collider.tag == "TrafficLight")
+        {
+            objectAhead_ = false;
+        }
 
         bool stopping = car_.GetState() == CarState.CS_PARKING || car_.GetState() == CarState.CS_DEPARKING;
         float stoppingMultiplier = stopping ? car_.GetFineMovementMutliplier() : 1.0f;
