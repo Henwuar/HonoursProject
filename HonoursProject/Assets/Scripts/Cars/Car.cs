@@ -186,6 +186,11 @@ public class Car : MonoBehaviour
             return;
         }
 
+        if(tag == "Player")
+        {
+            stateText_.SetActive(false);
+        }
+
         //reset the current light intensity
         curLightIntensity_ = brakeLightIntensity_ * 0.5f;
         UpdateAudio();

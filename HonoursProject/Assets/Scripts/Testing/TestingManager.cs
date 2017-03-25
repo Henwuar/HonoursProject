@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public enum TestingType { TT_AB, TT_BOTH};
+public enum TestingType { TT_AB, TT_BOTH, TT_DYNAMIC};
 
 public class TestingManager : MonoBehaviour
 {
@@ -103,9 +103,8 @@ public class TestingManager : MonoBehaviour
             foreach(GameObject car in GameObject.FindGameObjectsWithTag("Car"))
             {
                 car.GetComponent<Car>().ToggleImprovements(useImprovements_);
+                car.GetComponent<Car>().ToggleStateText();
             }
-            
-
         }
     }
 
@@ -138,6 +137,11 @@ public class TestingManager : MonoBehaviour
 
     void Stage2()
     {
+        print(checkpoints_.Progress());
+        if(checkpoints_.Progress() >= 0.5f)
+        {
+            print("Half way");
+        }
 
         carComponent_.enabled = true;
         if (checkpoints_.Complete())
@@ -177,6 +181,11 @@ public class TestingManager : MonoBehaviour
             running_ = true;
         }
         stage_ = 0;
+
+        foreach (GameObject car in GameObject.FindGameObjectsWithTag("Car"))
+        { 
+            car.GetComponent<Car>().ToggleStateText();
+        }
     }
 
     public bool UseImprovements()

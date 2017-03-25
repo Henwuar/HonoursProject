@@ -145,4 +145,9 @@ public class CheckpointManager : MonoBehaviour
         }
         return Vector3.zero;
     }
+
+    public float Progress()
+    {
+        return 1.0f - ((float)checkpoints_.Count / (float)numCheckpoints_);
+    }
 }
