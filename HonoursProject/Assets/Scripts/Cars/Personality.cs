@@ -54,11 +54,21 @@ public class Personality : MonoBehaviour
         }
     }
 
-    public void Init()
+    public void Init(bool overrideValues = false, float aggression = 0, float defensiveness = 0, float inattentiveness = 0)
     {
         Start();
 
-        StoreBaseValues();
+        if (overrideValues)
+        {
+            aggression_ = aggression;
+            defensiveness_ = defensiveness;
+            inattentiveness_ = inattentiveness;
+            ResetToBase();
+        }
+        else
+        {
+            StoreBaseValues();
+        }
 
         InitAggression();
         InitAttentiveness();

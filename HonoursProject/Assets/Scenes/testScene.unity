@@ -594,7 +594,7 @@ MonoBehaviour:
   carPrefab_: {fileID: 1000010303715308, guid: 935a773ec57e7fe409dd6f5e978bd5cb, type: 2}
   checkpoints_: {fileID: 1466242142}
   events_: {fileID: 1818271943}
-  test_: 0
+  test_: 2
   useImprovements_: 0
   countDownText_: {fileID: 1069336357}
 --- !u!1 &191558875
@@ -2452,7 +2452,7 @@ MonoBehaviour:
   clock_: {fileID: 1308445611}
   random_: 0
   numCheckpoints_: 2
-  junctionIndices_: 000000000900000027000000230000005f000000630000004f000000350000001700000000000000
+  junctionIndices_: 00000000010000000900000062000000370000003200000014000000190000000f00000000000000
 --- !u!1 &1480256549
 GameObject:
   m_ObjectHideFlags: 0

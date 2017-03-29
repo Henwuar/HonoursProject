@@ -19,6 +19,7 @@ public class CheckpointManager : MonoBehaviour
     private bool timing_ = false;
     private bool complete_ = false;
     private Vector2 citySize_;
+    private bool countdown_ = false;
 
     // Use this for initialization
 	void Start ()
@@ -32,14 +33,28 @@ public class CheckpointManager : MonoBehaviour
     {
 	    if(timing_)
         {
-            timer_ += Time.deltaTime;
-
+            if (countdown_)
+            {
+                timer_ -= Time.deltaTime;
+                if (timer_ <= 0)
+                {
+                    timing_ = false;
+                    complete_ = true;
+                    timer_ = 0;
+                }
+            }
+            else
+            {
+                timer_ += Time.deltaTime;
+            }
 
             //apply the string
             clock_.text = GetTimerString();
 
-
-            GetComponent<Renderer>().enabled = true;
+            if (!countdown_)
+            {
+                GetComponent<Renderer>().enabled = true;
+            }
         }
         else
         {
@@ -90,7 +105,7 @@ public class CheckpointManager : MonoBehaviour
             {
                 transform.parent.position = checkpoints_.Dequeue();
             }
-            else
+            else if(!countdown_)
             {
                 timing_ = false;
                 complete_ = true;
@@ -107,9 +122,16 @@ public class CheckpointManager : MonoBehaviour
         timer_ = 0;
     }
 
-    public void StartTimer()
+    public void StartTimer(float startTime = 0.0f)
     {
         timing_ = true;
+        if(startTime > 0)
+        {
+            countdown_ = true;
+            timer_ = startTime;
+            GetComponent<Renderer>().enabled = false;
+            complete_ = false;
+        }
     }
 
     public void StopTimer()

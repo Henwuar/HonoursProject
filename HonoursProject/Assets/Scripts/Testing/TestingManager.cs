@@ -18,6 +18,7 @@ public class TestingManager : MonoBehaviour
     private Text countDownText_;
 
     private int stage_ = 0;
+    private int phase2Stage_ = 0;
     private bool running_;
 
     private GameObject car_;
@@ -45,6 +46,9 @@ public class TestingManager : MonoBehaviour
             case 1: Stage1(); break;
             case 2: Stage2(); break;
             case 3: Stage3(); break;
+            case 4: Stage4(); break;
+            case 5: Stage5(); break;
+            case 6: Stage6(); break;
             default: CleanUp(); break;
         }
 	}
@@ -81,23 +85,14 @@ public class TestingManager : MonoBehaviour
                 useImprovements_ = false;
             }
 
+            if(test_ == TestingType.TT_DYNAMIC)
+            {
+                useImprovements_ = false;
+            }
+
             running_ = false;
 
-            Vector3 startPos = checkpoints_.GetStart() + Vector3.up;
-            car_ = (GameObject)Instantiate(carPrefab_, startPos, Quaternion.identity);
-            car_.GetComponent<Car>().Init();
-            carComponent_ = car_.GetComponent<Car>();
-            car_.GetComponent<Car>().ToggleControlled();
-            car_.GetComponent<Car>().Invoke("Start", 0.0f);
-            car_.GetComponent<Vision>().enabled = false;
-            car_.GetComponent<Personality>().enabled = false;
-            car_.GetComponent<Error>().enabled = false;
-            car_.GetComponent<Purpose>().enabled = false;
-            car_.tag = "Player";
-            car_.transform.LookAt(checkpoints_.GetCheckpoint(1));
-            Vector3 carRotation = car_.transform.eulerAngles;
-            carRotation.y = Mathf.Round(carRotation.y / 90) * 90;
-            car_.transform.eulerAngles = carRotation;
+            SpawnPlayerCar();
             stage_ = 1;
             
             foreach(GameObject car in GameObject.FindGameObjectsWithTag("Car"))
@@ -137,10 +132,13 @@ public class TestingManager : MonoBehaviour
 
     void Stage2()
     {
-        print(checkpoints_.Progress());
-        if(checkpoints_.Progress() >= 0.5f)
+        if(checkpoints_.Progress() >= 0.5f && test_ == TestingType.TT_DYNAMIC)
         {
-            print("Half way");
+            //print("Half way");
+            foreach(GameObject car in GameObject.FindGameObjectsWithTag("Car"))
+            {
+                car.GetComponent<Car>().ToggleImprovements(true);
+            }
         }
 
         carComponent_.enabled = true;
@@ -153,12 +151,131 @@ public class TestingManager : MonoBehaviour
     void Stage3()
     {
         countDownText_.CrossFadeAlpha(1, 0.5f, true);
-        countDownText_.text = "FINISHED!";// + checkpoints_.GetTimerString();
+        if (test_ == TestingType.TT_DYNAMIC)
+        {
+            countDownText_.text = "FINISHED\nPlease complete SECTION 1 of the questionnaire";
+            events_.SetTrackData(false);
+            if(Input.GetButtonDown("Start"))
+            {
+                CleanUp();
+                stage_ = 4;
+                SpawnPlayerCar();
+            }
+        }
+        else
+        {
+            countDownText_.text = "FINISHED!";// + checkpoints_.GetTimerString();
+            events_.SetTrackData(false);
+
+            if (Input.GetButtonDown("Start"))
+            {
+                CleanUp();
+            }
+        }
+    }
+
+    void Stage4()
+    {
+        Stage1();
+        if(stage_ == 2)
+        {
+            stage_ = 5;
+            checkpoints_.StartTimer(60.0f);
+            if(phase2Stage_ == 0)
+            {
+                //set up totally defensive cars
+                foreach(GameObject car in GameObject.FindGameObjectsWithTag("Car"))
+                {
+                    Personality personality = car.GetComponent<Personality>();
+                    if(personality)
+                    {
+                        personality.Init(true, 0.0f, 1.0f, 0.0f);
+                    }
+                }
+            }
+            else if(phase2Stage_ == 1)
+            {
+                //set up totally aggressive cars
+                foreach (GameObject car in GameObject.FindGameObjectsWithTag("Car"))
+                {
+                    Personality personality = car.GetComponent<Personality>();
+                    if (personality)
+                    {
+                        personality.Init(true, 1.0f, 0.0f, 0.0f);
+                    }
+                }
+            }
+            else if(phase2Stage_ == 2)
+            {
+                //set up totally inattentive cars
+                foreach (GameObject car in GameObject.FindGameObjectsWithTag("Car"))
+                {
+                    Personality personality = car.GetComponent<Personality>();
+                    if (personality)
+                    {
+                        personality.Init(true, 0.0f, 0.0f, 1.0f);
+                    }
+                }
+            }
+
+        }
+    }
+
+    void Stage5()
+    {
+        carComponent_.enabled = true;
+        if(checkpoints_.Complete())
+        {
+            stage_ = 6;
+        }
+    }
+
+    void Stage6()
+    {
+        print("Stage 6");
+        countDownText_.CrossFadeAlpha(1, 0.5f, true);
+        countDownText_.text = "FINISHED\nPlease complete SECTION " + (phase2Stage_ + 2).ToString() +  " of the questionnaire";
         events_.SetTrackData(false);
+        if (Input.GetButtonDown("Start"))
+        {
+            CleanUp();
+            SpawnPlayerCar();
+            stage_ = 4;
+            phase2Stage_++;
+            if(phase2Stage_ > 2)
+            {
+                stage_ = 7;
+            }
+        }
+    }
+
+    void Stage7()
+    {
         if(Input.GetButtonDown("Start"))
         {
             CleanUp();
+            checkpoints_.Reset();
+            phase2Stage_ = 0;
         }
+    }
+
+    void SpawnPlayerCar()
+    {
+        Vector3 startPos = checkpoints_.GetStart() + Vector3.up;
+        car_ = (GameObject)Instantiate(carPrefab_, startPos, Quaternion.identity);
+        car_.GetComponent<Car>().Init();
+        carComponent_ = car_.GetComponent<Car>();
+        car_.GetComponent<Car>().ToggleControlled();
+        car_.GetComponent<Car>().Invoke("Start", 0.0f);
+        car_.GetComponent<Vision>().enabled = false;
+        car_.GetComponent<Personality>().enabled = false;
+        car_.GetComponent<Error>().enabled = false;
+        car_.GetComponent<Purpose>().enabled = false;
+        car_.tag = "Player";
+        car_.transform.LookAt(checkpoints_.GetCheckpoint(1));
+        Vector3 carRotation = car_.transform.eulerAngles;
+        carRotation.y = Mathf.Round(carRotation.y / 90) * 90;
+        car_.transform.eulerAngles = carRotation;
     }
 
     void CleanUp()
