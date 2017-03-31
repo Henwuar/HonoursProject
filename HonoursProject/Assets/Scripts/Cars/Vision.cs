@@ -92,7 +92,7 @@ public class Vision : MonoBehaviour
             {
                 if (IsFacing(hit.collider.gameObject))
                 {
-                    if (purpose_)
+                    if (purpose_.enabled)
                     {
                         purpose_.SoundHorn();
                     }
@@ -176,7 +176,7 @@ public class Vision : MonoBehaviour
         {
             if(prevObjectAhead_)
             {
-                if(error_)
+                if(error_ && error_.enabled)
                 {
                     car_.Wait(error_.GetReactionTime());
                 }
@@ -193,7 +193,7 @@ public class Vision : MonoBehaviour
             GetComponent<AudioSource>().PlayOneShot(crashNoise_);
         }
 
-        if(purpose_)
+        if(purpose_ && purpose_.enabled)
         {
             purpose_.SoundHorn();
         }
@@ -208,7 +208,7 @@ public class Vision : MonoBehaviour
         }
         else
         {
-            if(purpose_)
+            if(purpose_.enabled)
             {
                 car_.MoveAwayFrom(other);
                 purpose_.SetParkingChance(101.0f);

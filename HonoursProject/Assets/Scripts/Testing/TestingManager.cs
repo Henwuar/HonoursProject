@@ -16,9 +16,12 @@ public class TestingManager : MonoBehaviour
     private bool useImprovements_;
     [SerializeField]
     private Text countDownText_;
+    [SerializeField]
+    private bool trackEvents_ = false;
 
     private int stage_ = 0;
     private int phase2Stage_ = 0;
+    private int curRun_ = 0;
     private bool running_;
 
     private GameObject car_;
@@ -80,9 +83,10 @@ public class TestingManager : MonoBehaviour
                 }
                 PlayerPrefs.Save();
             }
-            else if(!running_)
+
+            if (test_ == TestingType.TT_BOTH)
             {
-                useImprovements_ = false;
+                useImprovements_ = (curRun_ == 1);
             }
 
             if(test_ == TestingType.TT_DYNAMIC)
@@ -98,7 +102,7 @@ public class TestingManager : MonoBehaviour
             foreach(GameObject car in GameObject.FindGameObjectsWithTag("Car"))
             {
                 car.GetComponent<Car>().ToggleImprovements(useImprovements_);
-                car.GetComponent<Car>().ToggleStateText();
+                car.GetComponent<Car>().ToggleStateText(false);
             }
         }
     }
@@ -120,7 +124,7 @@ public class TestingManager : MonoBehaviour
                 countDownText_.text = "GO!";
                 checkpoints_.StartTimer();
                 car_.GetComponent<Car>().enabled = true;
-                events_.SetTrackData(true);
+                events_.SetTrackData(trackEvents_);
             }
             if(timer_ <= 0)
             {
@@ -160,11 +164,19 @@ public class TestingManager : MonoBehaviour
                 CleanUp();
                 stage_ = 4;
                 SpawnPlayerCar();
+                foreach (GameObject car in GameObject.FindGameObjectsWithTag("Car"))
+                {
+                    car.GetComponent<Car>().ToggleStateText(false);
+                }
             }
         }
         else
         {
             countDownText_.text = "FINISHED!";// + checkpoints_.GetTimerString();
+            if(test_ == TestingType.TT_BOTH)
+            {
+                countDownText_.text += "\nPlease complete part " + (curRun_ + 1).ToString() + " of the questionnaire.";
+            }
             events_.SetTrackData(false);
 
             if (Input.GetButtonDown("Start"))
@@ -177,8 +189,11 @@ public class TestingManager : MonoBehaviour
     void Stage4()
     {
         Stage1();
+        //check if stage1 has complete
         if(stage_ == 2)
         {
+            Camera.main.GetComponent<CameraController>().ToggleCompass(false);
+
             stage_ = 5;
             checkpoints_.StartTimer(60.0f);
             if(phase2Stage_ == 0)
@@ -240,6 +255,11 @@ public class TestingManager : MonoBehaviour
         {
             CleanUp();
             SpawnPlayerCar();
+
+            foreach (GameObject car in GameObject.FindGameObjectsWithTag("Car"))
+            {
+                car.GetComponent<Car>().ToggleStateText(false);
+            }
             stage_ = 4;
             phase2Stage_++;
             if(phase2Stage_ > 2)
@@ -301,7 +321,15 @@ public class TestingManager : MonoBehaviour
 
         foreach (GameObject car in GameObject.FindGameObjectsWithTag("Car"))
         { 
-            car.GetComponent<Car>().ToggleStateText();
+            car.GetComponent<Car>().ToggleStateText(true);
+        }
+
+        Camera.main.GetComponent<CameraController>().ToggleCompass(true);
+
+        curRun_++;
+        if(curRun_ > 1)
+        {
+            curRun_ = 0;
         }
     }
 

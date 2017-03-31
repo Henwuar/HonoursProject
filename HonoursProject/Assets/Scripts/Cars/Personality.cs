@@ -22,16 +22,27 @@ public class Personality : MonoBehaviour
     private Purpose purpose_ = null;
     private Car car_ = null;
 
-    float baseStopping;
-    float baseLookAngle;
-    float baseImpatience;
-    float baseImpatienceSpeed;
-    float baseTopSpeed;
-    float baseVisionDistance;
-    float baseDistractionChance;
-    float baseStallChance;
-    float baseParkChance;
-    float baseReactionTime;
+    private bool initialised = false;
+
+    private float baseStopping;
+    private float baseLookAngle;
+    private float baseImpatience;
+    private float baseImpatienceSpeed;
+    private float baseTopSpeed;
+    private float baseVisionDistance;
+    private float baseDistractionChance;
+    private float baseStallChance;
+    private float baseParkChance;
+    private float baseReactionTime;
+
+
+    void OnDisable()
+    {
+        if(initialised)
+        {
+            ResetToBase();
+        }
+    }
 
     void Start()
     {
@@ -73,6 +84,8 @@ public class Personality : MonoBehaviour
         InitAggression();
         InitAttentiveness();
         InitDefensiveness();
+
+        initialised = true;
     }
 
     public void ResetToBase()

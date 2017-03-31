@@ -48,7 +48,11 @@ public class CameraController : MonoBehaviour
             Vector3 north = checkpoint.transform.position - player.transform.position;
             float northHeading = Mathf.Atan2(north.z, north.x);
             float angle = northHeading - Mathf.Atan2(player.transform.forward.z, player.transform.forward.x);
-            arrow_.eulerAngles = new Vector3(0, 0, angle * Mathf.Rad2Deg);
+
+            if (arrow_.gameObject.activeSelf)
+            {
+                arrow_.eulerAngles = new Vector3(0, 0, angle * Mathf.Rad2Deg);
+            }
 
             //move the camera behind the player
             transform.position = player.transform.position - (player.transform.forward * 4) + (Vector3.up * 2);
@@ -107,7 +111,7 @@ public class CameraController : MonoBehaviour
             transform.position += transform.forward * scrollAmount;
 
             if (toggled_)
-            {
+            { 
                 following_ = GameObject.FindGameObjectWithTag("Car");
                 toggled_ = false;
             }
@@ -127,7 +131,12 @@ public class CameraController : MonoBehaviour
 
         if(!player)
         {
-            debugDisplay_.GetComponent<DebugDisplayManager>().SetSelectedCar(following_);
+            debugDisplay_.GetComponent<DebugDisplayManager>().SetSelectedCar(following_);   
         }
+    }
+
+    public void ToggleCompass(bool value)
+    {
+        arrow_.gameObject.SetActive(value);
     }
 }

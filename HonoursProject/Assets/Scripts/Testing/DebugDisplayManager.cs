@@ -7,6 +7,7 @@ public class DebugDisplayManager : MonoBehaviour
     private GameObject personalityDisplay;
 
     private GameObject selectedCar_ = null;
+    private bool stateTexts_ = true;
 
 	// Use this for initialization
 	void Start ()
@@ -49,9 +50,10 @@ public class DebugDisplayManager : MonoBehaviour
 
     public void ToggleCarStates()
     {
+        stateTexts_ = !stateTexts_;
         foreach (Car car in GameObject.Find("Cars").GetComponentsInChildren<Car>())
         {
-            car.ToggleStateText();
+            car.ToggleStateText(stateTexts_);
         }
     }
 

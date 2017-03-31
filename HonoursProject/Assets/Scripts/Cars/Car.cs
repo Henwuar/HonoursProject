@@ -169,7 +169,6 @@ public class Car : MonoBehaviour
         }
         else
         {
-            print("no parking");
             targets_.Enqueue(road.GetComponent<Road>().GetEnd().position);
             state_ = CarState.CS_MOVING;
             transform.position = road.GetPointOnRoad(transform.position);
@@ -199,6 +198,8 @@ public class Car : MonoBehaviour
 
         if (state_ == CarState.CS_CRASHED && !controlled_)
         {
+            //make sure the car isn't accelerating
+            Accelerate(0.0f);
             //if the car isn't visible reset it
             if (!GetComponent<Renderer>().isVisible || !GameObject.FindGameObjectWithTag("Player"))
             {
@@ -519,7 +520,7 @@ public class Car : MonoBehaviour
         }
         if (canMove)
         {    
-            if(error_ && amount != 0 && !controlled_)
+            if(error_.enabled && amount != 0 && !controlled_)
             {
                 error_.TestStall();
             }
@@ -562,7 +563,7 @@ public class Car : MonoBehaviour
 
     public void MoveToTarget()
     {
-        if(error_ && error_.GetDistracted())
+        if(error_.enabled && error_.GetDistracted())
         {
             //check if the body is stopped (account for slight drift)
             if(body_.velocity.magnitude < 0.01f)
@@ -575,7 +576,7 @@ public class Car : MonoBehaviour
         bool fineMovement = state_ == CarState.CS_PARKING || state_ == CarState.CS_DEPARKING;
         float distanceMultiplier =  fineMovement ? fineMovementMultiplier_ : 1.0f;
      
-        if (DistanceToTarget() > arrivalDistance_ * distanceMultiplier)
+        if (DistanceToTarget() > arrivalDistance_)// * distanceMultiplier)
         {
             //make sure the car doesn't exceed the maximum speed
             if (body_.velocity.magnitude < maxSpeed_ * distanceMultiplier)
@@ -769,9 +770,9 @@ public class Car : MonoBehaviour
         error_.enabled = value;
     }
 
-    public void ToggleStateText()
+    public void ToggleStateText(bool value)
     {
-        stateText_.SetActive(!stateText_.activeSelf);
+        stateText_.SetActive(value);
     }
 
     void UpdateStateText()

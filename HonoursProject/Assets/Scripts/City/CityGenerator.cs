@@ -65,7 +65,7 @@ public class CityGenerator : MonoBehaviour
         GameObject ground = GameObject.FindGameObjectWithTag("Ground");
         Vector3 endPoint = startPoint_ + new Vector3(size_, 0, size_);
         ground.transform.position = Vector3.Lerp(startPoint_, endPoint, 0.5f) - Vector3.up * 0.11f;
-        float scale = size_ * 0.125f;
+        float scale = size_ * 0.105f;
         ground.transform.localScale = new Vector3(scale, scale, scale);
     }
 	
@@ -127,7 +127,7 @@ public class CityGenerator : MonoBehaviour
                     }
                 }
 
-                entryPoints_ = new Vector3[maxJunctions*4];
+                /*entryPoints_ = new Vector3[maxJunctions*4];
                 for(int index = 0; index < maxJunctions*4; index++)
                 {
                     int side = Mathf.FloorToInt(index / maxJunctions);
@@ -147,11 +147,11 @@ public class CityGenerator : MonoBehaviour
                             entryPoints_[index] = CreateEntryPoint((index % maxJunctions) * maxJunctions + maxJunctions - 1, Vector3.forward);
                             break;
                     }
-                }
+                }*/
                 
 
 
-                transform.position = entryPoints_[0] + Vector3.up;
+                //transform.position = entryPoints_[0] + Vector3.up;
 
                 CreateBuildings();
 

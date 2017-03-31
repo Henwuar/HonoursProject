@@ -986,7 +986,7 @@ MonoBehaviour:
   aggression_: 0
   defensiveness_: 0
   inattentiveness_: 0
-  alterPercentageBounds_: {x: 0.1, y: 0.3}
+  alterPercentageBounds_: {x: 0.3, y: 0.5}
 --- !u!114 &114000010858333526
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1052,6 +1052,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffb8a5c979f637f4fa4ff309accb6368, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  reverse: 1
 --- !u!114 &114000013021729570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1088,7 +1089,7 @@ MonoBehaviour:
   brakeLightIntensity_: 1
   headLightIntensity_: 1
   reverseAngleLimits_: {x: 150, y: 210}
-  dragValues_: {x: 0.25, y: 0.8}
+  dragValues_: {x: 0.25, y: 0.5}
   minEnginePitch_: 0.5
   enginePitchMultiplier_: 0.25
   crashResetTime_: 10

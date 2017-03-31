@@ -89,7 +89,7 @@ public class ParkingSpace : MonoBehaviour
             //align the car better
             //targets.Add(transform.position + transform.forward * length_ * 0.25f + transform.right * 0.5f);
             //targets.Add(transform.position - transform.forward * length_ * 0.25f);// - transform.right * 0.5f);
-            targets.Add(transform.position);
+            targets.Add(transform.position + transform.forward * length_ * 0.5f);
 
             targets.Add(transform.position - transform.forward * length_ * 0.25f);// + transform.right*0.5f);
 
