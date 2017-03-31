@@ -16,6 +16,7 @@ public class EventTracker : MonoBehaviour
     private float[] eventCount_;
     private InputField pathInput;
     private int sessionNumber_;
+    private Canvas canvas;
 
     // Use this for initialization
     void Start ()
@@ -46,6 +47,9 @@ public class EventTracker : MonoBehaviour
         pathInput.text = outputPath_;
         pathInput.gameObject.SetActive(false);
         trackData_ = false;
+
+
+        canvas = GetComponentInParent<Canvas>();
     }
 
     void Update()
@@ -87,11 +91,11 @@ public class EventTracker : MonoBehaviour
             
         }
 
-        sessionText_.text = sessionNumber_.ToString();
+        /*sessionText_.text = sessionNumber_.ToString();
         if(GameObject.Find("TestingManager").GetComponent<TestingManager>().UseImprovements())
         {
             sessionText_.text += "_I";
-        }
+        }*/
     }
 
     public void WriteData(bool improved)
@@ -148,5 +152,10 @@ public class EventTracker : MonoBehaviour
     public void SetTrackData(bool value)
     {
         trackData_ = value;
+    }
+
+    public void ToggleDisplay(bool value)
+    {
+        canvas.enabled = value;
     }
 }

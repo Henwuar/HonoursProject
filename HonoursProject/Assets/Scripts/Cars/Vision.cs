@@ -94,7 +94,7 @@ public class Vision : MonoBehaviour
                 {
                     if (purpose_.enabled)
                     {
-                        purpose_.SoundHorn();
+                        purpose_.TestImpatience();//SoundHorn();
                     }
                 }
             }

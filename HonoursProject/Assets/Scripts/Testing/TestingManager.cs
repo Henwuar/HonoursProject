@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public enum TestingType { TT_AB, TT_BOTH, TT_DYNAMIC};
 
@@ -9,6 +10,7 @@ public class TestingManager : MonoBehaviour
     public GameObject carPrefab_;
     public CheckpointManager checkpoints_;
     public EventTracker events_;
+ 
 
     [SerializeField]
     private TestingType test_;
@@ -41,7 +43,14 @@ public class TestingManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Delete))
         {
-            CleanUp();
+            if (running_)
+            {
+                CleanUp();
+            }
+            else
+            {
+                GameObject.Find("City Generator").GetComponent<CityGenerator>().ResetCity();
+            }
         }
         switch (stage_)
         {
@@ -52,6 +61,7 @@ public class TestingManager : MonoBehaviour
             case 4: Stage4(); break;
             case 5: Stage5(); break;
             case 6: Stage6(); break;
+            case 7: Stage7(); break;
             default: CleanUp(); break;
         }
 	}
@@ -94,6 +104,9 @@ public class TestingManager : MonoBehaviour
                 useImprovements_ = false;
             }
 
+
+            GameObject.Find("City Generator").GetComponent<CityGenerator>().ResetCity();
+
             running_ = false;
 
             SpawnPlayerCar();
@@ -104,6 +117,9 @@ public class TestingManager : MonoBehaviour
                 car.GetComponent<Car>().ToggleImprovements(useImprovements_);
                 car.GetComponent<Car>().ToggleStateText(false);
             }
+
+
+            events_.ToggleDisplay(false);
         }
     }
 
@@ -331,6 +347,8 @@ public class TestingManager : MonoBehaviour
         {
             curRun_ = 0;
         }
+
+        events_.ToggleDisplay(true);
     }
 
     public bool UseImprovements()

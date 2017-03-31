@@ -314,4 +314,45 @@ public class CityGenerator : MonoBehaviour
             canSpawn_ = false;
         }
     }
+
+    public void ResetCity()
+    {
+        Transform carContainer = GameObject.Find("Cars").transform;
+        for(int i = 0; i < carContainer.childCount; i++)
+        {
+            Destroy(carContainer.GetChild(i).gameObject);
+        }
+
+        spawnedCars_ = 0;
+
+        while (spawnedCars_ < numCars_)
+        {
+            bool foundSpace = false;
+            //loop through all the roads and place a car in the first available parking space
+            foreach (GameObject road in GameObject.FindGameObjectsWithTag("Road"))
+            {
+                //check that the road has a parking space
+                GameObject parking = road.GetComponent<Road>().GetParkingSpace();
+                if (parking)
+                {
+                    foundSpace = true;
+                    if (spawnedCars_ < numCars_)
+                    {
+                        SpawnParkedCar(road);
+                    }
+                    else
+                    {
+                        //break from both loops
+                        foundSpace = false;
+                        break;
+                    }
+                }
+            }
+            //no spaces were found in any roads
+            if (!foundSpace)
+            {
+                break;
+            }
+        }
+    }
 }
