@@ -323,6 +323,11 @@ public class CityGenerator : MonoBehaviour
             Destroy(carContainer.GetChild(i).gameObject);
         }
 
+        foreach(GameObject parking in  GameObject.FindGameObjectsWithTag("Parking"))
+        {
+            parking.GetComponent<ParkingSpace>().SetAvailable(true);
+        }
+
         spawnedCars_ = 0;
 
         while (spawnedCars_ < numCars_)

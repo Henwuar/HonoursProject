@@ -8,6 +8,7 @@ public class DebugDisplayManager : MonoBehaviour
 
     private GameObject selectedCar_ = null;
     private bool stateTexts_ = true;
+    private bool improvements_ = true;
 
 	// Use this for initialization
 	void Start ()
@@ -54,6 +55,15 @@ public class DebugDisplayManager : MonoBehaviour
         foreach (Car car in GameObject.Find("Cars").GetComponentsInChildren<Car>())
         {
             car.ToggleStateText(stateTexts_);
+        }
+    }
+
+    public void ToggleImprovements()
+    {
+        improvements_ = !improvements_;
+        foreach (Car car in GameObject.Find("Cars").GetComponentsInChildren<Car>())
+        {
+            car.ToggleImprovements(improvements_);
         }
     }
 
