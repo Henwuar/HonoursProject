@@ -64,6 +64,10 @@ public class DebugDisplayManager : MonoBehaviour
         foreach (Car car in GameObject.Find("Cars").GetComponentsInChildren<Car>())
         {
             car.ToggleImprovements(improvements_);
+            if (!improvements_)
+            {
+                car.GetComponent<Personality>().ResetToBase();
+            }
         }
     }
 

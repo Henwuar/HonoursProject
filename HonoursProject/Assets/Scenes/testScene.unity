@@ -1607,7 +1607,7 @@ MonoBehaviour:
   size_: 500
   startPoint_: {x: -25, y: 0, z: -25}
   junctionSpacing_: 50
-  numCars_: 250
+  numCars_: 100
   randomisation_: 2
   buildingHeightBounds_: {x: 7.5, y: 20}
 --- !u!4 &544859559
@@ -2839,7 +2839,7 @@ MonoBehaviour:
   clock_: {fileID: 1308445611}
   random_: 0
   numCheckpoints_: 2
-  junctionIndices_: 000000000100000009000000630000003800000026000000130000000f0000000400000000000000
+  junctionIndices_: 000000000a000000
 --- !u!1 &1480256549
 GameObject:
   m_ObjectHideFlags: 0

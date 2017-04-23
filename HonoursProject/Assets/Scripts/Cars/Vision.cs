@@ -51,10 +51,6 @@ public class Vision : MonoBehaviour
         //Raycast out to see if there is a car in front
         RaycastHit hit;
         //figure out the current view angle
-        /*if (car_.GetState() == CarState.CS_DEPARKING)
-        {
-            startAngle_ = 160.0f;
-        }*/
         Vector3 lookDirection = Quaternion.Euler(new Vector3(0, startAngle_ + curAngle_-(lookAngle_*0.5f))) * transform.forward;
         if(error_ && error_.GetDistracted())
         {
@@ -125,13 +121,6 @@ public class Vision : MonoBehaviour
                 //stop following targets for the next frame
                 car_.Wait(Time.deltaTime);
                 car_.Brake();
-                /*if(hit.rigidbody && hit.rigidbody.velocity.magnitude > car_.GetMaxSpeed()*0.5f)
-                {
-                    if(purpose_)
-                    {
-                        purpose_.SoundHorn();
-                    }
-                }*/
             }
             else
             {
@@ -157,7 +146,6 @@ public class Vision : MonoBehaviour
                 if(hit.collider.gameObject.GetComponent<TrafficLight>().GetSignal() == Signals.S_GO)
                 {
                     car_.SetState(CarState.CS_MOVING);
-                    //car_.SetFollowingTarget(true);
                 }
             }
         }

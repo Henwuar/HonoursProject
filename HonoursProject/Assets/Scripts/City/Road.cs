@@ -99,7 +99,6 @@ public class Road : MonoBehaviour
         }
 
         direction_ = forward;
-        //GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     public void UpdateMesh()

@@ -115,7 +115,6 @@ public class Car : MonoBehaviour
             }
         }
         //chose a target road from them
-        //int chosenRoad = Random.Range(0, roads.GetLength(0));
         target_ = closestRoad.transform.position;
         curRoad_ = closestRoad.transform.gameObject;
         if(curRoad_)
@@ -279,24 +278,8 @@ public class Car : MonoBehaviour
         }
 
         UpdateLights();
-        //make the respawn point follow the player
-        //respawnPoint_ = new Vector3(transform.position.x, respawnPoint_.y, transform.position.z);
-
-        //resetting
-
-        /*RaycastHit hit;
-        Physics.Raycast(transform.position, transform.up, out hit);
-        if (hit.collider && hit.collider.gameObject.tag == "Ground")
-        {
-            Reset();
-        }*/
-
-
-        //print(curRoad_);
 
         Debug.DrawLine(transform.position, target_, Color.green);
-        //Debug.DrawLine(target_.position + Vector3.right, target_.position - Vector3.right, Color.blue);
-        //Debug.DrawLine(target_.position + Vector3.forward, target_.position - Vector3.forward, Color.blue);
     }
 
     //handles response to input
@@ -362,21 +345,9 @@ public class Car : MonoBehaviour
                 curColour.a = intensity;
                 material.SetColor("_MainColour", curColour);
             }
-            /*Light[] tailLights = transform.FindChild("Taillights").GetComponentsInChildren<Light>();
-            foreach (Light light in tailLights)
-            {
-                light.intensity = intensity;
-            }
-            intensity = Random.Range(headLightIntensity_ * 0.5f, 2.0f * headLightIntensity_);
-            Light[] headLights = transform.FindChild("Headlights").GetComponentsInChildren<Light>();
-            foreach (Light light in headLights)
-            {
-                light.intensity = intensity;
-            }*/
         }
         else
         {
-            //print(curLightIntensity_);
             foreach (GameObject light in lights_)
             {
                 Material material = light.GetComponent<Renderer>().material;
@@ -391,16 +362,6 @@ public class Car : MonoBehaviour
                 }
                 material.SetColor("_MainColour", curColour);
             }
-            /*Light[] tailLights = transform.FindChild("Taillights").GetComponentsInChildren<Light>();
-            foreach (Light light in tailLights)
-            {
-                light.intensity = curLightIntensity_;
-            }
-            Light[] headLights = transform.FindChild("Headlights").GetComponentsInChildren<Light>();
-            foreach (Light light in headLights)
-            {
-                light.intensity = headLightIntensity_;
-            }*/
         }
     }
 
@@ -448,7 +409,6 @@ public class Car : MonoBehaviour
             float speed = body_.velocity.magnitude;
             float maxTurn = Mathf.Clamp(1 - Mathf.Min((speed / maxSpeed_), 1.0f), 0.25f, 1.0f);
             angle = angle * maxTurn;
-            //print(angle);
         }
         else
         {
@@ -466,16 +426,7 @@ public class Car : MonoBehaviour
             }
 
             angle = Vector3.Angle(transform.forward, direction);
-            //angle = Mathf.Abs(angle);
 
-            //clamp the angle correcting for reversing
-            /*if(Reversing())
-            {
-                angle = Vector3.Angle(-transform.forward, targetPos - transform.position);
-                //Mathf.Clamp(angle, -turnSpeed_, turnSpeed_);
-                angle -= 180;
-                angle *= -1;
-            }*/
             if (Mathf.Abs(angle) > turnSpeed_)
             {
                 angle = turnSpeed_;
@@ -653,7 +604,6 @@ public class Car : MonoBehaviour
 
     public void MoveAwayFrom(GameObject other)
     {
-        print("moving away");
         targets_.Clear();
         targets_.Enqueue(target_);
         target_ = transform.position - (other.transform.position - transform.position).normalized * 2.0f;

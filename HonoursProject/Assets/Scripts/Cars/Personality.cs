@@ -61,7 +61,6 @@ public class Personality : MonoBehaviour
             {
                 purpose_.SetParkingChance(Random.Range(5, 50));
             }
-            //print("a: " + aggression_ + "   d: " + defensiveness_ + "   i: " + inattentiveness_);
         }
     }
 
@@ -221,10 +220,6 @@ public class Personality : MonoBehaviour
 
         if(purpose_)
         {
-            //increase angle that the car will try and achieve while parking
-            /*float parkAngle = purpose_.GetParkedAngle();
-            parkAngle += GetModifier(parkAngle, inattentiveness_);
-            purpose_.SetParkedAngle(parkAngle);*/
             float parkChance = baseParkChance;
             parkChance -= GetModifier(parkChance, inattentiveness_);
             purpose_.SetParkingChance(parkChance);

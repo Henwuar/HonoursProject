@@ -111,7 +111,7 @@ public class EventTracker : MonoBehaviour
         eventFile += eventCount_[3].ToString();
 
         System.DateTime now = System.DateTime.Now;
-        string fname = sessionNumber_.ToString();//now.Year.ToString() + now.Month.ToString() + now.Day.ToString() + "_" + now.Hour.ToString() + now.Minute.ToString();
+        string fname = sessionNumber_.ToString();
         if(improved)
         {
             fname += "_I";

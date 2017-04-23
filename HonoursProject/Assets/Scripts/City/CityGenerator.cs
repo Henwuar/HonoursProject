@@ -7,7 +7,6 @@ public class CityGenerator : MonoBehaviour
     public GameObject junctionPrefab_;
     public GameObject[] carPrefabs_;
     public GameObject buildingPrefab_;
-    //public Text carCount_;
 
     [SerializeField]
     private float size_;
@@ -127,32 +126,6 @@ public class CityGenerator : MonoBehaviour
                     }
                 }
 
-                /*entryPoints_ = new Vector3[maxJunctions*4];
-                for(int index = 0; index < maxJunctions*4; index++)
-                {
-                    int side = Mathf.FloorToInt(index / maxJunctions);
-
-                    switch(side)
-                    {
-                        case 0:
-                            entryPoints_[index] = CreateEntryPoint(index, -Vector3.right);
-                            break;
-                        case 1:
-                            entryPoints_[index] = CreateEntryPoint(junctions_.Length - (index % maxJunctions) - 1, Vector3.right);
-                            break;
-                        case 2:
-                            entryPoints_[index] = CreateEntryPoint((index % maxJunctions) * maxJunctions, -Vector3.forward);
-                            break;
-                        case 3:
-                            entryPoints_[index] = CreateEntryPoint((index % maxJunctions) * maxJunctions + maxJunctions - 1, Vector3.forward);
-                            break;
-                    }
-                }*/
-                
-
-
-                //transform.position = entryPoints_[0] + Vector3.up;
-
                 CreateBuildings();
 
                 canSpawn_ = true;
@@ -163,7 +136,6 @@ public class CityGenerator : MonoBehaviour
                 Vector3 lookAtPoint = Vector3.Lerp(startPoint_, startPoint_ + Vector3.forward * size_ + Vector3.right * size_, 0.25f);
                 Camera.main.transform.LookAt(lookAtPoint);
                 Camera.main.GetComponent<CameraController>().Init();
-                //SpawnCar();
             }
         }
 
@@ -175,25 +147,6 @@ public class CityGenerator : MonoBehaviour
                 print("done");
             }
         }
-
-
-        //carCount_.text = "Cars: " + spawnedCars_.ToString("D3");
-        /*if (!Physics.CheckBox(transform.position, GetComponent<BoxCollider>().size * 0.5f, Quaternion.identity, LayerMask.NameToLayer("CarCheck")))
-        {
-            canSpawn_ = true;
-        }*/
-        /*if(spawnedCars_ < numCars_)
-        {
-            Time.timeScale = 5.0f;
-            if (!Physics.CheckBox(transform.position, GetComponent<BoxCollider>().size * 0.5f, Quaternion.identity, LayerMask.NameToLayer("CarCheck")))
-            {
-                canSpawn_ = true;
-            }
-        }
-        else
-        {
-            Time.timeScale = 1.0f;
-        }*/
 
         if (initialised_ && spawnedCars_ < numCars_)
         {
@@ -234,9 +187,6 @@ public class CityGenerator : MonoBehaviour
         newRoad.GetComponent<Road>().Init(laneSpacing, false);
 
         return transform.position;
-
-        //move the spawn point up slightly
-        //transform.position = transform.position + Vector3.up;
     }
 
     void CreateBuildings()
@@ -272,11 +222,6 @@ public class CityGenerator : MonoBehaviour
 
     void SpawnCar()
     {
-        //int junction = Random.Range(0, junctions_.GetLength(0));
-        //curJunction_ = junctions_[junction].GetComponent<Junction>();
-
-        //transform.position = junctions_[junction].transform.position + Vector3.up;
-
         GameObject newCar = (GameObject)Instantiate(ChooseCar(), transform.position, Quaternion.identity, GameObject.Find("Cars").transform);
 
         newCar.GetComponent<Car>().Init();
@@ -310,7 +255,6 @@ public class CityGenerator : MonoBehaviour
     {
         if (other.gameObject.tag == "Car")
         {
-            //carsInside_++;
             canSpawn_ = false;
         }
     }

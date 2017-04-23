@@ -58,16 +58,6 @@ public class CameraController : MonoBehaviour
             transform.position = player.transform.position - (player.transform.forward * 4) + (Vector3.up * 2);
             //look at the player
             transform.LookAt(player.transform.position +  (new Vector3(player.transform.forward.x, 0, player.transform.forward.z) * 3));
-
-            /*if (toggled_)
-            {
-                player.GetComponent<Car>().ToggleControlled();
-                player.GetComponent<Car>().Init();
-                toggled_ = false;
-            }*/
-
-            //GameObject.FindGameObjectWithTag("CheckpointManager")
-            //checkpoint.GetComponent<CheckpointManager>().StartTimer();
         }
         else if(following_)
         {

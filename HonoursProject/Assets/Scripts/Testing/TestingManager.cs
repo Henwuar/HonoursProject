@@ -154,7 +154,6 @@ public class TestingManager : MonoBehaviour
     {
         if(checkpoints_.Progress() >= 0.5f && test_ == TestingType.TT_DYNAMIC)
         {
-            //print("Half way");
             foreach(GameObject car in GameObject.FindGameObjectsWithTag("Car"))
             {
                 car.GetComponent<Car>().ToggleImprovements(true);
@@ -188,7 +187,7 @@ public class TestingManager : MonoBehaviour
         }
         else
         {
-            countDownText_.text = "FINISHED!";// + checkpoints_.GetTimerString();
+            countDownText_.text = "FINISHED!";
             if(test_ == TestingType.TT_BOTH)
             {
                 countDownText_.text += "\nPlease complete part " + (curRun_ + 1).ToString() + " of the questionnaire.";

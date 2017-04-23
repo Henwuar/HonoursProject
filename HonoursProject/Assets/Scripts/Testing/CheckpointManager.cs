@@ -153,7 +153,7 @@ public class CheckpointManager : MonoBehaviour
     {
         string clockText = "";
         int milliseconds = (int)((timer_ - Mathf.Floor(timer_)) * 100);
-        int seconds = Mathf.FloorToInt(timer_) % 60;// + milliseconds;
+        int seconds = Mathf.FloorToInt(timer_) % 60;
         int minutes = Mathf.FloorToInt(timer_ / 60);
         clockText = minutes.ToString("D2") + ":" + seconds.ToString("D2") + "." + milliseconds.ToString("D2");
         return clockText;

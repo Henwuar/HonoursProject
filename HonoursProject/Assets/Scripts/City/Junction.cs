@@ -120,24 +120,6 @@ public class Junction : MonoBehaviour
         return ready_;
     }
 
-    /*public List<Vector3> GetNewTargets()
-    {
-        List<Vector3> targets = new List<Vector3>();
-        //make sure there are connected junctions
-        if(roads_.Count == 0)
-        {
-            targets.Add(gameObject.transform.position);
-        }
-        else
-        {
-            int id = Random.Range(0, roads_.Count);
-            targets.Add(roads_[id].GetComponent<Road>().GetStart().position);
-            targets.Add(roads_[id].GetComponent<Road>().GetEnd().position);
-            //targets.Add(roads_[id].GetComponent<Road>().endJunction_.transform);
-        }
-        return targets;
-    }*/
-
     public GameObject GetNewRoad(GameObject curRoad)
     {
         GameObject newRoad = null;
